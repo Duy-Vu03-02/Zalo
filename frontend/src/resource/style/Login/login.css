@@ -123,11 +123,14 @@
 .login-form-login-account {
   padding-top: 30px;
 }
-.login-form-login-account img {
+.login-form-login-account .icon-login {
   width: 20px;
+  height: 20px;
   display: flex;
+  align-items: center;
+  align-content: center;
   margin: 0 10px;
-  line-height: 30px;
+  line-height: 20px;
 }
 .login-form-login-wrap div {
   margin: 0px 30px 30px 30px;

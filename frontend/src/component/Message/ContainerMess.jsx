@@ -1,26 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import "../../resource/style/Chat/containermess.css";
+import { ThemeContext } from "../../Context/ThemeContext";
 import avatar from "../../resource/img/Chat/nu9.png";
-import videocam from "../../resource/svg/chat/message/containermess/videocam.svg";
-import addGroup from "../../resource/svg/chat/message/contact/addGroup.svg";
-import search from "../../resource/svg/chat/message/contact/search.svg";
-import fast from "../../resource/svg/chat/message/containermess/fast.svg";
-import icon from "../../resource/svg/chat/message/containermess/icon.svg";
-import email from "../../resource/svg/chat/message/containermess/email.svg";
-import like from "../../resource/svg/chat/message/containermess/like.svg";
-import emoji from "../../resource/svg/chat/message/containermess/emoji.svg";
-import image from "../../resource/svg/chat/message/containermess/image.svg";
-import attach from "../../resource/svg/chat/message/containermess/attach.svg";
-import screencapture from "../../resource/svg/chat/message/containermess/screencapture.svg";
-import contact from "../../resource/svg/chat/message/containermess/contact.svg";
-import clock from "../../resource/svg/chat/message/containermess/clock.svg";
-import addtodo from "../../resource/svg/chat/message/containermess/addtodo.svg";
-import chamthan from "../../resource/svg/chat/message/containermess/chamthan.svg";
-import replacebackground from "../../resource/svg/chat/message/containermess/repalcebackground.svg";
+import { HiOutlineUsers } from "react-icons/hi2";
+import { CiSearch } from "react-icons/ci";
+import { IoVideocamOutline } from "react-icons/io5";
+import { AiOutlineLike } from "react-icons/ai";
+import { AiOutlineThunderbolt } from "react-icons/ai";
+import { TbBackground } from "react-icons/tb";
+import { AiOutlinePicture } from "react-icons/ai";
+import { IoMdAttach } from "react-icons/io";
+import { IoCameraOutline } from "react-icons/io5";
+import { MdOutlineContactMail } from "react-icons/md";
+import { RiCalendarTodoFill } from "react-icons/ri";
+import { RiEmojiStickerLine } from "react-icons/ri";
+import { RxFace } from "react-icons/rx";
 
 export default function ContainerMess() {
-  const [colorBackground, setColorBackground] = useState("");
   const [tableColor, setTableColr] = useState(false);
+  const { theme, setTheme } = useContext(ThemeContext);
+  console.log(theme);
   const codeBackground = [
     "#34568B",
     "#ff6f61",
@@ -36,25 +35,13 @@ export default function ContainerMess() {
     "#ffccb6",
     "#ff968a",
     "#8fcaca",
-    "#fff",
+    "#f4f3f3",
     "#bb5098",
   ];
 
-  useEffect(() => {
-    const background = async () => {
-      const them = await JSON.parse(localStorage.getItem("them"));
-      if (them) {
-        setColorBackground(them);
-      } else {
-        setColorBackground("#fff");
-      }
-    };
-    background();
-  }, []);
-
   const handleSetBackground = (bg) => {
-    setColorBackground(bg);
-    localStorage.setItem("them", JSON.stringify(bg));
+    setTheme(bg);
+    setTableColr(false);
   };
   const handleTableColor = () => {
     tableColor ? setTableColr(false) : setTableColr(true);
@@ -73,32 +60,28 @@ export default function ContainerMess() {
             </div>
           </div>
           <div className="group-choice flex">
-            <img src={addGroup} alt="" />
-            <img src={search} alt="" />
-            <img src={videocam} alt="" />
+            <HiOutlineUsers className="icon-header" />
+            <CiSearch className="icon-header" />
+            <IoVideocamOutline className="icon-header" />
           </div>
         </div>
-        <div
-          className="infor-container"
-          style={{ backgroundColor: colorBackground }}
-        >
+        <div className="infor-container" style={{ backgroundColor: theme }}>
           <div></div>
         </div>
         <div className="footer-chat">
           <div className="chat-input flex">
             <div className="flex">
-              <img src={emoji} alt="" />
-              <img src={image} alt="" />
-              <img src={attach} alt="" />
-              <img src={screencapture} alt="" />
-              <img src={contact} alt="" />
-              <img src={addtodo} alt="" />
-              <img src={chamthan} alt="" />
+              <RiEmojiStickerLine className="icon-header" />
+              <AiOutlinePicture className="icon-header" />
+              <IoMdAttach className="icon-header" />
+              <IoCameraOutline className="icon-header" />
+              <MdOutlineContactMail className="icon-header" />
+              <RiCalendarTodoFill className="icon-header" />
+
               <div className="wrap-setbackground">
-                <img
-                  src={replacebackground}
+                <TbBackground
                   onClick={handleTableColor}
-                  alt=""
+                  className="icon-header"
                 />
                 <div
                   className={`set-background ${
@@ -125,10 +108,9 @@ export default function ContainerMess() {
               <input type="text" placeholder="Nhập @, tin nhắn tới A Âm" />
             </div>
             <div>
-              <img src={fast} alt="" />
-              <img src={icon} alt="" />
-              <img src={email} alt="" />
-              <img src={like} alt="" />
+              <AiOutlineThunderbolt className="icon-header" />
+              <RxFace className="icon-header" />
+              <AiOutlineLike className="icon-header" />
             </div>
           </div>
         </div>

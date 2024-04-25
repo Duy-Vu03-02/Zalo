@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import "../../resource/style/Chat/contact.css";
 import axios from "axios";
-import search from "../../resource/svg/chat/message/contact/search.svg";
-import addPerson from "../../resource/svg/chat/message/contact/addPerson.svg";
-import addGroup from "../../resource/svg/chat/message/contact/addGroup.svg";
-import expand from "../../resource/svg/chat/message/contact/expand.svg";
-import more from "../../resource/svg/chat/message/contact/more.svg";
+import { CiSearch } from "react-icons/ci";
+import { HiOutlineUsers } from "react-icons/hi2";
+import { HiOutlineUser } from "react-icons/hi2";
+import { MdExpandMore } from "react-icons/md";
+import { IoIosMore } from "react-icons/io";
 
 export default function Contact() {
   const [textSearch, setTextSearch] = useState("");
@@ -48,7 +48,7 @@ export default function Contact() {
       <div className="contact-container-contact">
         <div className="contact-contact-search flex">
           <div className="contact-group-search flex">
-            <img src={search} alt="" />
+            <CiSearch className="icon-search" />
             <input
               type="text"
               value={textSearch}
@@ -57,8 +57,8 @@ export default function Contact() {
             />
           </div>
           <div className="contact-group-add-user flex">
-            <img src={addPerson} alt="" />
-            <img src={addGroup} alt="" />
+            <HiOutlineUser className="icon-user-contact" />
+            <HiOutlineUsers className="icon-user-contact" />
           </div>
         </div>
         <div className="contact-wrap-conversation">
@@ -88,10 +88,10 @@ export default function Contact() {
               <div className="contact- flex">
                 <div className="contact-classification-filter flex">
                   <p>Phân loại</p>
-                  <img src={expand} alt="" />
+                  <MdExpandMore className="icon-filter" />
                 </div>
                 <div className="contact-more-filter">
-                  <img src={more} alt="" />
+                  <IoIosMore className="icon-filter" />
                 </div>
               </div>
             </div>

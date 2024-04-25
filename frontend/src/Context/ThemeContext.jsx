@@ -9,11 +9,13 @@ export const ThemeProvider = ({ children }) => {
     const themeLocal = localStorage.getItem("theme");
     if (themeLocal != null) {
       setTheme(JSON.parse(themeLocal));
+    } else {
+      setTheme("#f4f3f3");
     }
   }, []);
 
   return (
-    <ThemeContext.Provider value={(theme, setTheme)}>
+    <ThemeContext.Provider value={{ theme, setTheme }}>
       {children}
     </ThemeContext.Provider>
   );

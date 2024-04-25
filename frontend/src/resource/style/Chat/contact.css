@@ -11,9 +11,9 @@
   margin-right: 5px;
   border-radius: 5px;
 }
-.contact-group-search img {
-  width: 22px;
-  height: 22px;
+.contact-group-search .icon-search {
+  width: 18px;
+  height: 18px;
   margin: auto 5px;
   display: block;
   z-index: 2;
@@ -59,15 +59,15 @@
 
 /**/
 
-.contact-group-add-user img {
-  width: 22px;
-  height: 22px;
+.contact-group-add-user .icon-user-contact {
+  width: 17px;
+  height: 17px;
   display: block;
   margin: auto 3px;
-  padding: 5px;
+  padding: 8px;
   cursor: pointer;
 }
-.contact-group-add-user img:hover {
+.contact-group-add-user .icon-user-contact:hover {
   background-color: #eaedf0;
   border-radius: 5px;
 }
@@ -100,7 +100,7 @@
   margin: auto;
   display: block;
 }
-.contact-right-filter img {
+.contact-right-filter .icon-filter {
   width: 20px;
   height: 20px;
   padding: 2px;
@@ -115,7 +115,7 @@
   background-color: #eaedf0;
   border-radius: 10px;
 }
-.contact-more-filter img:hover {
+.contact-more-filter .icon-filter:hover {
   background-color: #eaedf0;
   border-radius: 50%;
   cursor: pointer;

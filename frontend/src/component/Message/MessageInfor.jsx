@@ -1,18 +1,20 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import "../../resource/style/Chat/messageInfor.css";
+import { ThemeContext } from "../../Context/ThemeContext";
 import avatar from "../../resource/img/Chat/nu9.png";
-import edit from "../../resource/svg/chat/message/messageinfor/edit.svg";
-import bell from "../../resource/svg/chat/message/messageinfor/bell.svg";
-import pin from "../../resource/svg/chat/message/messageinfor/pin.svg";
-import addgroup from "../../resource/svg/chat/message/messageinfor/addgroup.svg";
+import { AiOutlineBell } from "react-icons/ai";
+import { GoPin } from "react-icons/go";
+import { HiOutlineUsers } from "react-icons/hi2";
+import { CiEdit } from "react-icons/ci";
+
 import nam9 from "../../resource/img/Chat/VuongAnVu.png";
 import nu9 from "../../resource/img/Chat/nu9.png";
 import nam8 from "../../resource/img/Chat/namphu.png";
 
 export default function MessageInfor() {
   const ref = useRef(null);
-  const [colorBackground, setColorBackground] = useState("");
   const [showTool, setShowTool] = useState([]);
+  const { theme } = useContext(ThemeContext);
   const imgs = [nu9, nu9, nu9, nu9, nu9, nu9, nu9, nu9, nu9];
   const listOption = [
     "Danh sách nhắc hẹn",
@@ -21,18 +23,6 @@ export default function MessageInfor() {
     "Link",
     "Thiết lập bảo mật",
   ];
-
-  useEffect(() => {
-    const fetchBackround = async () => {
-      const them = await JSON.parse(localStorage.getItem("them"));
-      if (them) {
-        setColorBackground(them);
-      } else {
-        setColorBackground("#fff");
-      }
-    };
-    fetchBackround();
-  }, []);
 
   const handleShowTool = (index) => {
     setShowTool((prevState) => {
@@ -49,7 +39,7 @@ export default function MessageInfor() {
     <>
       <div
         className="mess-infor-container-messageinfor"
-        style={{ backgroundColor: colorBackground }}
+        style={{ backgroundColor: theme }}
       >
         <div className="mess-infor-title-text flex">
           <h3>Thông tin hội thoại</h3>
@@ -60,20 +50,20 @@ export default function MessageInfor() {
               <img className="mess-infor-avatar-infor" src={avatar} alt="" />
               <div className="mess-infor-nickname flex">
                 <p>A âm</p>
-                <img src={edit} alt="" />
+                <CiEdit style={{ fontSize: "23px", cursor: "pointer" }} />
               </div>
             </div>
             <div className="mess-infor-header-infor-tool flex">
               <div>
-                <img src={bell} alt="" />
+                <AiOutlineBell className="icon-tool-mess" />
                 <p>Tắt thông báo</p>
               </div>
               <div>
-                <img src={pin} alt="" />
+                <GoPin className="icon-tool-mess" />
                 <p>Ghim hội thoại</p>
               </div>
               <div>
-                <img src={addgroup} alt="" />
+                <HiOutlineUsers className="icon-tool-mess" />
                 <p>Tạo nhóm trò truyện</p>
               </div>
             </div>
@@ -98,25 +88,25 @@ export default function MessageInfor() {
                     </div>
                   </div>
                   <div
-                    className={`list-data-tool ${
-                      showTool.includes(index) ? "li-tool-active" : ""
+                    className={` ${
+                      showTool.includes(index)
+                        ? "li-tool-active"
+                        : "li-tool-none"
                     }`}
                   >
-                    <img src={nu9} alt="" />
-                    <img src={nu9} alt="" />
-                    <img src={nu9} alt="" />
-                    <img src={nu9} alt="" />
-                    <img src={nu9} alt="" />
-                    <img src={nu9} alt="" />
-                    <img src={nu9} alt="" />
-                    <img src={nu9} alt="" />
-                  </div>
-                  <div
-                    className={`btn-all-data ${
-                      showTool.includes(index) ? "block" : "none"
-                    }`}
-                  >
-                    <p>Xem tất cả</p>
+                    <div className={`list-data-tool`}>
+                      <img src={nu9} alt="" />
+                      <img src={nu9} alt="" />
+                      <img src={nu9} alt="" />
+                      <img src={nu9} alt="" />
+                      <img src={nu9} alt="" />
+                      <img src={nu9} alt="" />
+                      <img src={nu9} alt="" />
+                      <img src={nu9} alt="" />
+                    </div>
+                    <div className={`btn-all-data `}>
+                      <p>Xem tất cả</p>
+                    </div>
                   </div>
                 </li>
               ))}

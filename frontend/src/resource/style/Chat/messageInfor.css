@@ -22,7 +22,6 @@
 }
 
 .mess-infor-header-infor {
-  border-bottom: 1px solid rgb(209, 209, 209);
   background-color: white;
   height: 235px;
   display: flex;
@@ -64,14 +63,6 @@
   justify-content: space-around;
   padding-bottom: 8px;
 }
-.mess-infor-header-infor-tool img {
-  width: 30px;
-  height: 30px;
-  background-color: rgb(223, 226, 230);
-  margin: auto;
-  padding: 5px;
-  border-radius: 50%;
-}
 .mess-infor-header-infor-tool div {
   width: 75px;
   display: flex;
@@ -79,6 +70,7 @@
   flex-wrap: wrap;
 }
 .mess-infor-header-infor-tool p {
+  font-size: 14px;
   text-align: center;
 }
 .mess-infor-footer-tool {
@@ -110,10 +102,15 @@
   background-color: white;
   height: 150px;
 }
-.list-data-tool {
+.li-tool-none {
   height: 0;
-  display: flex;
   transition: height 0.3s;
+}
+.li-tool-none .btn-all-data p {
+  display: none;
+}
+.list-data-tool {
+  display: flex;
   align-items: center;
   justify-content: space-between;
   margin: 0 5px;
@@ -127,7 +124,7 @@
 }
 
 .li-tool-active {
-  height: 140px;
+  height: 170px;
   transition: height 0.3s;
 }
 .li-tool-active img {
@@ -148,4 +145,20 @@
   text-align: center;
   margin-bottom: 10px;
   display: flex;
+}
+.mess-infor-header-infor-tool .icon-tool-mess {
+  margin: auto;
+  font-size: 22px;
+  font-weight: 200;
+  background-color: rgb(223, 226, 230);
+  padding: 10px;
+  border-radius: 50%;
+}
+
+.mess-infor-header-infor-tool img {
+  width: 30px;
+  height: 30px;
+  margin: auto;
+  padding: 5px;
+  border-radius: 50%;
 }

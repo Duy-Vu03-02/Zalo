@@ -5,6 +5,8 @@ import "../resource/style/Login/login.css";
 import qr from "../resource/img/Login/qr.png";
 import lock from "../resource/svg/login/lock.svg";
 import iphone from "../resource/svg/login/iphone.svg";
+import { IoIosPhonePortrait } from "react-icons/io";
+import { CiLock } from "react-icons/ci";
 
 export default function Login() {
   const [activeQr, setActiveQr] = useState(true);
@@ -124,7 +126,7 @@ function LoginAccount() {
         <div className="login-form-login-account">
           <div className="login-form-login-wrap">
             <div className="flex">
-              <img src={iphone} alt="" />
+              <IoIosPhonePortrait className="icon-login" />
               <input
                 type="text"
                 placeholder="Số điện thoại"
@@ -134,7 +136,7 @@ function LoginAccount() {
               />
             </div>
             <div className="flex">
-              <img src={lock} alt="" />
+              <CiLock className="icon-login" />
               <input
                 type="text"
                 placeholder="Mật khẩu"

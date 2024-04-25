@@ -8,13 +8,13 @@
   justify-content: space-between;
 }
 .zavatar {
-  margin: 6px;
+  margin: 6px 6px 6px 12px;
 }
 .zavatar img {
   margin: auto;
   display: block;
-  width: 56px;
-  height: 56px;
+  width: 55px;
+  height: 55px;
   border-radius: 50%;
 }
 .friend-mess-infor {
@@ -32,12 +32,8 @@
   color: #7589a3;
 }
 
-.group-choice img {
-  width: 30px;
-  height: 30px;
-  margin: auto 3px;
-  padding: 7px;
-  display: block;
+.group-choice {
+  align-items: center;
 }
 .group-choice img:hover {
   background-color: #eaedf0;
@@ -55,7 +51,7 @@
   height: 50px;
   align-items: center;
   justify-content: space-between;
-  background-color: #f5f5f5;
+  background-color: #fbf8f8;
   border-bottom: 1px solid rgb(209, 209, 209);
   border-top: 1px solid rgb(209, 209, 209);
 }
@@ -73,24 +69,15 @@
   outline: none;
   font-size: 15px;
 }
-.chat-input-web input:hover {
-  border: none;
-  outline: none;
-}
-.chat-input-web img,
-.chat-input img {
+.container-containermess .icon-header {
   width: 25px;
   height: 25px;
   padding: 5px;
   margin: 0 5px;
   cursor: pointer;
 }
-.chat-input-web img:hover {
-  background-color: #eaedf0;
-  border-radius: 5px;
-}
-.chat-input img:hover {
-  background-color: rgb(195, 228, 245);
+.container-containermess .icon-header:hover {
+  background-color: #d6dbe1;
   border-radius: 5px;
 }
 .wrap-setbackground {
@@ -105,7 +92,7 @@
   z-index: 10;
   width: 130px;
   height: 130px;
-  background-color: rgb(235, 237, 238);
+  background-color: rgb(215, 233, 241);
   border-radius: 10px;
 }
 .set-background-active {
