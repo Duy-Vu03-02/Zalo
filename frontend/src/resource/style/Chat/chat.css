@@ -1,0 +1,39 @@
+.chat-menu-left {
+  min-width: 65px;
+  height: 100vh;
+  background-color: #0091ff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.chat-top-menu,
+.chat-bottom-menu {
+  width: 100%;
+}
+.chat-top-menu {
+  margin: 50px 0;
+}
+.chat-top-menu img,
+.chat-bottom-menu img {
+  width: 25px;
+  height: 25px;
+  display: block;
+  margin: 0px auto;
+  padding: 18px 0;
+}
+.chat-avatar-user img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: block;
+  margin: 0 auto;
+}
+.chat-top-menu li:hover,
+.chat-bottom-menu li:hover {
+  cursor: pointer;
+  background-color: #0383e5;
+}
+.chat-menu-left .chat-top-menu .chat-menu-left-active,
+.chat-menu-left .chat-bottom-menu .chat-menu-left-active {
+  background-color: #0371c5;
+}

@@ -1,0 +1,151 @@
+.mess-infor-container-messageinfor {
+  width: 300px;
+  height: 100vh;
+  border-left: 1px solid rgb(209, 209, 209);
+}
+.mess-infor-scrool-header {
+  overflow-y: auto;
+  max-height: calc(100vh - 70px);
+}
+.mess-infor-title-text {
+  background-color: white;
+  border-bottom: 1px solid rgb(209, 209, 209);
+  height: 70px;
+  justify-content: center;
+}
+.mess-infor-title-text h3 {
+  margin: 0;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.mess-infor-header-infor {
+  border-bottom: 1px solid rgb(209, 209, 209);
+  background-color: white;
+  height: 235px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.mess-infor-wrap-avatar {
+  height: 130px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+.mess-infor-nickname {
+  justify-content: center;
+}
+.mess-infor-nickname p {
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0 5px;
+}
+.mess-infor-nickname img {
+  background-color: rgb(223, 226, 230);
+  border-radius: 10px;
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+  margin: auto 5px;
+  padding: 5px;
+}
+
+.mess-infor-avatar-infor {
+  margin: auto;
+  display: block;
+  width: 85px;
+  height: 85px;
+  border-radius: 50%;
+}
+.mess-infor-header-infor-tool {
+  justify-content: space-around;
+  padding-bottom: 8px;
+}
+.mess-infor-header-infor-tool img {
+  width: 30px;
+  height: 30px;
+  background-color: rgb(223, 226, 230);
+  margin: auto;
+  padding: 5px;
+  border-radius: 50%;
+}
+.mess-infor-header-infor-tool div {
+  width: 75px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+.mess-infor-header-infor-tool p {
+  text-align: center;
+}
+.mess-infor-footer-tool {
+  min-height: 248px;
+}
+.mess-infor-footer-tool li {
+  background-color: white;
+  margin: 8px 0;
+}
+.title-tool {
+  padding: 12px;
+  cursor: pointer;
+  justify-content: space-between;
+}
+.mess-infor-footer-tool li p {
+  margin: auto 0;
+  font-weight: 500;
+  display: block;
+}
+.mess-infor-detial-tool {
+  transform: rotate(180deg);
+  transition: transform 0.3s;
+}
+.mess-infor-tool-active {
+  transform: rotate(90deg);
+  transition: transform 0.3s;
+}
+.mess-infor-fill-namespace {
+  background-color: white;
+  height: 150px;
+}
+.list-data-tool {
+  height: 0;
+  display: flex;
+  transition: height 0.3s;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 5px;
+  flex-wrap: wrap;
+}
+.list-data-tool img {
+  margin: 0 5px;
+  background-color: black;
+  width: 58px;
+  height: 0px;
+}
+
+.li-tool-active {
+  height: 140px;
+  transition: height 0.3s;
+}
+.li-tool-active img {
+  height: 58px;
+  transition: 50px;
+}
+.btn-all-data {
+  margin: 10px;
+  padding-bottom: 10px;
+}
+.btn-all-data p {
+  line-height: 30px;
+  border-radius: 5px;
+  background-color: rgb(213, 221, 229);
+  font-weight: 600;
+  padding: 3px 0;
+  margin: 10px;
+  text-align: center;
+  margin-bottom: 10px;
+  display: flex;
+}

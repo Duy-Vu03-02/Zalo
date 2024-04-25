@@ -1,0 +1,199 @@
+.contact-container-contact {
+  height: 100vh;
+  min-width: 350px;
+  border-right: 1px solid rgb(209, 209, 209);
+}
+.contact-group-search {
+  background-color: #eaedf0;
+  height: 30px;
+  width: 250px;
+  margin: 15px;
+  margin-right: 5px;
+  border-radius: 5px;
+}
+.contact-group-search img {
+  width: 22px;
+  height: 22px;
+  margin: auto 5px;
+  display: block;
+  z-index: 2;
+  opacity: 0.6;
+}
+.contact-group-search input {
+  font-size: 14px;
+  width: 200px;
+  border: none;
+  margin: 5px;
+  background-color: #eaedf0;
+  z-index: 2;
+}
+.contact-group-search input:focus {
+  background-color: white;
+  border: none;
+  outline: none;
+}
+/**/
+.contact-group-search {
+  position: relative;
+}
+
+.contact-group-search::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  z-index: -1;
+  transition: background-color 0.3s ease;
+}
+
+.contact-group-search:focus-within::before {
+  z-index: 1;
+  background-color: white; /* Màu nền khi bất kỳ phần tử con nào trong group-search được focus */
+  border: 1px solid #0190f3;
+  border-radius: 5px;
+  outline: none;
+}
+
+/**/
+
+.contact-group-add-user img {
+  width: 22px;
+  height: 22px;
+  display: block;
+  margin: auto 3px;
+  padding: 5px;
+  cursor: pointer;
+}
+.contact-group-add-user img:hover {
+  background-color: #eaedf0;
+  border-radius: 5px;
+}
+
+.contact-filter-converstation {
+  justify-content: space-between;
+  padding-bottom: 3px;
+  border-bottom: 1px solid rgb(202, 199, 200);
+}
+.contact-left-filter {
+  margin-left: 5px;
+  position: relative;
+}
+.contact-right-filter {
+  margin-right: 10px;
+}
+.contact-left-filter p {
+  font-size: 14px;
+  font-weight: 700;
+  color: #7589a3;
+  margin: 0 10px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.contact-left-filter p:hover {
+  color: #0190f3;
+}
+.contact-right-filter p {
+  font-size: 13px;
+  margin: auto;
+  display: block;
+}
+.contact-right-filter img {
+  width: 20px;
+  height: 20px;
+  padding: 2px;
+  margin: auto 3px;
+  display: block;
+}
+.contact-classification-filter {
+  cursor: pointer;
+  padding: 0px 5px 0px 10px;
+}
+.contact-classification-filter:hover {
+  background-color: #eaedf0;
+  border-radius: 10px;
+}
+.contact-more-filter img:hover {
+  background-color: #eaedf0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.contact-left-filter .contact-all-mess-active {
+  color: #0190f3;
+  transition: color 0.2s;
+}
+.contact-hr-left-filter {
+  position: absolute;
+  width: 39px;
+  height: 3px;
+  border: none;
+  outline: none;
+  background-color: #0190f3;
+  top: 16px;
+  left: 10px;
+  transition: with 0.3s, left 0.3s;
+}
+.contact-hr-left-filter-active {
+  width: 61px;
+  left: 70px;
+  transition: with 0.3s, left 0.3s;
+}
+
+.contact-listConversation {
+  overflow-y: auto;
+  height: 600px;
+}
+.contact-listConversation::-webkit-scrollbar {
+  width: 10px;
+  height: 12px;
+}
+.contact-listConversation::-webkit-scrollbar-thumb {
+  background-color: #c0bfbf;
+  border-radius: 6px;
+}
+.contact-listConversation::-webkit-scrollbar-thumb:hover {
+  background-color: #a09f9f;
+}
+.contact-listConversation::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+
+.contact-detial-conversation {
+  padding: 10px 0;
+  justify-content: space-between;
+}
+.contact-detial-conversation:hover {
+  background-color: #f3f5f6;
+  cursor: pointer;
+}
+.contact-detial-conversation div {
+  padding: 0 5px;
+}
+.contact-avatar-friend img {
+  margin: auto;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  display: block;
+}
+.contact-overview-mess {
+  margin: auto;
+  display: block;
+}
+.contact-overview-mess h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+}
+.contact-overview-mess p {
+  font-size: 14px;
+  color: #7589a3;
+  font-weight: 400;
+}
+.contact-last-onl p {
+  font-size: 13px;
+  font-weight: 500;
+  color: #7589a3;
+}
