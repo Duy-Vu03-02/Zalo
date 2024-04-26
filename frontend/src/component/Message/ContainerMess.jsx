@@ -4,7 +4,7 @@ import { ThemeContext } from "../../Context/ThemeContext";
 import avatar from "../../resource/img/Chat/nu9.png";
 import { HiOutlineUsers } from "react-icons/hi2";
 import { CiSearch } from "react-icons/ci";
-import { IoVideocamOutline } from "react-icons/io5";
+import { IoSend, IoVideocamOutline } from "react-icons/io5";
 import { AiOutlineLike } from "react-icons/ai";
 import { TbBackground } from "react-icons/tb";
 import { AiOutlinePicture } from "react-icons/ai";
@@ -14,14 +14,15 @@ import { MdOutlineContactMail } from "react-icons/md";
 import { RiCalendarTodoFill } from "react-icons/ri";
 import { RiEmojiStickerLine } from "react-icons/ri";
 import { AiOutlineSend } from "react-icons/ai";
-import io from "socket.io-client";
+import axios from "axios";
+// import io from "socket.io-client";
 
-const optionSocket = {
-  transports: ["websocket"],
-};
-const socket = io("http://localhost:8080", optionSocket);
+// const optionSocket = {
+//   transports: ["websocket"],
+// };
+// const socket = io("http://localhost:8080", optionSocket);
 
-export default function ContainerMess() {
+export default function ContainerMess({ contactData }) {
   const [messages, setMessages] = useState([]);
   const [mess, setMess] = useState("");
   const [tableColor, setTableColr] = useState(false);
@@ -45,30 +46,57 @@ export default function ContainerMess() {
     "#b4426e",
   ];
 
-  useEffect(() => {
-    socket.on("chat message", (msg) => {
-      setMessages((prevMessages) => [...prevMessages, msg]);
-    });
-  }, []);
-
   // useEffect(() => {
-  //   socket.on("message", (response) => {
-  //     setMessages((prevState) => [...prevState, response]);
+  //   socket.on("chat message", (response) => {
+  //     setMessages((prevMess) => [...prevMess, response]);
   //   });
 
   //   return () => {
-  //     socket.off("message");
+  //     socket.off("chat message");
   //   };
-  // }, []);
+  // });
+  const handleSendMess = async (e) => {
+    e.preventDefault();
+    //   if (mess != "") {
+    //     socket.emit("chat message", mess);
+    //     setMess("");
+    //   }
+    const data = {
+      message: mess,
+      user: {
+        from: "65902e6b34de607dec05f55e",
+        to: "65902e1834de607dec05f557",
+      },
+      sender: "65902e6b34de607dec05f55e",
+    };
+    const response = await axios.post(
+      "http://127.0.0.1:8080/message/createmessage",
+      data
+    );
+    if (response.status === 200) {
+      console.log(response);
+    }
+  };
+
+  useEffect(() => {
+    const fetch = async () => {
+      const data = {
+        from: "65902e6b34de607dec05f55e",
+        to: "65902e1834de607dec05f557",
+      };
+      const response = await axios.post(
+        "http://127.0.0.1:8080/message/getallmessage",
+        data
+      );
+      if (response.status === 200) {
+        console.log(response.data);
+      }
+    };
+    fetch();
+  }, []);
 
   const handleChangMess = (e) => {
     setMess(e.target.value);
-  };
-
-  const handleSendMess = (e) => {
-    // e.preventDefault();
-    socket.emit("chat message", mess);
-    setMessages("");
   };
 
   const handleSetBackground = (bg) => {
@@ -84,10 +112,10 @@ export default function ContainerMess() {
         <div className="top-container flex">
           <div className="flex">
             <div className="zavatar">
-              <img src={avatar} alt="" />
+              <img src={contactData.avatarImage} alt="" />
             </div>
             <div className="friend-mess-infor">
-              <h3>A Âm</h3>
+              <h3>{contactData.username}</h3>
               <p>Truy cập 2 giờ trước</p>
             </div>
           </div>
@@ -102,8 +130,15 @@ export default function ContainerMess() {
             <ul>
               {messages &&
                 messages.map((item, index) => (
-                  <li key={index}>
-                    <p>{item}</p>
+                  <li key={index} className="wrap-text-mess flex">
+                    <img src={avatar} alt="" />
+                    <div className="detail-mess">
+                      <p className="name-mess">A âm</p>
+                      <p className="text-mess">{item}</p>
+                      <div className="time-mess">
+                        <p>10:30</p>
+                      </div>
+                    </div>
                   </li>
                 ))}
             </ul>

@@ -111,6 +111,11 @@
 .li-tool-none .btn-all-data p {
   display: none;
 }
+.li-tool-none .btn-all-data {
+  visibility: hidden;
+  transition: visibility 2s, opacity 0.75s;
+  opacity: 0;
+}
 .list-data-tool {
   display: flex;
   align-items: center;
@@ -128,6 +133,11 @@
 .li-tool-active {
   height: 170px;
   transition: height 0.3s;
+}
+.li-tool-active .btn-all-data {
+  visibility: visible;
+  opacity: 1;
+  transition: visibility 1s, opacity 0.75s;
 }
 .li-tool-active img {
   height: 58px;

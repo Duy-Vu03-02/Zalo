@@ -42,6 +42,7 @@
 
 .infor-container {
   height: calc(100vh - 180px);
+  overflow-y: auto;
 }
 
 .footer-chat {
@@ -121,4 +122,43 @@
 .wrap-input-chat {
   display: flex;
   width: 100%;
+}
+.wrap-text-mess {
+  margin: 20px;
+}
+.wrap-text-mess img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+.detail-mess {
+  padding: 10px;
+  border-radius: 10px;
+  max-width: 550px;
+  background-color: white;
+  word-wrap: break-word;
+}
+.detail-mess .name-mess {
+  font-size: 14px;
+  font-weight: 500;
+  color: #7589a3;
+  margin: 2px 0;
+}
+.detail-mess .text-mess {
+  margin: 2px 0;
+  font-size: 16px;
+}
+.my-mess {
+  justify-content: right;
+  text-align: left;
+}
+.my-mess img,
+.my-mess .name-mess {
+  display: none;
+}
+.detail-mess .time-mess {
+  font-size: 11px;
+  font-weight: 500;
+  color: #7589a3;
 }

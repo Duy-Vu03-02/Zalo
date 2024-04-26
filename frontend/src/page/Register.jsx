@@ -4,25 +4,32 @@ import axios from "axios";
 function Register() {
   const [value, setValue] = useState({
     phone: "",
-    username: "",
+    name: "",
     password: "",
-    img: "",
+    avatar: "",
   });
 
   const handleChangeData = (e) => {
     setValue({ ...value, [e.target.name]: e.target.value });
   };
-  console.log(value);
 
   const handleSubmitRegister = async () => {
+    console.log(value);
     await axios
       .post("http://127.0.0.1:8080/auth/register", value)
       .then((response) => {
         console.log(response);
+        alert("Thanh cong");
       })
       .catch((err) => {
         console.error(err);
       });
+    setValue({
+      phone: "",
+      name: "",
+      password: "",
+      avatar: "",
+    });
   };
 
   return (
@@ -47,8 +54,8 @@ function Register() {
             <input
               type="text"
               placeholder="Nhập tên người dùng"
-              value={value.username}
-              name="username"
+              value={value.name}
+              name="name"
               onChange={(e) => handleChangeData(e)}
             />
           </div>
@@ -67,8 +74,8 @@ function Register() {
             <input
               type="text"
               placeholder="link anh"
-              value={value.img}
-              name="img"
+              value={value.avatar}
+              name="avatar"
               onChange={(e) => handleChangeData(e)}
             />
           </div>

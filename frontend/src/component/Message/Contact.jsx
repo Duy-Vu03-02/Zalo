@@ -1,40 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { ContactContext } from "../../Context/ContactConext";
 import "../../resource/style/Chat/contact.css";
-import axios from "axios";
 import { CiSearch } from "react-icons/ci";
 import { HiOutlineUsers } from "react-icons/hi2";
 import { HiOutlineUser } from "react-icons/hi2";
 import { MdExpandMore } from "react-icons/md";
 import { IoIosMore } from "react-icons/io";
 
-export default function Contact() {
+export default function Contact({ handleChangeContact }) {
   const [textSearch, setTextSearch] = useState("");
   const [allMessActive, setAllMessActive] = useState(true);
   const [conversationList, setConversationList] = useState([]);
-  const [statusShow, setStatusShow] = useState(false);
+  const { contact } = useContext(ContactContext);
 
   useEffect(() => {
-    const fetchFriend = async () => {
-      await axios
-        .post("http://127.0.0.1:8080/user/getfriend")
-        .then((response) => {
-          if (response.status === 200) {
-            setConversationList(response.data);
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    };
-    fetchFriend();
-  }, []);
-
-  useEffect(() => {
-    const showFriend = () => {
-      setStatusShow(true);
-    };
-    showFriend();
-  }, [conversationList]);
+    if (contact !== null) {
+      setConversationList(contact);
+    }
+  }, [contact]);
 
   const handleChangeTextSearch = (e) => {
     setTextSearch(e.target.value);
@@ -98,9 +81,9 @@ export default function Contact() {
           </div>
           <div className="contact-listConversation">
             <ul>
-              {statusShow &&
+              {conversationList &&
                 conversationList.map((data, index) => (
-                  <li key={index}>
+                  <li key={index} onClick={() => handleChangeContact(data)}>
                     <div className="contact-detial-conversation flex">
                       <div className="flex">
                         <div className="contact-avatar-friend">

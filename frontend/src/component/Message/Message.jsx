@@ -1,20 +1,34 @@
-import React from "react";
+import React, { useContext, useRef, useState } from "react";
+import { ContactContext } from "../../Context/ContactConext";
 import MessageInfor from "./MessageInfor";
 import Contact from "./Contact";
 import ContainerMess from "./ContainerMess";
 
 export default function Message() {
+  const [dataContact, setDataContact] = useState(null);
+
+  const handleChangeContact = (value) => {
+    setDataContact(value);
+  };
   return (
     <>
       <div className="container-mess flex">
         <div>
-          <Contact />
+          <Contact handleChangeContact={handleChangeContact} />
         </div>
         <div>
-          <ContainerMess />
+          {dataContact !== null ? (
+            <ContainerMess contactData={dataContact} />
+          ) : (
+            ""
+          )}
         </div>
         <div>
-          <MessageInfor />
+          {dataContact !== null ? (
+            <MessageInfor contactData={dataContact} />
+          ) : (
+            ""
+          )}
         </div>
       </div>
     </>

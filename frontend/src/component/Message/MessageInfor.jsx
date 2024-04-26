@@ -6,12 +6,13 @@ import { AiOutlineBell } from "react-icons/ai";
 import { GoPin } from "react-icons/go";
 import { HiOutlineUsers } from "react-icons/hi2";
 import { CiEdit } from "react-icons/ci";
+import { IoTriangle } from "react-icons/io5";
 
 import nam9 from "../../resource/img/Chat/VuongAnVu.png";
 import nu9 from "../../resource/img/Chat/nu9.png";
 import nam8 from "../../resource/img/Chat/namphu.png";
 
-export default function MessageInfor() {
+export default function MessageInfor({ contactData }) {
   const ref = useRef(null);
   const [showTool, setShowTool] = useState([]);
   const { theme } = useContext(ThemeContext);
@@ -47,9 +48,13 @@ export default function MessageInfor() {
         <div className="mess-infor-scrool-header">
           <div className="mess-infor-header-infor">
             <div className="mess-infor-wrap-avatar">
-              <img className="mess-infor-avatar-infor" src={avatar} alt="" />
+              <img
+                className="mess-infor-avatar-infor"
+                src={contactData.avatarImage}
+                alt=""
+              />
               <div className="mess-infor-nickname flex">
-                <p>A âm</p>
+                <p>{contactData.username}</p>
                 <CiEdit style={{ fontSize: "23px", cursor: "pointer" }} />
               </div>
             </div>
@@ -82,9 +87,9 @@ export default function MessageInfor() {
                         showTool.includes(index) ? "mess-infor-tool-active" : ""
                       }`}
                     >
-                      <svg height="10" width="50">
-                        <polygon points="25,0 50,50 0,50" fill="black" />
-                      </svg>
+                      <IoTriangle
+                        style={{ color: "#7589a3", fontSize: "11px" }}
+                      />
                     </div>
                   </div>
                   <div

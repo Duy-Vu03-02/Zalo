@@ -1,7 +1,7 @@
 import express, { NextFunction, Request, Response } from "express";
 import { get, merge } from "lodash";
 
-import { getUserBySessionToken } from "config/schema/schema";
+import { getUserBySessionToken } from "config/schema/userModel";
 
 export const isAuthentication = async (
   req: Request,

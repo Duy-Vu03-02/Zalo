@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
+import { UserContext } from "../Context/UserContext";
 import { useNavigate } from "react-router-dom";
 import "../resource/style/Login/login.css";
 import qr from "../resource/img/Login/qr.png";
@@ -75,6 +76,7 @@ function LoginQr() {
 }
 
 function LoginAccount() {
+  const { setUserData } = useContext(UserContext);
   const [value, setValue] = useState({
     phone: "",
     password: "",
@@ -110,6 +112,7 @@ function LoginAccount() {
       .post("http://127.0.0.1:8080/auth/login", value)
       .then((response) => {
         if (response.status === 200) {
+          setUserData(response.data);
           navigation("/");
         }
       })

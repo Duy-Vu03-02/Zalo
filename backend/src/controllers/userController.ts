@@ -1,4 +1,4 @@
-import express, { Request, Response, response } from "express";
+import express, { Request, Response } from "express";
 import { authentication, comparePass } from "../helper/helper";
 import multer from "multer";
 import path from "path";
@@ -10,7 +10,7 @@ import {
   deleUserById,
   updateUserById,
   getUserBySessionToken,
-} from "../config/schema/schema";
+} from "../config/schema/userModel";
 
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
@@ -146,7 +146,7 @@ export const register = async (req: Request, res: Response) => {
   }
 };
 
-const handleStorageImg = async () => {
+export const handleStorageImg = async () => {
   const uploadDir = path.join("D:/TypeScript/zalo-types/data", "avatar");
   const storage = multer.diskStorage({
     destination: (req, file, callback) => {
