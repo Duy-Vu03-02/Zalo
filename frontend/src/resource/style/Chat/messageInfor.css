@@ -19,6 +19,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  font-weight: 500;
 }
 
 .mess-infor-header-infor {
@@ -62,6 +63,7 @@
 .mess-infor-header-infor-tool {
   justify-content: space-around;
   padding-bottom: 8px;
+  margin: 10px;
 }
 .mess-infor-header-infor-tool div {
   width: 75px;

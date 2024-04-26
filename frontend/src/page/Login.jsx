@@ -3,8 +3,6 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../resource/style/Login/login.css";
 import qr from "../resource/img/Login/qr.png";
-import lock from "../resource/svg/login/lock.svg";
-import iphone from "../resource/svg/login/iphone.svg";
 import { IoIosPhonePortrait } from "react-icons/io";
 import { CiLock } from "react-icons/ci";
 

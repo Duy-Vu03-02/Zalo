@@ -92,7 +92,9 @@
   cursor: pointer;
   transition: color 0.2s;
 }
-.contact-left-filter p:hover {
+
+.contact-left-filter p:hover,
+.contact-left-filter .all-mess-active {
   color: #0190f3;
 }
 .contact-right-filter p {

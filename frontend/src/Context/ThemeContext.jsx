@@ -11,11 +11,17 @@ export const ThemeProvider = ({ children }) => {
       setTheme(JSON.parse(themeLocal));
     } else {
       setTheme("#f4f3f3");
+      handleChangeTheme("#f4f3f3");
     }
   }, []);
 
+  const handleChangeTheme = (value) => {
+    setTheme(value);
+    localStorage.setItem("theme", JSON.stringify(value));
+  };
+
   return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
+    <ThemeContext.Provider value={{ theme, setTheme, handleChangeTheme }}>
       {children}
     </ThemeContext.Provider>
   );

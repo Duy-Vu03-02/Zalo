@@ -6,7 +6,7 @@ import {
   loginByAccount,
   loginBySessiToken,
   register,
-} from "../controllers/user";
+} from "../controllers/userController";
 
 export default (router: express.Router) => {
   router.post("/user/getfriend", getAllUsers);

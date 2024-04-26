@@ -61,10 +61,10 @@
   align-items: center;
 }
 .chat-input-web input {
-  width: 550px;
+  width: 100%;
   display: block;
   line-height: 40px;
-  margin: auto 10px;
+  margin: auto 20px auto 10px;
   border: none;
   outline: none;
   font-size: 15px;
@@ -79,6 +79,10 @@
 .container-containermess .icon-header:hover {
   background-color: #d6dbe1;
   border-radius: 5px;
+}
+.container-containermess .icon-send-mess:hover {
+  background-color: #4ca8ec !important;
+  color: white !important;
 }
 .wrap-setbackground {
   position: relative;
@@ -113,4 +117,8 @@
   margin: 5px;
   border-radius: 50%;
   cursor: pointer;
+}
+.wrap-input-chat {
+  display: flex;
+  width: 100%;
 }

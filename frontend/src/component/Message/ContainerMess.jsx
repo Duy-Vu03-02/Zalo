@@ -6,7 +6,6 @@ import { HiOutlineUsers } from "react-icons/hi2";
 import { CiSearch } from "react-icons/ci";
 import { IoVideocamOutline } from "react-icons/io5";
 import { AiOutlineLike } from "react-icons/ai";
-import { AiOutlineThunderbolt } from "react-icons/ai";
 import { TbBackground } from "react-icons/tb";
 import { AiOutlinePicture } from "react-icons/ai";
 import { IoMdAttach } from "react-icons/io";
@@ -14,16 +13,23 @@ import { IoCameraOutline } from "react-icons/io5";
 import { MdOutlineContactMail } from "react-icons/md";
 import { RiCalendarTodoFill } from "react-icons/ri";
 import { RiEmojiStickerLine } from "react-icons/ri";
-import { RxFace } from "react-icons/rx";
+import { AiOutlineSend } from "react-icons/ai";
+import io from "socket.io-client";
+
+const optionSocket = {
+  transports: ["websocket"],
+};
+const socket = io("http://localhost:8080", optionSocket);
 
 export default function ContainerMess() {
+  const [messages, setMessages] = useState([]);
+  const [mess, setMess] = useState("");
   const [tableColor, setTableColr] = useState(false);
-  const { theme, setTheme } = useContext(ThemeContext);
-  console.log(theme);
+  const { theme, handleChangeTheme } = useContext(ThemeContext);
   const codeBackground = [
     "#34568B",
-    "#ff6f61",
-    "#6b5b95",
+    "rgb(8 108 167)",
+    "#a183b3",
     "#88b04b",
     "#b565a7",
     "#dd4124",
@@ -36,11 +42,37 @@ export default function ContainerMess() {
     "#ff968a",
     "#8fcaca",
     "#f4f3f3",
-    "#bb5098",
+    "#b4426e",
   ];
 
+  useEffect(() => {
+    socket.on("chat message", (msg) => {
+      setMessages((prevMessages) => [...prevMessages, msg]);
+    });
+  }, []);
+
+  // useEffect(() => {
+  //   socket.on("message", (response) => {
+  //     setMessages((prevState) => [...prevState, response]);
+  //   });
+
+  //   return () => {
+  //     socket.off("message");
+  //   };
+  // }, []);
+
+  const handleChangMess = (e) => {
+    setMess(e.target.value);
+  };
+
+  const handleSendMess = (e) => {
+    // e.preventDefault();
+    socket.emit("chat message", mess);
+    setMessages("");
+  };
+
   const handleSetBackground = (bg) => {
-    setTheme(bg);
+    handleChangeTheme(bg);
     setTableColr(false);
   };
   const handleTableColor = () => {
@@ -66,7 +98,16 @@ export default function ContainerMess() {
           </div>
         </div>
         <div className="infor-container" style={{ backgroundColor: theme }}>
-          <div></div>
+          <div>
+            <ul>
+              {messages &&
+                messages.map((item, index) => (
+                  <li key={index}>
+                    <p>{item}</p>
+                  </li>
+                ))}
+            </ul>
+          </div>
         </div>
         <div className="footer-chat">
           <div className="chat-input flex">
@@ -104,12 +145,23 @@ export default function ContainerMess() {
             </div>
           </div>
           <div className="chat-input-web flex">
-            <div>
-              <input type="text" placeholder="Nhập @, tin nhắn tới A Âm" />
+            <div className="wrap-input-chat">
+              <input
+                type="text"
+                value={mess}
+                onChange={handleChangMess}
+                placeholder="Nhập @, tin nhắn tới A Âm"
+              />
             </div>
-            <div>
-              <AiOutlineThunderbolt className="icon-header" />
-              <RxFace className="icon-header" />
+            <div className="flex">
+              <AiOutlineSend
+                className="icon-header icon-send-mess"
+                style={{
+                  color: "rgb(107 173 223)",
+                  backgroundColor: "#dff3ff",
+                }}
+                onClick={handleSendMess}
+              />
               <AiOutlineLike className="icon-header" />
             </div>
           </div>
