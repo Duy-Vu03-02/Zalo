@@ -67,13 +67,13 @@ export const loginBySessiToken = async (req: Request, res: Response) => {
       "authentication.sessionToken avatarImage"
     );
     if (!user) {
-      return res.sendStatus(400);
+      return res.status(400).json("Không tồn tại user");
     } else {
       if (user.authentication.sessionToken === sessiontoken) {
         const newSissionToken = await authentication(user._id.toString());
         user.authentication.sessionToken = newSissionToken;
         await user.save();
-        return res.status(200).json(newSissionToken).end();
+        return res.status(200).json(user).end();
       }
     }
   } catch (err) {
@@ -102,8 +102,8 @@ export const loginByAccount = async (req: Request, res: Response) => {
           return res.sendStatus(404);
         }
         if (checkPass) {
-          const newSissionToken = await authentication(user._id.toString());
-          user.authentication.sessionToken = newSissionToken;
+          const newSessionToken = await authentication(user._id.toString());
+          user.authentication.sessionToken = newSessionToken;
           await user.save();
           user.authentication.password;
           const response_data = user.toObject();

@@ -21,7 +21,44 @@
   margin: 0px auto;
   padding: 18px 0;
 }
+.chat-avatar-user {
+  position: relative;
+}
+.chat-avatar-user .startup {
+  z-index: 1000;
+  position: absolute;
+  background-color: white;
+  top: 0;
+  left: 65px;
+  width: 200px;
+  padding: 5px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 5px rgba(137, 137, 137, 0.5),
+    0px 0 5px rgba(146, 143, 143, 0.5), 0px 5px 0px rgba(224, 224, 224, 0.5);
+}
+.startup > p:first-child {
+  font-weight: 500;
+  font-size: 17px;
+  cursor: default;
+}
+.startup > p:first-child:hover {
+  background-color: white;
+}
+.startup > div {
+  border: 1px solid rgb(202, 199, 200);
+  border-left: none;
+  border-right: none;
+}
+.startup p {
+  cursor: pointer;
+  margin: 3px 5px;
+  padding: 5px 5px;
+}
+.startup p:hover {
+  background-color: #f3f5f6;
+}
 .chat-avatar-user img {
+  cursor: pointer;
   width: 50px;
   height: 50px;
   border-radius: 50%;

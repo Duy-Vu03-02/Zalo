@@ -25,10 +25,12 @@
   margin: 5px 0;
   font-size: 18px;
   font-weight: 600;
+  cursor: default;
 }
 .friend-mess-infor p {
   font-size: 14px;
   font-weight: 500;
+  cursor: default;
   color: #7589a3;
 }
 

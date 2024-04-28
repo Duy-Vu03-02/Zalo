@@ -7,7 +7,7 @@ import qr from "../resource/img/Login/qr.png";
 import { IoIosPhonePortrait } from "react-icons/io";
 import { CiLock } from "react-icons/ci";
 
-export default function Login() {
+export default function Login({ handleChangeStateChat }) {
   const [activeQr, setActiveQr] = useState(true);
 
   const handleSetActive = () => {
@@ -49,7 +49,13 @@ export default function Login() {
               />
             </div>
           </div>
-          <div>{activeQr ? <LoginQr /> : <LoginAccount />}</div>
+          <div>
+            {activeQr ? (
+              <LoginQr />
+            ) : (
+              <LoginAccount handleChangeStateChat={handleChangeStateChat} />
+            )}
+          </div>
         </div>
       </div>
     </>
@@ -75,7 +81,7 @@ function LoginQr() {
   );
 }
 
-function LoginAccount() {
+function LoginAccount({ handleChangeStateChat }) {
   const { setUserData } = useContext(UserContext);
   const [value, setValue] = useState({
     phone: "",
@@ -84,17 +90,6 @@ function LoginAccount() {
   const [disableBtn, setDisableBtn] = useState(true);
   const navigation = useNavigate();
 
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if ((e.ctrlKey || e.mateKey) && e.key === "a") {
-        e.preventDefault();
-      }
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
   useEffect(() => {
     if (value.phone.length >= 4 && value.password.length >= 4) {
       setDisableBtn(false);
@@ -113,7 +108,11 @@ function LoginAccount() {
       .then((response) => {
         if (response.status === 200) {
           setUserData(response.data);
-          navigation("/");
+          localStorage.setItem(
+            "token",
+            JSON.stringify(response.data.authentication.sessionToken)
+          );
+          handleChangeStateChat();
         }
       })
       .catch((err) => {

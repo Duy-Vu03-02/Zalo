@@ -2,12 +2,12 @@ import mongoose from "mongoose";
 
 const MessageSchema = new mongoose.Schema(
   {
-    message: { type: String, require: true },
+    message: { type: String, required: true },
     user: {
-      from: { type: String, require: true },
-      to: { type: String, require: true },
+      from: { type: String, required: true },
+      to: { type: String, required: true },
     },
-    sender: { type: String, require: true },
+    sender: { type: String, required: true },
   },
   {
     timestamps: true,
@@ -18,7 +18,9 @@ const MessageSchema = new mongoose.Schema(
 export const MessagesModel = mongoose.model("messages", MessageSchema);
 
 export const getMessages = (from: string, to: string) =>
-  MessagesModel.find({ from, to });
+  MessagesModel.find({
+    $and: [{ "user.from": from }, { "user.to": to }],
+  });
 
 export const createMessages = async (userMess: Record<string, any>) => {
   try {

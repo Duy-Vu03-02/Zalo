@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import "../../resource/style/Chat/containermess.css";
 import { ThemeContext } from "../../Context/ThemeContext";
+import { UserContext } from "../../Context/UserContext";
 import avatar from "../../resource/img/Chat/nu9.png";
 import { HiOutlineUsers } from "react-icons/hi2";
 import { CiSearch } from "react-icons/ci";
@@ -26,6 +27,7 @@ export default function ContainerMess({ contactData }) {
   const [messages, setMessages] = useState([]);
   const [mess, setMess] = useState("");
   const [tableColor, setTableColr] = useState(false);
+  const { userData } = useContext(UserContext);
   const { theme, handleChangeTheme } = useContext(ThemeContext);
   const codeBackground = [
     "#34568B",
@@ -61,35 +63,46 @@ export default function ContainerMess({ contactData }) {
     //     socket.emit("chat message", mess);
     //     setMess("");
     //   }
-    const data = {
-      message: mess,
-      user: {
-        from: "65902e6b34de607dec05f55e",
-        to: "65902e1834de607dec05f557",
-      },
-      sender: "65902e6b34de607dec05f55e",
-    };
-    const response = await axios.post(
-      "http://127.0.0.1:8080/message/createmessage",
-      data
-    );
-    if (response.status === 200) {
-      console.log(response);
+    if (mess.trim !== "") {
+      const data = {
+        message: mess.trim(),
+        user: {
+          from: userData._id,
+          to: contactData._id,
+        },
+        sender: userData._id,
+      };
+      const response = await axios.post(
+        "http://127.0.0.1:8080/message/createmessage",
+        data
+      );
+      if (response.status === 200) {
+        setMessages((prevMessage) => {
+          if (Array.isArray(prevMessage)) {
+            return [...prevMessage, response.data.message];
+          } else {
+            return [response.data.message];
+          }
+        });
+        setMess("");
+        console.log(response.data.message);
+      }
     }
   };
-
   useEffect(() => {
     const fetch = async () => {
       const data = {
-        from: "65902e6b34de607dec05f55e",
-        to: "65902e1834de607dec05f557",
+        from: userData._id,
+        to: contactData._id,
       };
       const response = await axios.post(
         "http://127.0.0.1:8080/message/getallmessage",
         data
       );
+      console.log(response);
       if (response.status === 200) {
-        console.log(response.data);
+        setMessages(response.data.message);
+        console.log(response);
       }
     };
     fetch();

@@ -19,6 +19,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  cursor: default;
   font-weight: 500;
 }
 
@@ -41,6 +42,7 @@
 .mess-infor-nickname p {
   font-size: 18px;
   font-weight: 500;
+  cursor: default;
   margin: 0 5px;
 }
 .mess-infor-nickname img {
@@ -73,6 +75,7 @@
 }
 .mess-infor-header-infor-tool p {
   font-size: 14px;
+  cursor: pointer;
   text-align: center;
 }
 .mess-infor-footer-tool {
@@ -160,6 +163,7 @@
 }
 .mess-infor-header-infor-tool .icon-tool-mess {
   margin: auto;
+  cursor: pointer;
   font-size: 22px;
   font-weight: 200;
   background-color: rgb(223, 226, 230);

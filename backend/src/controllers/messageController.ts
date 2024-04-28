@@ -2,19 +2,16 @@ import express, { Request, Response } from "express";
 import { genderJWT } from "helper/helper";
 import { getMessages, createMessages } from "../config/schema/messageModel";
 import { send } from "process";
+import { get } from "lodash";
 
 export const getAllMessages = async (req: Request, res: Response) => {
   try {
     const { from, to } = req.body;
-    const mess = await getMessages(from, to);
-    if (mess == null) {
-      return res.sendStatus(204);
-    } else {
-      return res.status(200).json(mess);
-    }
+    const allMessages = await getMessages(from, to);
+    console.log(allMessages);
   } catch (err) {
     console.error(err);
-    return res.sendStatus(400);
+    return res.status(400).json({ error: "Failed to retrieve messages" });
   }
 };
 
