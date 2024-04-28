@@ -7,8 +7,14 @@ import { get } from "lodash";
 export const getAllMessages = async (req: Request, res: Response) => {
   try {
     const { from, to } = req.body;
-    const allMessages = await getMessages(from, to);
-    console.log(allMessages);
+    const allMessages = await getMessages(from, to).sort({ updateAt: 1 });
+    const resMess = allMessages.map((item) => {
+      return {
+        sender: item.sender.toString() === from.toString(),
+        message: item.message,
+      };
+    });
+    return res.status(200).json(resMess);
   } catch (err) {
     console.error(err);
     return res.status(400).json({ error: "Failed to retrieve messages" });
@@ -26,7 +32,7 @@ export const createMessage = async (req: Request, res: Response) => {
       },
       sender: sender,
     });
-    return res.status(200).json(newMess).end();
+    return res.sendStatus(200);
   } catch (err) {
     console.error(err);
     return res.sendStatus(400);

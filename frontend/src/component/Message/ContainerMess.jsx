@@ -1,8 +1,7 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useRef, useState, useContext } from "react";
 import "../../resource/style/Chat/containermess.css";
 import { ThemeContext } from "../../Context/ThemeContext";
 import { UserContext } from "../../Context/UserContext";
-import avatar from "../../resource/img/Chat/nu9.png";
 import { HiOutlineUsers } from "react-icons/hi2";
 import { CiSearch } from "react-icons/ci";
 import { IoSend, IoVideocamOutline } from "react-icons/io5";
@@ -24,7 +23,11 @@ import axios from "axios";
 // const socket = io("http://localhost:8080", optionSocket);
 
 export default function ContainerMess({ contactData }) {
-  const [messages, setMessages] = useState([]);
+  const scrollRef = useRef(null);
+  const [messages, setMessages] = useState({
+    sender: null,
+    message: null,
+  });
   const [mess, setMess] = useState("");
   const [tableColor, setTableColr] = useState(false);
   const { userData } = useContext(UserContext);
@@ -49,6 +52,15 @@ export default function ContainerMess({ contactData }) {
   ];
 
   // useEffect(() => {
+  //   if (Array.isArray(messages)) {
+  //     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  //   }
+  // }, [messages]);
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView();
+  }, [messages]);
+
+  // useEffect(() => {
   //   socket.on("chat message", (response) => {
   //     setMessages((prevMess) => [...prevMess, response]);
   //   });
@@ -63,7 +75,7 @@ export default function ContainerMess({ contactData }) {
     //     socket.emit("chat message", mess);
     //     setMess("");
     //   }
-    if (mess.trim !== "") {
+    if (mess.trim() !== "") {
       const data = {
         message: mess.trim(),
         user: {
@@ -79,16 +91,20 @@ export default function ContainerMess({ contactData }) {
       if (response.status === 200) {
         setMessages((prevMessage) => {
           if (Array.isArray(prevMessage)) {
-            return [...prevMessage, response.data.message];
+            return [...prevMessage, { sender: true, message: data.message }];
           } else {
-            return [response.data.message];
+            return [{ sender: true, message: data.message }];
           }
         });
         setMess("");
-        console.log(response.data.message);
       }
     }
   };
+
+  useEffect(() => {
+    console.log(messages);
+  }, [messages]);
+
   useEffect(() => {
     const fetch = async () => {
       const data = {
@@ -99,14 +115,12 @@ export default function ContainerMess({ contactData }) {
         "http://127.0.0.1:8080/message/getallmessage",
         data
       );
-      console.log(response);
       if (response.status === 200) {
-        setMessages(response.data.message);
-        console.log(response);
+        setMessages(response.data);
       }
     };
     fetch();
-  }, []);
+  }, [contactData]);
 
   const handleChangMess = (e) => {
     setMess(e.target.value);
@@ -142,12 +156,20 @@ export default function ContainerMess({ contactData }) {
           <div>
             <ul>
               {messages &&
+                Array.isArray(messages) &&
+                messages.length > 0 &&
                 messages.map((item, index) => (
-                  <li key={index} className="wrap-text-mess flex">
-                    <img src={avatar} alt="" />
+                  <li
+                    ref={scrollRef}
+                    key={index}
+                    className={`wrap-text-mess ${
+                      item.sender ? "my-mess" : ""
+                    } flex`}
+                  >
+                    <img src={contactData.avatarImage} alt="" />
                     <div className="detail-mess">
-                      <p className="name-mess">A âm</p>
-                      <p className="text-mess">{item}</p>
+                      <p className="name-mess">{contactData.username}</p>
+                      <p className="text-mess">{item.message}</p>
                       <div className="time-mess">
                         <p>10:30</p>
                       </div>

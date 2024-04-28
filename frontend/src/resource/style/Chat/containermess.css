@@ -148,7 +148,7 @@
   margin: 2px 0;
 }
 .detail-mess .text-mess {
-  margin: 2px 0;
+  margin: 2px 0 2px -2px;
   font-size: 16px;
 }
 .my-mess {
