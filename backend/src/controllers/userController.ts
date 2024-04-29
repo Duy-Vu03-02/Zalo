@@ -5,6 +5,7 @@ import path from "path";
 import {
   getUsers,
   getUserByPhone,
+  getUserByName,
   getUsersById,
   createUser,
   deleUserById,
@@ -59,10 +60,24 @@ export const userByPhone = async (req: Request, res: Response) => {
   }
 };
 
+export const userByName = async (req: Request, res: Response) => {
+  try {
+    const { username } = req.body;
+    const checkUserName = await getUserByName(username).select("avatarImage");
+    if (checkUserName) {
+      return res.status(200).json(checkUserName).end();
+    } else {
+      return res.status(204).json({ mess: "null" });
+    }
+  } catch (err) {
+    console.error(err);
+    return res.sendStatus(400);
+  }
+};
+
 export const loginBySessiToken = async (req: Request, res: Response) => {
   try {
     const { sessiontoken } = req.body;
-    console.log(sessiontoken);
     const user = await getUserBySessionToken(sessiontoken).select(
       "authentication.sessionToken avatarImage"
     );

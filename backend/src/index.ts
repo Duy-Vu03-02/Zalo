@@ -1,6 +1,4 @@
-import express from "express";
-const app = express();
-const server = require("http").createServer(app);
+import { server, app } from "./socket/socket";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 import cors from "cors";
@@ -9,8 +7,13 @@ import { connectionDB } from "./config/db/db";
 import router from "./router/index";
 import * as dotenv from "dotenv";
 dotenv.config();
-export const io = require("socket.io")(server);
-
+// const socket = require("socket.io");
+// export const io = socket(server, {
+//   cors: {
+//     credentials: true,
+//     origin: "http://localhost:3000",
+//   },
+// });
 const port = process.env.PORT;
 connectionDB();
 
@@ -27,20 +30,19 @@ app.use(cookieParser());
 
 app.use("/", router());
 
-import { Socket } from "socket.io";
-io.on("connection", (socket: Socket) => {
-  console.log("User connection");
+// import { Socket } from "socket.io";
+// io.on("connection", (socket: Socket) => {
+//   console.log("User connection");
 
-  socket.on("disconnect", () => {
-    console.log("User disconnect");
-  });
+//   socket.on("disconnect", () => {
+//     console.log("User disconnect");
+//   });
 
-  socket.on("chat message", (data) => {
-    console.log("Mess: ", data);
-    io.emit("chat message", data);
-  });
-});
-
+//   socket.on("chat message", (data) => {
+//     console.log("Mess: ", data);
+//     io.emit("chat message", data);
+//   });
+// });
 server.listen(port, () => {
   console.log("Server listen on port: ", port);
 });

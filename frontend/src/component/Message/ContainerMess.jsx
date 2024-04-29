@@ -51,30 +51,40 @@ export default function ContainerMess({ contactData }) {
     "#b4426e",
   ];
 
-  // useEffect(() => {
-  //   if (Array.isArray(messages)) {
-  //     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-  //   }
-  // }, [messages]);
   useEffect(() => {
     scrollRef.current?.scrollIntoView();
   }, [messages]);
 
   // useEffect(() => {
   //   socket.on("chat message", (response) => {
+  //     console.log(response);
   //     setMessages((prevMess) => [...prevMess, response]);
   //   });
+
+  //   socket.on("create-room", (response) => {
+  //     console.log(response);
+  //   });
+  //   const data = {
+  //     idSend: userData._id,
+  //     idRecieve: contactData.id,
+  //   };
+  //   socket.emit("create-room", data);
 
   //   return () => {
   //     socket.off("chat message");
   //   };
-  // });
+  // }, []);
   const handleSendMess = async (e) => {
     e.preventDefault();
-    //   if (mess != "") {
-    //     socket.emit("chat message", mess);
-    //     setMess("");
-    //   }
+    // if (mess !== "") {
+    //   const data = {
+    //     idSend: userData._id,
+    //     idRecieve: contactData._id,
+    //     mess: mess,
+    //   };
+    //   socket.emit("chat message", data);
+    //   setMess("");
+    // }
     if (mess.trim() !== "") {
       const data = {
         message: mess.trim(),
@@ -100,10 +110,6 @@ export default function ContainerMess({ contactData }) {
       }
     }
   };
-
-  useEffect(() => {
-    console.log(messages);
-  }, [messages]);
 
   useEffect(() => {
     const fetch = async () => {

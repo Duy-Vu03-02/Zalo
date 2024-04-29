@@ -7,7 +7,9 @@ export const ContactProvider = ({ children }) => {
   const [contact, setContact] = useState([]);
   useEffect(() => {
     const fetch = async () => {
-      const response = await axios.post("http://127.0.0.1:8080/user/getfriend");
+      const response = await axios.post(
+        "http://127.0.0.1:8080/user/getallfriend"
+      );
       if (response.status === 200) {
         setContact(response.data);
       }

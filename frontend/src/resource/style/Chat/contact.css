@@ -167,7 +167,7 @@
   justify-content: space-between;
 }
 .contact-detial-conversation:hover {
-  background-color: #f3f5f6;
+  background-color: #e6e8eb;
   cursor: pointer;
 }
 .contact-detial-conversation div {
@@ -198,4 +198,25 @@
   font-size: 13px;
   font-weight: 500;
   color: #7589a3;
+}
+.wrap-recent-search .wrap-result-search {
+  margin-top: 20px;
+}
+.wrap-recent-search li {
+  background-color: white;
+  padding: 8px;
+  cursor: pointer;
+}
+.wrap-recent-search li:hover {
+  background-color: #e6e8eb;
+}
+.wrap-recent-search li img {
+  margin-left: 10px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+.wrap-recent-search li p {
+  line-height: 50px;
+  margin-left: 15px;
 }

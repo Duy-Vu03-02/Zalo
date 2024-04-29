@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, memo } from "react";
 import { UserContext } from "../Context/UserContext";
 import "../resource/style/Chat/chat.css";
 import Message from "../component/Message/Message";
@@ -14,7 +14,7 @@ import cloud from "../resource/svg/chat/cloud.svg";
 import toolbox from "../resource/svg/chat/toolbox.svg";
 import setting from "../resource/svg/chat/setting.svg";
 
-export default function Chat({ handleLogout }) {
+function Chat({ handleLogout }) {
   const { userData } = useContext(UserContext);
   const topMenu = [mess, addressbook, todo];
   const bottomMenu = [cloud, toolbox, setting];
@@ -95,3 +95,5 @@ export default function Chat({ handleLogout }) {
     </>
   );
 }
+
+export default memo(Chat);
