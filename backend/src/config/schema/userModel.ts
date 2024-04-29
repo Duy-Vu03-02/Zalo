@@ -34,8 +34,9 @@ export const getUsersById = (id: string) => UserModel.findById(id);
 
 export const getUserByPhone = (phone: string) => UserModel.findOne({ phone });
 
-export const getUserByName = (username: string) =>
-  UserModel.findOne({ username });
+export const getUserByName = (username: string) => {
+  return UserModel.find({ username: { $regex: new RegExp(username, "i") } });
+};
 
 export const getUserBySessionToken = (sessionToken: string) =>
   UserModel.findOne({ "authentication.sessionToken": sessionToken });

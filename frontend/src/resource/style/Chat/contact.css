@@ -3,6 +3,9 @@
   min-width: 350px;
   border-right: 1px solid rgb(209, 209, 209);
 }
+.contact-contact-search {
+  border-bottom: 1px solid rgb(202, 199, 200);
+}
 .contact-group-search {
   background-color: #eaedf0;
   height: 30px;
@@ -75,10 +78,9 @@
 .contact-filter-converstation {
   justify-content: space-between;
   padding-bottom: 3px;
-  border-bottom: 1px solid rgb(202, 199, 200);
 }
 .contact-left-filter {
-  margin-left: 5px;
+  margin: 0 0 6px 5px;
   position: relative;
 }
 .contact-right-filter {
@@ -199,9 +201,23 @@
   font-weight: 500;
   color: #7589a3;
 }
-.wrap-recent-search .wrap-result-search {
-  margin-top: 20px;
+.btn-close-search {
+  margin: auto;
 }
+.btn-close-search p {
+  width: 70px;
+  line-height: 30px;
+  text-align: center;
+  margin: auto;
+  display: block;
+  cursor: pointer;
+  border-radius: 5px;
+  font-weight: 500;
+}
+.btn-close-search p:hover {
+  background-color: #eaedf0;
+}
+
 .wrap-recent-search li {
   background-color: white;
   padding: 8px;

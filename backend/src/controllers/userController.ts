@@ -63,11 +63,12 @@ export const userByPhone = async (req: Request, res: Response) => {
 export const userByName = async (req: Request, res: Response) => {
   try {
     const { username } = req.body;
-    const checkUserName = await getUserByName(username).select("avatarImage");
-    if (checkUserName) {
-      return res.status(200).json(checkUserName).end();
-    } else {
+    const lowerName = username.toLowerCase();
+    const checkUserName = await getUserByName(lowerName).select("avatarImage");
+    if (!checkUserName || checkUserName.length === 0) {
       return res.status(204).json({ mess: "null" });
+    } else {
+      return res.status(200).json(checkUserName).end();
     }
   } catch (err) {
     console.error(err);
