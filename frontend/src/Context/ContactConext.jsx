@@ -18,7 +18,7 @@ export const ContactProvider = ({ children }) => {
   }, []);
 
   return (
-    <ContactContext.Provider value={{ contact }}>
+    <ContactContext.Provider value={{ contact, setContact }}>
       {children}
     </ContactContext.Provider>
   );

@@ -8,8 +8,7 @@ import { MdExpandMore } from "react-icons/md";
 import { IoIosMore } from "react-icons/io";
 import { IoMdClose } from "react-icons/io";
 import { IoTriangle } from "react-icons/io5";
-import { IoCameraOutline } from "react-icons/io5";
-
+import { BsFillCameraFill } from "react-icons/bs";
 import axios from "axios";
 
 export default function Contact({ handleChangeContact }) {
@@ -29,7 +28,28 @@ export default function Contact({ handleChangeContact }) {
   });
   const [allMessActive, setAllMessActive] = useState(true);
   const [conversationList, setConversationList] = useState([]);
-  const { contact } = useContext(ContactContext);
+
+  const [dataGr, setDataGr] = useState({
+    username: null,
+    listMember: [],
+    showAvt: false,
+    avatarImage: null,
+  });
+  const listAvatarGr = [
+    "https://res.zaloapp.com/pc/avt_group/1_family.jpg",
+    "https://res.zaloapp.com/pc/avt_group/2_family.jpg",
+    "https://res.zaloapp.com/pc/avt_group/3_family.jpg",
+    "https://res.zaloapp.com/pc/avt_group/4_work.jpg",
+    "https://res.zaloapp.com/pc/avt_group/5_work.jpg",
+    "https://res.zaloapp.com/pc/avt_group/6_work.jpg",
+    "https://res.zaloapp.com/pc/avt_group/7_friends.jpg",
+    "https://res.zaloapp.com/pc/avt_group/8_friends.jpg",
+    "https://res.zaloapp.com/pc/avt_group/9_friends.jpg",
+    "https://res.zaloapp.com/pc/avt_group/10_school.jpg",
+    "https://res.zaloapp.com/pc/avt_group/11_school.jpg",
+    "https://res.zaloapp.com/pc/avt_group/12_school.jpg",
+  ];
+  const { contact, setContact } = useContext(ContactContext);
   const searchTimeout = useRef(null);
 
   useEffect(() => {
@@ -101,16 +121,17 @@ export default function Contact({ handleChangeContact }) {
       }, 300);
     }
   };
+
   const handleChangeTextSearch = (e) => {
     let data = e.target.value;
-
     setTextSearch(data);
-
     handleSearchDb(data);
   };
+
   const handleChangeShowMess = () => {
     allMessActive ? setAllMessActive(false) : setAllMessActive(true);
   };
+
   const handleChangeIsSearch = (value) => {
     setIsSearch((prevState) => {
       return {
@@ -122,6 +143,7 @@ export default function Contact({ handleChangeContact }) {
       setTextSearch("");
     }
   };
+
   const handleChoiceContact = (value) => {
     storeLocal(value);
     handleChangeContact(value);
@@ -133,6 +155,7 @@ export default function Contact({ handleChangeContact }) {
     });
     setTextSearch("");
   };
+
   const storeLocal = (value) => {
     setDataSearch((prevState) => {
       return {
@@ -143,7 +166,7 @@ export default function Contact({ handleChangeContact }) {
     localStorage.setItem("user-search", JSON.stringify(dataSearch.recent));
   };
 
-  const handleAddFriend = (value) => {
+  const handleShowAddFriend = (value) => {
     setAddUser((prevState) => {
       return {
         ...prevState,
@@ -151,7 +174,8 @@ export default function Contact({ handleChangeContact }) {
       };
     });
   };
-  const handleAddGroup = (value) => {
+
+  const handleShowAddGroup = (value) => {
     setAddUser((prevState) => {
       return {
         ...prevState,
@@ -160,6 +184,86 @@ export default function Contact({ handleChangeContact }) {
     });
   };
 
+  const handleAddMember = (value) => {
+    setDataGr((prevState) => {
+      if (prevState.listMember.length < 0) {
+        return {
+          ...prevState,
+          listMember: [value],
+        };
+      } else {
+        const check = prevState.listMember.includes(value);
+        if (check) {
+          const filter = prevState.listMember.filter((item) => item !== value);
+          return {
+            ...prevState,
+            listMember: [...filter],
+          };
+        } else {
+          return {
+            ...prevState,
+            listMember: [value, ...prevState.listMember],
+          };
+        }
+      }
+    });
+  };
+
+  const handleCreateGroup = () => {
+    handleShowAddGroup(false);
+    setContact((prevState) => {
+      return [dataGr, ...prevState];
+    });
+    setDataGr({
+      username: null,
+      listMember: [],
+      showAvt: false,
+      avatarImage: null,
+    });
+  };
+
+  const handleShowAvatarGr = (value) => {
+    setDataGr((prevState) => {
+      return {
+        ...prevState,
+        showAvt: value,
+      };
+    });
+  };
+
+  const handleChoiceAvatarGr = (value) => {
+    setDataGr((prevState) => {
+      return {
+        ...prevState,
+        avatarImage: value,
+      };
+    });
+  };
+
+  const handleChangURl = (e) => {
+    setDataGr((prevState) => {
+      return {
+        ...prevState,
+        avatarImage: e.target.value,
+      };
+    });
+  };
+
+  const handleSaveAvatarGr = () => {
+    if (dataGr.avatarImage !== null) {
+      handleShowAvatarGr(false);
+    }
+  };
+  const handleChangeNameGr = (e) => {
+    setDataGr((prevState) => {
+      return {
+        ...prevState,
+        username: e.target.value,
+      };
+    });
+  };
+
+  const handleChange = () => {};
   return (
     <>
       <div className="contact-container-contact">
@@ -183,11 +287,11 @@ export default function Contact({ handleChangeContact }) {
               <div className="contact-group-add-user flex">
                 <HiOutlineUser
                   className="icon-user-contact"
-                  onClick={() => handleAddFriend(true)}
+                  onClick={() => handleShowAddFriend(true)}
                 />
                 <HiOutlineUsers
                   className="icon-user-contact"
-                  onClick={() => handleAddGroup(true)}
+                  onClick={() => handleShowAddGroup(true)}
                 />
               </div>
             )}
@@ -199,7 +303,7 @@ export default function Contact({ handleChangeContact }) {
                       <p>Thêm bạn</p>
                       <IoMdClose
                         className="btn-close"
-                        onClick={() => handleAddFriend(false)}
+                        onClick={() => handleShowAddFriend(false)}
                       />
                     </div>
                     <div className="add-by-phone">
@@ -224,13 +328,69 @@ export default function Contact({ handleChangeContact }) {
                         <p>Kết quả gần nhất</p>
                       </div>
                       <div className="btn-find-friend flex">
-                        <button onClick={() => handleAddFriend(false)}>
+                        <button onClick={() => handleShowAddFriend(false)}>
                           Hủy
                         </button>
                         <button
                           style={{ backgroundColor: "#0068ff", color: "white" }}
                         >
                           Tìm kiếm
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              {dataGr.showAvt && (
+                <div className="screen-mask" style={{ zIndex: 1001 }}>
+                  <div className="choice-avatar-gr">
+                    <div className="header-add-friend flex">
+                      <p>Cập nhật ảnh đại diện</p>
+                      <IoMdClose
+                        className="btn-close"
+                        onClick={() => handleShowAvatarGr(false)}
+                      />
+                    </div>
+                    <div className="input-number-group">
+                      <CiSearch className="icon-search" />
+                      <input
+                        type="text"
+                        placeholder="Nhập url hình ảnh"
+                        value={dataGr.avatarImage}
+                        onChange={handleChangURl}
+                      />
+                    </div>
+                    <div>
+                      <ul className="ex-avatar flex">
+                        {listAvatarGr?.map((item, index) => (
+                          <li
+                            key={index}
+                            onClick={() => handleChoiceAvatarGr(item)}
+                          >
+                            <img
+                              src={item}
+                              alt=""
+                              className={
+                                item === dataGr.avatarImage
+                                  ? "ex-avatar-choice"
+                                  : ""
+                              }
+                            />
+                          </li>
+                        ))}
+                      </ul>
+                      <div
+                        className="btn-find-friend flex"
+                        style={{ position: "relative" }}
+                      >
+                        <button onClick={() => handleShowAvatarGr(false)}>
+                          Hủy
+                        </button>
+                        <button
+                          onClick={handleSaveAvatarGr}
+                          style={{ backgroundColor: "#0068ff", color: "white" }}
+                        >
+                          Cập nhật
                         </button>
                       </div>
                     </div>
@@ -244,14 +404,29 @@ export default function Contact({ handleChangeContact }) {
                       <p>Tạo nhóm</p>
                       <IoMdClose
                         className="btn-close"
-                        onClick={() => handleAddGroup(false)}
+                        onClick={() => handleShowAddGroup(false)}
                       />
                     </div>
                     <div className="add-by-phone">
                       <div className="phone-group flex">
-                        <IoCameraOutline className="avatar-group" />
+                        {dataGr.avatarImage ? (
+                          <img
+                            src={dataGr.avatarImage}
+                            onClick={() => handleShowAvatarGr(true)}
+                          />
+                        ) : (
+                          <BsFillCameraFill
+                            className="avatar-group"
+                            onClick={() => handleShowAvatarGr(true)}
+                          />
+                        )}
                         <div className="input-number group">
-                          <input type="text" placeholder="Nhập tên nhóm" />
+                          <input
+                            type="text"
+                            placeholder="Nhập tên nhóm"
+                            onChange={handleChangeNameGr}
+                            value={dataGr.username}
+                          />
                         </div>
                       </div>
                       <div className="input-number-group">
@@ -264,12 +439,24 @@ export default function Contact({ handleChangeContact }) {
                       <div className="list-contact">
                         {contact &&
                           contact.map((item, index) => (
-                            <li key={index}>
+                            <li
+                              key={index}
+                              onClick={() => handleAddMember(item)}
+                            >
                               <div className="contact-detial-conversation flex">
                                 <div className="flex">
                                   <div className="checkbox-add">
-                                    <input type="checkbox" id="index" />
-                                    <label for="checkbox"></label>
+                                    <input
+                                      type="checkbox"
+                                      id={`checkbox ${index}`}
+                                      checked={dataGr.listMember.some(
+                                        (member) => {
+                                          return item._id === member._id;
+                                        }
+                                      )}
+                                      onChange={handleChange}
+                                    />
+                                    <label for={`checkbox ${index}`}></label>
                                   </div>
                                   <div className="contact-avatar-friend">
                                     <img src={item.avatarImage} alt="" />
@@ -283,13 +470,21 @@ export default function Contact({ handleChangeContact }) {
                           ))}
                       </div>
                       <div className="btn-find-friend flex">
-                        <button onClick={() => handleAddGroup(false)}>
+                        <button onClick={() => handleShowAddGroup(false)}>
                           Hủy
                         </button>
                         <button
-                          style={{ backgroundColor: "#0068ff", color: "white" }}
+                          onClick={handleCreateGroup}
+                          style={{
+                            backgroundColor: "#0068ff",
+                            width: "125px",
+                            color: "white",
+                          }}
                         >
-                          Tạo nhóm
+                          Tạo nhóm{" "}
+                          {dataGr.listMember.length < 1
+                            ? ""
+                            : ` (${dataGr.listMember.length})`}
                         </button>
                       </div>
                     </div>

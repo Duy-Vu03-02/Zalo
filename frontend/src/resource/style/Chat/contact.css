@@ -168,9 +168,11 @@
   padding: 10px 0;
   justify-content: space-between;
 }
-.contact-detial-conversation:hover {
+.list-contact li:hover,
+.contact-listConversation li:hover {
   background-color: #e6e8eb;
   cursor: pointer;
+  transition: background-color 0.3s;
 }
 .contact-detial-conversation div {
   padding: 0 5px;
@@ -257,8 +259,9 @@
   position: relative;
 }
 .screen-mask .wrap-add-group {
-  width: 400px;
+  width: 450px;
   height: 600px;
+  position: relative;
 }
 .header-add-friend {
   justify-content: space-between;
@@ -290,12 +293,13 @@
   border-bottom: 1px solid #d6dbe1;
   padding: 5px 0;
   margin: 0 5px;
+  height: 25px;
 }
 .input-number {
   border-bottom: 1px solid #0190f3;
 }
 .input-number.group input {
-  width: 250px;
+  width: 270px;
 }
 .input-number input {
   font-size: 14px;
@@ -363,15 +367,24 @@
 .phone-group .avatar-group {
   cursor: pointer;
   margin: auto 0;
-  width: 20px;
+  /* font-size: 22px; */
+  width: 25px;
+  height: 20px;
   padding: 10px;
   border: 1px solid #d6dbe1;
+  border-radius: 50%;
+  color: #829cbd;
+}
+.phone-group img {
+  width: 47px;
+  height: 47px;
+  cursor: pointer;
   border-radius: 50%;
 }
 .list-contact {
   margin-top: 20px;
   border-top: 1px solid #d6dbe1;
-  height: 355px;
+  height: 348px;
   overflow-y: auto;
 }
 .list-contact img {
@@ -403,4 +416,28 @@
 
 .checkbox-add input[type="checkbox"]:checked + label {
   background-color: rgb(0, 104, 255);
+}
+.choice-avatar-gr {
+  background-color: white;
+  height: 470px;
+  width: 400px;
+  border-radius: 5px;
+}
+.ex-avatar {
+  margin: 20px 0;
+  flex-wrap: wrap;
+  justify-content: center;
+  z-index: 110;
+}
+.ex-avatar li {
+  margin: 15px;
+}
+.ex-avatar li img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.ex-avatar-choice {
+  outline: 3px solid #0190f3;
 }
