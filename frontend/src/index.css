@@ -35,3 +35,14 @@ li {
 .none {
   display: none;
 }
+input {
+  border: none;
+  outline: none;
+}
+input:focus {
+  border: none;
+  outline: none;
+}
+input::placeholder {
+  color: #7589a3;
+}

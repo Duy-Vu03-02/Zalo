@@ -1,10 +1,4 @@
-import React, {
-  useEffect,
-  useLayoutEffect,
-  useState,
-  useContext,
-  useRef,
-} from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import { ContactContext } from "../../Context/ContactConext";
 import "../../resource/style/Chat/contact.css";
 import { CiSearch } from "react-icons/ci";
@@ -12,6 +6,10 @@ import { HiOutlineUsers } from "react-icons/hi2";
 import { HiOutlineUser } from "react-icons/hi2";
 import { MdExpandMore } from "react-icons/md";
 import { IoIosMore } from "react-icons/io";
+import { IoMdClose } from "react-icons/io";
+import { IoTriangle } from "react-icons/io5";
+import { IoCameraOutline } from "react-icons/io5";
+
 import axios from "axios";
 
 export default function Contact({ handleChangeContact }) {
@@ -25,6 +23,10 @@ export default function Contact({ handleChangeContact }) {
     recent: [],
     response: [],
   });
+  const [addUser, setAddUser] = useState({
+    friend: false,
+    group: false,
+  });
   const [allMessActive, setAllMessActive] = useState(true);
   const [conversationList, setConversationList] = useState([]);
   const { contact } = useContext(ContactContext);
@@ -34,17 +36,9 @@ export default function Contact({ handleChangeContact }) {
     const local = localStorage.getItem("user-search");
     if (local !== null) {
       setDataSearch((prevState) => {
-        console.log(JSON.parse(local));
         return {
           ...prevState,
           recent: JSON.parse(local),
-        };
-      });
-      setIsSearch((prevState) => {
-        return {
-          ...prevState,
-          recent: true,
-          response: false,
         };
       });
     }
@@ -140,15 +134,30 @@ export default function Contact({ handleChangeContact }) {
     setTextSearch("");
   };
   const storeLocal = (value) => {
-    let newRecent;
-    if (dataSearch.recent.length > 0) {
-      console.log(typeof dataSearch.recent);
-      // const filter = dataSearch.recent.fillter((item) => item !== value);
-      // newRecent = [value, ...filter];
-    } else {
-      newRecent = [value];
-    }
-    // localStorage.setItem("user-search", JSON.stringify(newRecent));
+    setDataSearch((prevState) => {
+      return {
+        ...prevState,
+        recent: [value, ...prevState.recent],
+      };
+    });
+    localStorage.setItem("user-search", JSON.stringify(dataSearch.recent));
+  };
+
+  const handleAddFriend = (value) => {
+    setAddUser((prevState) => {
+      return {
+        ...prevState,
+        friend: value,
+      };
+    });
+  };
+  const handleAddGroup = (value) => {
+    setAddUser((prevState) => {
+      return {
+        ...prevState,
+        group: value,
+      };
+    });
   };
 
   return (
@@ -172,10 +181,122 @@ export default function Contact({ handleChangeContact }) {
               </div>
             ) : (
               <div className="contact-group-add-user flex">
-                <HiOutlineUser className="icon-user-contact" />
-                <HiOutlineUsers className="icon-user-contact" />
+                <HiOutlineUser
+                  className="icon-user-contact"
+                  onClick={() => handleAddFriend(true)}
+                />
+                <HiOutlineUsers
+                  className="icon-user-contact"
+                  onClick={() => handleAddGroup(true)}
+                />
               </div>
             )}
+            <div className="add-friend-group">
+              {addUser.friend && (
+                <div className="screen-mask">
+                  <div className="wrap-add">
+                    <div className="header-add-friend flex">
+                      <p>Thêm bạn</p>
+                      <IoMdClose
+                        className="btn-close"
+                        onClick={() => handleAddFriend(false)}
+                      />
+                    </div>
+                    <div className="add-by-phone">
+                      <div className="phone-friend flex">
+                        <div className="img-phone flex">
+                          <span></span>
+                          <p>(+84)</p>
+                          <IoTriangle
+                            style={{
+                              color: "#7589a3",
+                              fontSize: "11px",
+                              transform: "rotate(60deg)",
+                              margin: "auto 10px",
+                            }}
+                          />
+                        </div>
+                        <div className="input-number">
+                          <input type="text" placeholder="Số điện thoại" />
+                        </div>
+                      </div>
+                      <div className="recent-result">
+                        <p>Kết quả gần nhất</p>
+                      </div>
+                      <div className="btn-find-friend flex">
+                        <button onClick={() => handleAddFriend(false)}>
+                          Hủy
+                        </button>
+                        <button
+                          style={{ backgroundColor: "#0068ff", color: "white" }}
+                        >
+                          Tìm kiếm
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              {addUser.group && (
+                <div className="screen-mask">
+                  <div className="wrap-add wrap-add-group">
+                    <div className="header-add-friend flex">
+                      <p>Tạo nhóm</p>
+                      <IoMdClose
+                        className="btn-close"
+                        onClick={() => handleAddGroup(false)}
+                      />
+                    </div>
+                    <div className="add-by-phone">
+                      <div className="phone-group flex">
+                        <IoCameraOutline className="avatar-group" />
+                        <div className="input-number group">
+                          <input type="text" placeholder="Nhập tên nhóm" />
+                        </div>
+                      </div>
+                      <div className="input-number-group">
+                        <CiSearch className="icon-search" />
+                        <input
+                          type="text"
+                          placeholder="Nhập tên, số điện thoại, hoặc danh sách số"
+                        />
+                      </div>
+                      <div className="list-contact">
+                        {contact &&
+                          contact.map((item, index) => (
+                            <li key={index}>
+                              <div className="contact-detial-conversation flex">
+                                <div className="flex">
+                                  <div className="checkbox-add">
+                                    <input type="checkbox" id="index" />
+                                    <label for="checkbox"></label>
+                                  </div>
+                                  <div className="contact-avatar-friend">
+                                    <img src={item.avatarImage} alt="" />
+                                  </div>
+                                  <div className="contact-overview-mess">
+                                    <h3>{item.username}</h3>
+                                  </div>
+                                </div>
+                              </div>
+                            </li>
+                          ))}
+                      </div>
+                      <div className="btn-find-friend flex">
+                        <button onClick={() => handleAddGroup(false)}>
+                          Hủy
+                        </button>
+                        <button
+                          style={{ backgroundColor: "#0068ff", color: "white" }}
+                        >
+                          Tạo nhóm
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
           {(!isSearch.state || (isSearch.response && !isSearch.recent)) && (
             <div className="contact-filter-converstation flex">
