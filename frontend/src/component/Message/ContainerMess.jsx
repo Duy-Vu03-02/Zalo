@@ -15,12 +15,7 @@ import { RiCalendarTodoFill } from "react-icons/ri";
 import { RiEmojiStickerLine } from "react-icons/ri";
 import { AiOutlineSend } from "react-icons/ai";
 import axios from "axios";
-// import io from "socket.io-client";
-
-// const optionSocket = {
-//   transports: ["websocket"],
-// };
-// const socket = io("http://localhost:8080", optionSocket);
+import { socket } from "../../page/Chat";
 
 export default function ContainerMess({ contactData }) {
   const scrollRef = useRef(null);
@@ -55,36 +50,23 @@ export default function ContainerMess({ contactData }) {
     scrollRef.current?.scrollIntoView();
   }, [messages]);
 
-  // useEffect(() => {
-  //   socket.on("chat message", (response) => {
-  //     console.log(response);
-  //     setMessages((prevMess) => [...prevMess, response]);
-  //   });
+  useEffect(() => {
+    socket.on("recieve-mess", (data) => {
+      setMessages((prevMessage) => [...prevMessage, data]);
+    });
+  }, [socket]);
 
-  //   socket.on("create-room", (response) => {
-  //     console.log(response);
-  //   });
-  //   const data = {
-  //     idSend: userData._id,
-  //     idRecieve: contactData.id,
-  //   };
-  //   socket.emit("create-room", data);
-
-  //   return () => {
-  //     socket.off("chat message");
-  //   };
-  // }, []);
   const handleSendMess = async (e) => {
     e.preventDefault();
-    // if (mess !== "") {
-    //   const data = {
-    //     idSend: userData._id,
-    //     idRecieve: contactData._id,
-    //     mess: mess,
-    //   };
-    //   socket.emit("chat message", data);
-    //   setMess("");
-    // }
+    if (mess !== "") {
+      const data = {
+        idSend: userData._id,
+        idRecieve: contactData._id,
+        mess: mess,
+      };
+      socket.emit("send-mess", data);
+      setMess("");
+    }
     if (mess.trim() !== "") {
       const data = {
         message: mess.trim(),

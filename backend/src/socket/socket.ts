@@ -7,31 +7,29 @@ const socket = require("socket.io");
 const io = socket(server, {
   cors: {
     Credential: true,
-    origin: "http://localhost:3000",
+    // origin: "http://localhost:3000",
+    origin: "*",
   },
 });
 
-let listRoom = [String];
+const listRoom = new Map();
 
 io.on("connection", (socket: Socket) => {
-  console.log("user connection");
+  console.log("user connection: ", socket.id);
+
   socket.on("disconnect", () => {
     console.log("User disconnect");
   });
 
-  socket.on("create-room", (data) => {
-    const roomID = data.idSend;
-    const idSend = data.idSend;
-    const idRecieve = data.idRecieve;
-    socket.join(idSend);
-    socket.join(idRecieve);
-    listRoom.push(roomID);
-    io.to(roomID).emit(roomID);
-    console.log(listRoom);
+  socket.on("add-user", (data: any) => {
+    listRoom.set(data, socket.id);
   });
 
-  socket.on("chat message", (data) => {
-    console.log(data);
+  socket.on("send-mess", (data) => {
+    const id = listRoom.get(data.idRecieve);
+    if (id) {
+      socket.to(id).emit("recieve-mess", { send: false, message: data.mess });
+    }
   });
 });
 
