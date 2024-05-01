@@ -2,6 +2,9 @@
   width: calc(100vw - 65px - 350px - 300px);
   height: 100vh;
 }
+.container-containermess p {
+  cursor: default;
+}
 .top-container {
   height: 70px;
   border-bottom: 1px solid rgb(209, 209, 209);

@@ -18,7 +18,10 @@ const UserSchema = new mongoose.Schema(
     avatarImage: { type: String, required: true, select: false },
     sex: { type: String, required: false, min: 3, select: false },
     dob: { type: Date, required: false, select: false },
-    address: { type: String, required: false, selecte: false },
+    address: { type: String, required: false, select: false },
+    friend: { type: [String], required: false, select: false },
+    friendSend: { type: [String], required: false, select: false },
+    friendRecieve: { type: [String], required: false, select: false },
   },
   {
     timestamps: true,
@@ -31,6 +34,12 @@ export const UserModel = mongoose.model("users", UserSchema);
 export const getUsers = () => UserModel.find({});
 
 export const getUsersById = (id: string) => UserModel.findById(id);
+
+export const getFriendSend = (friendSend: string) =>
+  UserModel.find({ friendSend });
+
+export const getFriendRecieve = (friendRecieve: string) =>
+  UserModel.find({ friendRecieve });
 
 export const getUserByPhone = (phone: string) => UserModel.findOne({ phone });
 

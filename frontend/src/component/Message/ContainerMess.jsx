@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useContext } from "react";
+import React, { useEffect, useRef, useState, useContext, memo } from "react";
 import "../../resource/style/Chat/containermess.css";
 import { ThemeContext } from "../../Context/ThemeContext";
 import { UserContext } from "../../Context/UserContext";
@@ -15,9 +15,8 @@ import { RiCalendarTodoFill } from "react-icons/ri";
 import { RiEmojiStickerLine } from "react-icons/ri";
 import { AiOutlineSend } from "react-icons/ai";
 import axios from "axios";
-import { socket } from "../../page/Chat";
 
-export default function ContainerMess({ contactData }) {
+function ContainerMess({ contactData }) {
   const scrollRef = useRef(null);
   const [messages, setMessages] = useState({
     sender: null,
@@ -25,7 +24,7 @@ export default function ContainerMess({ contactData }) {
   });
   const [mess, setMess] = useState("");
   const [tableColor, setTableColr] = useState(false);
-  const { userData } = useContext(UserContext);
+  const { userData, socket } = useContext(UserContext);
   const { theme, handleChangeTheme } = useContext(ThemeContext);
   const codeBackground = [
     "#34568B",
@@ -51,10 +50,12 @@ export default function ContainerMess({ contactData }) {
   }, [messages]);
 
   useEffect(() => {
-    socket.on("recieve-mess", (data) => {
-      setMessages((prevMessage) => [...prevMessage, data]);
-    });
-  }, [socket]);
+    if (socket.current) {
+      socket.current.on("recieve-mess", (data) => {
+        setMessages((prevMessage) => [...prevMessage, data]);
+      });
+    }
+  }, []);
 
   const handleSendMess = async (e) => {
     e.preventDefault();
@@ -64,7 +65,7 @@ export default function ContainerMess({ contactData }) {
         idRecieve: contactData._id,
         mess: mess,
       };
-      socket.emit("send-mess", data);
+      socket.current.emit("send-mess", data);
       setMess("");
     }
     if (mess.trim() !== "") {
@@ -228,3 +229,5 @@ export default function ContainerMess({ contactData }) {
     </>
   );
 }
+
+export default memo(ContainerMess);

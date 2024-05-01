@@ -7,19 +7,36 @@ import {
   getUserByPhone,
   getUserByName,
   getUsersById,
+  getUserBySessionToken,
   createUser,
   deleUserById,
   updateUserById,
-  getUserBySessionToken,
+  UserModel,
 } from "../config/schema/userModel";
+import { get } from "lodash";
+
+// export const getAllUsers = async (req: Request, res: Response) => {
+//   try {
+//     const users = await getUsers().select("avatarImage");
+//     if (users == null) {
+//       return res.sendStatus(403);
+//     }
+//     return res.status(200).json(users);
+//   } catch (err) {
+//     console.error(err);
+//     return res.sendStatus(400);
+//   }
+// };
 
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
-    const users = await getUsers().select("avatarImage");
-    if (users == null) {
-      return res.sendStatus(403);
-    }
-    return res.status(200).json(users);
+    const { id } = req.body;
+    const user = await getUsersById(id).select("friend");
+    const listFrinend = user.friend;
+    const friends = await UserModel.find({ _id: { $in: listFrinend } }).select(
+      "avatarImage"
+    );
+    return res.status(200).json(friends);
   } catch (err) {
     console.error(err);
     return res.sendStatus(400);
@@ -47,12 +64,22 @@ export const updateUser = async (req: Request, res: Response) => {
 
 export const userByPhone = async (req: Request, res: Response) => {
   try {
-    const { phoneNumber } = req.body;
-    const checkPhone = await getUserByPhone(phoneNumber);
-    if (checkPhone) {
-      return res.status(200).json(checkPhone).end();
+    const { phone, id } = req.body;
+    const user = await getUsersById(id).select("friend");
+    if (user) {
+      const listFrinend = user.friend;
+      const number = await getUserByPhone(phone).select("phone avatarImage");
+      if (number) {
+        if (!listFrinend.includes(number.phone)) {
+          return res.status(200).json(number);
+        } else {
+          return res.sendStatus(204);
+        }
+      } else {
+        return res.sendStatus(204);
+      }
     } else {
-      return res.sendStatus(404);
+      return res.sendStatus(400);
     }
   } catch (err) {
     console.error(err);
@@ -112,7 +139,7 @@ export const loginByAccount = async (req: Request, res: Response) => {
       } else {
         const checkPass = await comparePass(
           password,
-          user.authentication.password
+          user.authentication.password as string
         );
         if (!checkPass) {
           return res.sendStatus(404);

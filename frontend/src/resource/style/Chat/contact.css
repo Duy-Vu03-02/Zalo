@@ -351,6 +351,7 @@
   justify-content: right;
   bottom: 15px;
 }
+.wrap-result-phone button,
 .btn-find-friend button {
   padding: 10px 20px;
   margin-right: 15px;
@@ -440,4 +441,29 @@
 }
 .ex-avatar-choice {
   outline: 3px solid #0190f3;
+}
+.wrap-result-phone {
+  justify-content: space-between;
+  margin-top: 15px;
+  align-items: center;
+  align-content: center;
+}
+.wrap-result-phone img {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  margin: 0 10px 0 20px;
+}
+.wrap-result-phone button {
+  padding: 8px 15px;
+  background-color: #357de8;
+  color: white;
+}
+.wrap-result-phone .username {
+  font-weight: 500;
+  font-size: 17px;
+}
+.wrap-result-phone .phone {
+  font-size: 14px;
+  color: #a09f9f;
 }

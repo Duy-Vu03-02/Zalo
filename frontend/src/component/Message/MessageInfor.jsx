@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useContext } from "react";
+import React, { useEffect, useState, useRef, useContext, memo } from "react";
 import "../../resource/style/Chat/messageInfor.css";
 import { ThemeContext } from "../../Context/ThemeContext";
 import avatar from "../../resource/img/Chat/nu9.png";
@@ -8,15 +8,12 @@ import { HiOutlineUsers } from "react-icons/hi2";
 import { CiEdit } from "react-icons/ci";
 import { IoTriangle } from "react-icons/io5";
 
-import nam9 from "../../resource/img/Chat/VuongAnVu.png";
 import nu9 from "../../resource/img/Chat/nu9.png";
-import nam8 from "../../resource/img/Chat/namphu.png";
 
-export default function MessageInfor({ contactData }) {
+function MessageInfor({ contactData }) {
   const ref = useRef(null);
   const [showTool, setShowTool] = useState([]);
   const { theme } = useContext(ThemeContext);
-  const imgs = [nu9, nu9, nu9, nu9, nu9, nu9, nu9, nu9, nu9];
   const listOption = [
     "Danh sách nhắc hẹn",
     "Ảnh/Video",
@@ -123,3 +120,5 @@ export default function MessageInfor({ contactData }) {
     </>
   );
 }
+
+export default memo(MessageInfor);

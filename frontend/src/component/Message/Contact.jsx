@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useContext, useRef } from "react";
+import React, { useEffect, useState, useContext, useRef, memo } from "react";
+import { UserContext } from "../../Context/UserContext";
 import { ContactContext } from "../../Context/ContactConext";
 import "../../resource/style/Chat/contact.css";
 import { CiSearch } from "react-icons/ci";
@@ -11,7 +12,7 @@ import { IoTriangle } from "react-icons/io5";
 import { BsFillCameraFill } from "react-icons/bs";
 import axios from "axios";
 
-export default function Contact({ handleChangeContact }) {
+function Contact({ handleChangeContact }) {
   const [textSearch, setTextSearch] = useState("");
   const [isSearch, setIsSearch] = useState({
     state: false,
@@ -28,6 +29,12 @@ export default function Contact({ handleChangeContact }) {
   });
   const [allMessActive, setAllMessActive] = useState(true);
   const [conversationList, setConversationList] = useState([]);
+
+  const [dataFr, setDataFr] = useState({
+    username: "",
+    show: false,
+    data: null,
+  });
 
   const [dataGr, setDataGr] = useState({
     username: null,
@@ -50,6 +57,7 @@ export default function Contact({ handleChangeContact }) {
     "https://res.zaloapp.com/pc/avt_group/12_school.jpg",
   ];
   const { contact, setContact } = useContext(ContactContext);
+  const { userData } = useContext(UserContext);
   const searchTimeout = useRef(null);
 
   useEffect(() => {
@@ -262,6 +270,35 @@ export default function Contact({ handleChangeContact }) {
       };
     });
   };
+  const handleChangePhone = (e) => {
+    setDataFr((prevState) => {
+      return {
+        ...prevState,
+        username: e.target.value,
+      };
+    });
+  };
+  const handleFineUserByPhone = async () => {
+    if (dataFr.username !== "") {
+      const url = "http://localhost:8080/user/getphone";
+      const response = await axios.post(url, {
+        phone: dataFr.username,
+        id: userData._id,
+      });
+      if (response.status === 200) {
+        setDataFr({
+          username: "",
+          show: true,
+          data: response.data,
+        });
+        console.log(response);
+      } else {
+        setDataFr((prevState) => {
+          return { ...prevState, data: null };
+        });
+      }
+    }
+  };
 
   const handleChange = () => {};
   return (
@@ -321,18 +358,40 @@ export default function Contact({ handleChangeContact }) {
                           />
                         </div>
                         <div className="input-number">
-                          <input type="text" placeholder="Số điện thoại" />
+                          <input
+                            type="text"
+                            value={dataFr.username}
+                            onChange={handleChangePhone}
+                            placeholder="Số điện thoại"
+                          />
                         </div>
                       </div>
                       <div className="recent-result">
-                        <p>Kết quả gần nhất</p>
+                        <p>Kết quả {dataFr.show !== null ? "" : "gần nhất"}</p>
                       </div>
+                      {dataFr.data !== null && (
+                        <div className="wrap-result-phone flex">
+                          <div className="flex">
+                            <img src={dataFr.data.avatarImage} alt="" />
+                            <div>
+                              <p className="username ">
+                                {dataFr.data.username}
+                              </p>
+                              <p className="phone">{dataFr.data.phone}</p>
+                            </div>
+                          </div>
+                          <div>
+                            <button>Kết bạn</button>
+                          </div>
+                        </div>
+                      )}
                       <div className="btn-find-friend flex">
                         <button onClick={() => handleShowAddFriend(false)}>
                           Hủy
                         </button>
                         <button
                           style={{ backgroundColor: "#0068ff", color: "white" }}
+                          onClick={handleFineUserByPhone}
                         >
                           Tìm kiếm
                         </button>
@@ -613,3 +672,5 @@ export default function Contact({ handleChangeContact }) {
     </>
   );
 }
+
+export default memo(Contact);

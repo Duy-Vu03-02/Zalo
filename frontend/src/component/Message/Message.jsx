@@ -4,7 +4,7 @@ import MessageInfor from "./MessageInfor";
 import Contact from "./Contact";
 import ContainerMess from "./ContainerMess";
 
-export default function Message() {
+export default function Message({ socket }) {
   const [dataContact, setDataContact] = useState(null);
 
   const handleChangeContact = (value) => {
@@ -25,7 +25,7 @@ export default function Message() {
         </div>
         <div>
           {dataContact !== null ? (
-            <MessageInfor contactData={dataContact} />
+            <MessageInfor contactData={dataContact} socket={socket} />
           ) : (
             ""
           )}

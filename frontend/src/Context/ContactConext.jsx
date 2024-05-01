@@ -1,21 +1,27 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState, useContext } from "react";
+import { UserContext } from "./UserContext";
 import axios from "axios";
 
 export const ContactContext = createContext(null);
 
 export const ContactProvider = ({ children }) => {
   const [contact, setContact] = useState([]);
+  const { userData } = useContext(UserContext);
+
   useEffect(() => {
     const fetch = async () => {
-      const response = await axios.post(
-        "http://127.0.0.1:8080/user/getallfriend"
-      );
-      if (response.status === 200) {
-        setContact(response.data);
+      if (userData) {
+        const response = await axios.post(
+          "http://127.0.0.1:8080/user/getallfriend",
+          { id: userData._id }
+        );
+        if (response.status === 200) {
+          setContact(response.data);
+        }
       }
     };
     fetch();
-  }, []);
+  }, [userData]);
 
   return (
     <ContactContext.Provider value={{ contact, setContact }}>

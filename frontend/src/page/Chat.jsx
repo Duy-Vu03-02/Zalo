@@ -14,12 +14,6 @@ import cloud from "../resource/svg/chat/cloud.svg";
 import toolbox from "../resource/svg/chat/toolbox.svg";
 import setting from "../resource/svg/chat/setting.svg";
 
-import io from "socket.io-client";
-const optionSocket = {
-  transports: ["websocket"],
-};
-export const socket = io("http://localhost:8080", optionSocket);
-
 function Chat({ handleLogout }) {
   const { userData } = useContext(UserContext);
   const topMenu = [mess, addressbook, todo];
@@ -28,10 +22,6 @@ function Chat({ handleLogout }) {
   const listComponent = [Message, AddressBook, ToDo, Clod, ToolBox, Setting];
   const CurrentComponent = listComponent[menuActive];
   const [isShowStartup, setIsShoeStartup] = useState(false);
-
-  useEffect(() => {
-    socket.emit("add-user", userData._id);
-  }, []);
 
   const handleChangeMenuActive = (index) => {
     setMenuactive(index);

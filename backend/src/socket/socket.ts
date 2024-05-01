@@ -15,10 +15,10 @@ const io = socket(server, {
 const listRoom = new Map();
 
 io.on("connection", (socket: Socket) => {
-  console.log("user connection: ", socket.id);
+  // console.log("user connection: ", socket.id);
 
   socket.on("disconnect", () => {
-    console.log("User disconnect");
+    // console.log("User disconnect");
   });
 
   socket.on("add-user", (data: any) => {
