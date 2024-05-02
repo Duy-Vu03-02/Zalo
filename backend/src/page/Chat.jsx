@@ -15,19 +15,13 @@ import toolbox from "../resource/svg/chat/toolbox.svg";
 import setting from "../resource/svg/chat/setting.svg";
 
 function Chat({ handleLogout }) {
-  const { userData, socket } = useContext(UserContext);
+  const { userData } = useContext(UserContext);
   const topMenu = [mess, addressbook, todo];
   const bottomMenu = [cloud, toolbox, setting];
   const [menuActive, setMenuactive] = useState(0);
   const listComponent = [Message, AddressBook, ToDo, Clod, ToolBox, Setting];
   const CurrentComponent = listComponent[menuActive];
   const [isShowStartup, setIsShoeStartup] = useState(false);
-
-  useEffect(() => {
-    if (userData !== null) {
-      socket.current.emit("add-user", { id: userData._id });
-    }
-  }, []);
 
   const handleChangeMenuActive = (index) => {
     setMenuactive(index);

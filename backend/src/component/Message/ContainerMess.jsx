@@ -58,9 +58,11 @@ function ContainerMess({ contactData }) {
 
   useLayoutEffect(() => {
     if (socket.current) {
+      console.log("check: ", socket.current);
       socket.current.on("recieve-mess", (data) => {
         setMessages((prevMessage) => [...prevMessage, data]);
       });
+      console.log(messages);
     }
   }, [socket.current]);
 

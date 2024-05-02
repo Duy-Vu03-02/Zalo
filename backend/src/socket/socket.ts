@@ -1,5 +1,12 @@
 import express from "express";
 import { Socket } from "socket.io";
+import {
+  KET_BAN,
+  DONG_Y,
+  HUY,
+  HUY_LOI_MOI_KET_BAN,
+  BAN_BE,
+} from "../controllers/userController";
 const app = express();
 const server = require("http").createServer(app);
 
@@ -18,17 +25,56 @@ io.on("connection", (socket: Socket) => {
   // console.log("user connection: ", socket.id);
 
   socket.on("disconnect", () => {
-    // console.log("User disconnect");
+    listRoom.forEach((item: String, key: String) => {
+      if (key === socket.id) {
+        listRoom.delete(item);
+      }
+    });
   });
 
   socket.on("add-user", (data: any) => {
-    listRoom.set(data, socket.id);
+    listRoom.set(data.id, socket.id);
   });
 
-  socket.on("send-mess", (data) => {
+  socket.on("send-mess", (data: any) => {
     const id = listRoom.get(data.idRecieve);
     if (id) {
       socket.to(id).emit("recieve-mess", { send: false, message: data.mess });
+    }
+  });
+
+  socket.on("crud-friend", (data: any) => {
+    const idSend = listRoom.get(data.userId);
+    const idRecieve = listRoom.get(data.friendId);
+
+    if (data.state === KET_BAN) {
+      console.log(idSend, socket.id);
+
+      socket.to(idSend).emit("recieve-crud-fr", { mess: HUY_LOI_MOI_KET_BAN });
+      if (idRecieve) {
+        socket.to(idRecieve).emit("recieve-crud-fr", { mess: DONG_Y });
+      }
+    }
+
+    if (data.state === DONG_Y) {
+      socket.to(idSend).emit("recieve-crud-fr", { mess: BAN_BE });
+      if (idRecieve) {
+        socket.to(idRecieve).emit("recieve-crud-fr", { mess: BAN_BE });
+      }
+    }
+
+    if (data.state === HUY) {
+      socket.to(idSend).emit("recieve-crud-fr", { mess: KET_BAN });
+      if (idRecieve) {
+        socket.to(idRecieve).emit("recieve-crud-fr", { mess: KET_BAN });
+      }
+    }
+
+    if (data.state === HUY_LOI_MOI_KET_BAN) {
+      socket.to(idSend).emit("recieve-crud-fr", { mess: KET_BAN });
+      if (idRecieve) {
+        socket.to(idRecieve).emit("recieve-crud-fr", { mess: KET_BAN });
+      }
     }
   });
 });

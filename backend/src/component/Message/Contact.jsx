@@ -1,11 +1,4 @@
-import React, {
-  useEffect,
-  useLayoutEffect,
-  useState,
-  useContext,
-  useRef,
-  memo,
-} from "react";
+import React, { useEffect, useState, useContext, useRef, memo } from "react";
 import { UserContext } from "../../Context/UserContext";
 import { ContactContext } from "../../Context/ContactConext";
 import "../../resource/style/Chat/contact.css";
@@ -66,7 +59,7 @@ function Contact({ handleChangeContact }) {
     "https://res.zaloapp.com/pc/avt_group/12_school.jpg",
   ];
   const { contact, setContact } = useContext(ContactContext);
-  const { userData, socket } = useContext(UserContext);
+  const { userData } = useContext(UserContext);
   const searchTimeout = useRef(null);
 
   useEffect(() => {
@@ -80,23 +73,6 @@ function Contact({ handleChangeContact }) {
       });
     }
   }, []);
-
-  useEffect(() => {
-    console.log("check");
-    socket.current.on("recieve-crud-fr", (data) => {
-      setDataFr((prevState) => {
-        return {
-          ...prevState,
-          state: data.mess,
-          show: true,
-          cancel: null,
-        };
-      });
-    });
-  }, [socket.current]);
-  useEffect(() => {
-    console.log(dataFr);
-  }, [dataFr]);
 
   useEffect(() => {
     if (textSearch === "") {
@@ -314,7 +290,7 @@ function Contact({ handleChangeContact }) {
       };
     });
   };
-  const handleFindUserByPhone = async () => {
+  const handleFineUserByPhone = async () => {
     if (dataFr.username !== "") {
       const url = "http://localhost:8080/user/getphone";
       const response = await axios.post(url, {
@@ -342,7 +318,7 @@ function Contact({ handleChangeContact }) {
     }
   };
 
-  const handleCRUDFriend = async (friendId, state) => {
+  const handleLoginFriend = async (friendId, state) => {
     const data = {
       userId: userData._id,
       friendId: friendId,
@@ -350,10 +326,7 @@ function Contact({ handleChangeContact }) {
     };
     const url = "http://localhost:8080/user/crudfriend";
     const response = await axios.post(url, data);
-    if (response.status === 200) {
-      console.log("send crud");
-      socket.current.emit("crud-friend", data);
-    }
+    console.log(response);
   };
 
   const handleChange = () => {};
@@ -437,14 +410,14 @@ function Contact({ handleChangeContact }) {
                             </div>
                           </div>
                           <div>
-                            {dataFr.cancel && dataFr.cancel !== null && (
+                            {dataFr.cancel && (
                               <button
                                 style={{
                                   backgroundColor: "#eaedf0",
                                   color: "black",
                                 }}
                                 onClick={() =>
-                                  handleCRUDFriend(
+                                  handleLoginFriend(
                                     dataFr.data._id,
                                     dataFr.cancel
                                   )
@@ -455,7 +428,7 @@ function Contact({ handleChangeContact }) {
                             )}
                             <button
                               onClick={() =>
-                                handleCRUDFriend(dataFr.data._id, dataFr.state)
+                                handleLoginFriend(dataFr.data._id, dataFr.state)
                               }
                             >
                               {dataFr?.state}
@@ -476,7 +449,7 @@ function Contact({ handleChangeContact }) {
                         </button>
                         <button
                           style={{ backgroundColor: "#0068ff", color: "white" }}
-                          onClick={handleFindUserByPhone}
+                          onClick={handleFineUserByPhone}
                         >
                           Tìm kiếm
                         </button>

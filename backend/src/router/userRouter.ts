@@ -1,5 +1,6 @@
 import express, { Request, Response, Router } from "express";
 import {
+  crudfriend,
   getAllUsers,
   updateUser,
   userByName,
@@ -11,6 +12,7 @@ import {
 
 export default (router: express.Router) => {
   router.post("/user/getallfriend", getAllUsers);
+  router.post("/user/crudfriend", crudfriend);
   router.post("/user/getphone", userByPhone);
   router.post("/user/getfriend", userByName);
   router.post("/auth/register", register);

@@ -11,12 +11,6 @@ export const UserProvider = ({ children }) => {
   const socket = useRef();
   socket.current = io("http://localhost:8080", optionSocket);
 
-  useEffect(() => {
-    if (userData !== null) {
-      socket.current.emit("add-user", { id: userData._id });
-    }
-  }, [userData]);
-
   return (
     <UserContext.Provider value={{ userData, socket, setUserData }}>
       {children}

@@ -28,15 +28,25 @@ import { get } from "lodash";
 //   }
 // };
 
+export const HUY_LOI_MOI_KET_BAN = "Hủy lời mời kết bạn";
+export const KET_BAN = "Kết bạn";
+export const DONG_Y = "Đồng ý";
+export const BAN_BE = "Bạn bè";
+export const HUY = "Hủy";
+
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
     const { id } = req.body;
     const user = await getUsersById(id).select("friend");
     const listFrinend = user.friend;
-    const friends = await UserModel.find({ _id: { $in: listFrinend } }).select(
-      "avatarImage"
-    );
-    return res.status(200).json(friends);
+    if (listFrinend.length > 0) {
+      const friends = await UserModel.find({
+        _id: { $in: listFrinend },
+      }).select("avatarImage");
+      return res.status(200).json(friends);
+    } else {
+      return res.sendStatus(204);
+    }
   } catch (err) {
     console.error(err);
     return res.sendStatus(400);
@@ -65,21 +75,95 @@ export const updateUser = async (req: Request, res: Response) => {
 export const userByPhone = async (req: Request, res: Response) => {
   try {
     const { phone, id } = req.body;
-    const user = await getUsersById(id).select("friend");
+    const user = await getUsersById(id).select(
+      "friend friendSend friendRecieve"
+    );
     if (user) {
-      const listFrinend = user.friend;
+      const friends = user.friend;
+      const friendSends = user.friendSend;
+      const friendRecieves = user.friendRecieve;
+
       const number = await getUserByPhone(phone).select("phone avatarImage");
       if (number) {
-        if (!listFrinend.includes(number.phone)) {
-          return res.status(200).json(number);
+        if (!friends.includes(number._id)) {
+          const newRespone = {
+            data: number,
+            state: "",
+            cancel: "",
+          };
+          if (friendSends.includes(number._id)) {
+            newRespone.state = HUY_LOI_MOI_KET_BAN;
+          } else if (friendRecieves.includes(number._id)) {
+            newRespone.state = DONG_Y;
+            newRespone.cancel = HUY;
+          } else {
+            newRespone.state = KET_BAN;
+          }
+          return res.status(200).json(newRespone);
         } else {
-          return res.sendStatus(204);
+          return res.status(200).json({ data: number, state: BAN_BE });
         }
       } else {
-        return res.sendStatus(204);
+        return res.status(203).json({
+          state: "Số điện thoại chưa đăng ký hoặc không cho phép tìm kiếm",
+        });
       }
+    }
+  } catch (err) {
+    console.error(err);
+    return res.sendStatus(400);
+  }
+};
+
+export const crudfriend = async (req: Request, res: Response) => {
+  try {
+    const { userId, friendId, state } = req.body;
+    const user = await getUsersById(userId).select(
+      "friend friendSend friendRecieve"
+    );
+    const friend = await getUsersById(friendId).select(
+      "friend friendSend friendRecieve"
+    );
+
+    if (user && friend) {
+      if (state === KET_BAN) {
+        user.friendSend.push(friend._id);
+        friend.friendRecieve.push(user._id);
+        user.save();
+        friend.save();
+      }
+
+      if (state === DONG_Y) {
+        const zUser = user.friendRecieve.indexOf(user._id);
+        const zFriend = friend.friendSend.indexOf(friend._id);
+        user.friendRecieve.splice(zUser, 1);
+        friend.friendSend.splice(zFriend, 1);
+        user.friend.push(friend._id);
+        friend.friend.push(user._id);
+        user.save();
+        friend.save();
+      }
+
+      if (state === HUY) {
+        const zUser = user.friendRecieve.indexOf(friend._id);
+        const zFriend = friend.friendSend.indexOf(user._id);
+        user.friendRecieve.splice(zUser, 1);
+        friend.friendSend.splice(zFriend, 1);
+        user.save();
+        friend.save();
+      }
+
+      if (state === HUY_LOI_MOI_KET_BAN) {
+        const zUser = user.friendSend.indexOf(friend._id);
+        const zFriend = friend.friendRecieve.indexOf(user._id);
+        user.friendSend.splice(zUser, 1);
+        friend.friendRecieve.splice(zFriend, 1);
+        user.save();
+        friend.save();
+      }
+      return res.sendStatus(200);
     } else {
-      return res.sendStatus(400);
+      return res.sendStatus(204);
     }
   } catch (err) {
     console.error(err);
