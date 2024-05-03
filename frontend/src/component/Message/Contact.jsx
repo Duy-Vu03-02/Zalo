@@ -82,21 +82,18 @@ function Contact({ handleChangeContact }) {
   }, []);
 
   useEffect(() => {
-    console.log("check");
     socket.current.on("recieve-crud-fr", (data) => {
       setDataFr((prevState) => {
         return {
           ...prevState,
           state: data.mess,
           show: true,
-          cancel: null,
+          cancel: data.cancel ? data.cancel : null,
         };
       });
     });
   }, [socket.current]);
-  useEffect(() => {
-    console.log(dataFr);
-  }, [dataFr]);
+  useEffect(() => {}, [dataFr]);
 
   useEffect(() => {
     if (textSearch === "") {
@@ -253,11 +250,29 @@ function Contact({ handleChangeContact }) {
     });
   };
 
-  const handleCreateGroup = () => {
+  const handleCreateGroup = async () => {
     handleShowAddGroup(false);
-    setContact((prevState) => {
-      return [dataGr, ...prevState];
-    });
+    const url = "http://localhost:8080/group/creategroup";
+    const data = {
+      groupName: dataGr.username,
+      member: [...dataGr.listMember, userData._id],
+      avatarImage: dataGr.avatarImage,
+    };
+    console.log(data);
+    const response = await axios.post(url, data);
+    if (response.status === 200) {
+      console.log(response);
+      setContact((prevState) => {
+        return [
+          {
+            _id: response.data._id,
+            username: response.data.groupName,
+            avatarImage: response.data.avatarImage,
+          },
+          ...prevState,
+        ];
+      });
+    }
     setDataGr({
       username: null,
       listMember: [],
@@ -351,7 +366,6 @@ function Contact({ handleChangeContact }) {
     const url = "http://localhost:8080/user/crudfriend";
     const response = await axios.post(url, data);
     if (response.status === 200) {
-      console.log("send crud");
       socket.current.emit("crud-friend", data);
     }
   };
@@ -600,7 +614,9 @@ function Contact({ handleChangeContact }) {
                                       )}
                                       onChange={handleChange}
                                     />
-                                    <label for={`checkbox ${index}`}></label>
+                                    <label
+                                      htmlFor={`checkbox ${index}`}
+                                    ></label>
                                   </div>
                                   <div className="contact-avatar-friend">
                                     <img src={item.avatarImage} alt="" />

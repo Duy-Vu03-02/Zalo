@@ -7,7 +7,4 @@ import {
 export default (router: express.Router) => {
   router.post("/message/getallmessage", getAllMessages);
   router.post("/message/createmessage", createMessage);
-  router.post("/ak", (req: Request, res: Response) => {
-    console.log(req.body);
-  });
 };

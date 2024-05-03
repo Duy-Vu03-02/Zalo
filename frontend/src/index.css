@@ -35,11 +35,13 @@ li {
 .none {
   display: none;
 }
-input {
+input,
+button {
   border: none;
   outline: none;
 }
-input:focus {
+input:focus,
+button:focus {
   border: none;
   outline: none;
 }

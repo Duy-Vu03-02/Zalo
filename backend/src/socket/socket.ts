@@ -52,7 +52,9 @@ io.on("connection", (socket: Socket) => {
 
       socket.to(idSend).emit("recieve-crud-fr", { mess: HUY_LOI_MOI_KET_BAN });
       if (idRecieve) {
-        socket.to(idRecieve).emit("recieve-crud-fr", { mess: DONG_Y });
+        socket
+          .to(idRecieve)
+          .emit("recieve-crud-fr", { mess: DONG_Y, cancel: HUY });
       }
     }
 
