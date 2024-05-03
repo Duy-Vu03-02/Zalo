@@ -43,11 +43,7 @@ function Chat({ handleLogout }) {
         <div className="chat-menu-left ">
           <div className="chat-top-menu">
             <div className="chat-avatar-user">
-              <img
-                src={userData.avatarImage}
-                alt=""
-                onClick={handleShowStartup}
-              />
+              <img src={userData.avatar} alt="" onClick={handleShowStartup} />
               {isShowStartup && (
                 <div className="startup">
                   <p>{userData.username}</p>

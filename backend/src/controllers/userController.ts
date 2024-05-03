@@ -1,48 +1,41 @@
 import express, { Request, Response } from "express";
+import mongoose, { Schema } from "mongoose";
 import { authentication, comparePass } from "../helper/helper";
 import multer from "multer";
 import path from "path";
+import { get } from "lodash";
+import { MessagesModel } from "../config/schema/MessageModel";
 import {
-  getUsers,
-  getUserByPhone,
-  getUserByName,
-  getUsersById,
-  getUserBySessionToken,
+  UserModel,
   createUser,
+  getUsers,
+  getFriendRecieve,
+  getFriendSend,
+  getUserByName,
+  getUserByPhone,
+  getUserBySessionToken,
+  getUsersById,
   deleUserById,
   updateUserById,
-  UserModel,
-} from "../config/schema/userModel";
-import { get } from "lodash";
-
-// export const getAllUsers = async (req: Request, res: Response) => {
-//   try {
-//     const users = await getUsers().select("avatarImage");
-//     if (users == null) {
-//       return res.sendStatus(403);
-//     }
-//     return res.status(200).json(users);
-//   } catch (err) {
-//     console.error(err);
-//     return res.sendStatus(400);
-//   }
-// };
+} from "../config/schema/UserModel";
+import { ConversationModel } from "../config/schema/ConversationModel";
 
 export const HUY_LOI_MOI_KET_BAN = "Hủy lời mời kết bạn";
 export const KET_BAN = "Kết bạn";
 export const DONG_Y = "Đồng ý";
 export const BAN_BE = "Bạn bè";
+export const XOA_BAN_BE = "Xóa kết bạn";
 export const HUY = "Hủy";
 
-export const getAllUsers = async (req: Request, res: Response) => {
+export const getAllFriend = async (req: Request, res: Response) => {
   try {
     const { id } = req.body;
-    const user = await getUsersById(id).select("friend");
+    const user = await getUsersById(id).select("friend.");
     const listFrinend = user.friend;
     if (listFrinend.length > 0) {
       const friends = await UserModel.find({
         _id: { $in: listFrinend },
-      }).select("avatarImage");
+      }).select("avatar updatedAt");
       return res.status(200).json(friends);
     } else {
       return res.sendStatus(204);
@@ -83,17 +76,21 @@ export const userByPhone = async (req: Request, res: Response) => {
       const friendSends = user.friendSend;
       const friendRecieves = user.friendRecieve;
 
-      const number = await getUserByPhone(phone).select("phone avatarImage");
+      const number = await getUserByPhone(phone).select("phone avatar");
       if (number) {
-        if (!friends.includes(number._id)) {
+        const checkInFriend: boolean = friends.some(
+          (item: any) => item.idUser === number._id
+        );
+        if (!checkInFriend) {
           const newRespone = {
             data: number,
             state: "",
             cancel: "",
+            unfriend: "",
           };
-          if (friendSends.includes(number._id)) {
+          if (friendSends.includes(number._id.toString())) {
             newRespone.state = HUY_LOI_MOI_KET_BAN;
-          } else if (friendRecieves.includes(number._id)) {
+          } else if (friendRecieves.includes(number._id.toString())) {
             newRespone.state = DONG_Y;
             newRespone.cancel = HUY;
           } else {
@@ -101,7 +98,9 @@ export const userByPhone = async (req: Request, res: Response) => {
           }
           return res.status(200).json(newRespone);
         } else {
-          return res.status(200).json({ data: number, state: BAN_BE });
+          return res
+            .status(200)
+            .json({ data: number, state: BAN_BE, unfriend: XOA_BAN_BE });
         }
       } else {
         return res.status(203).json({
@@ -127,37 +126,62 @@ export const crudfriend = async (req: Request, res: Response) => {
 
     if (user && friend) {
       if (state === KET_BAN) {
-        user.friendSend.push(friend._id);
-        friend.friendRecieve.push(user._id);
+        user.friendSend.push(friendId);
+        friend.friendRecieve.push(userId);
         user.save();
         friend.save();
       }
 
       if (state === DONG_Y) {
-        const zUser = user.friendRecieve.indexOf(user._id);
-        const zFriend = friend.friendSend.indexOf(friend._id);
-        user.friendRecieve.splice(zUser, 1);
-        friend.friendSend.splice(zFriend, 1);
-        user.friend.push(friend._id);
-        friend.friend.push(user._id);
+        const zUser: number = user.friendSend.indexOf(friendId);
+        const zFriend: number = friend.friendRecieve.indexOf(userId);
+        if (zUser && zFriend) {
+          user.friendSend.splice(zUser, 1);
+          friend.friendRecieve.splice(zFriend, 1);
+          const newConversation = new ConversationModel({
+            type: "single",
+            member: [userId, friendId],
+          });
+          await newConversation.save();
+
+          user.friend.push({
+            idUser: friendId,
+            idConversation: newConversation._id,
+          });
+          friend.friend.push({
+            idUser: userId,
+            idConversation: newConversation.id,
+          });
+          await user.save();
+          await friend.save();
+        }
+      }
+
+      if (state === HUY_LOI_MOI_KET_BAN) {
+        const zUser: number = user.friendSend.indexOf(friendId);
+        const zFriend: number = friend.friendRecieve.indexOf(userId);
+        if (zUser && zFriend) {
+          user.friendSend.splice(zUser, 1);
+          friend.friendRecieve.splice(zFriend, 1);
+        }
         user.save();
         friend.save();
       }
 
       if (state === HUY) {
-        const zUser = user.friendRecieve.indexOf(friend._id);
-        const zFriend = friend.friendSend.indexOf(user._id);
-        user.friendRecieve.splice(zUser, 1);
-        friend.friendSend.splice(zFriend, 1);
+        const zUser = user.friendRecieve.indexOf(friendId);
+        const zFriend = friend.friendSend.indexOf(userId);
+        user.friendSend.splice(zUser, 1);
+        friend.friendRecieve.splice(zFriend, 1);
         user.save();
         friend.save();
       }
 
-      if (state === HUY_LOI_MOI_KET_BAN) {
-        const zUser = user.friendSend.indexOf(friend._id);
-        const zFriend = friend.friendRecieve.indexOf(user._id);
-        user.friendSend.splice(zUser, 1);
-        friend.friendRecieve.splice(zFriend, 1);
+      if (state === XOA_BAN_BE) {
+        const zUser = user.friend.indexOf(friendId);
+        const zFriend = friend.friend.indexOf(userId);
+        user.friend.splice(zUser, 1);
+        friend.friend.splice(zFriend, 1);
         user.save();
         friend.save();
       }
@@ -166,6 +190,7 @@ export const crudfriend = async (req: Request, res: Response) => {
       return res.sendStatus(204);
     }
   } catch (err) {
+    console.log("check er");
     console.error(err);
     return res.sendStatus(400);
   }
@@ -175,7 +200,7 @@ export const userByName = async (req: Request, res: Response) => {
   try {
     const { username } = req.body;
     const lowerName = username.toLowerCase();
-    const checkUserName = await getUserByName(lowerName).select("avatarImage");
+    const checkUserName = await getUserByName(lowerName).select("avatar");
     if (!checkUserName || checkUserName.length === 0) {
       return res.status(204).json({ mess: "null" });
     } else {
@@ -191,10 +216,10 @@ export const loginBySessiToken = async (req: Request, res: Response) => {
   try {
     const { sessiontoken } = req.body;
     const user = await getUserBySessionToken(sessiontoken).select(
-      "authentication.sessionToken avatarImage"
+      "authentication.sessionToken avatar"
     );
     if (!user) {
-      return res.status(400).json("Không tồn tại user");
+      return res.status(205).json("Không tồn tại user");
     } else {
       if (user.authentication.sessionToken === sessiontoken) {
         const newSissionToken = await authentication(user._id.toString());
@@ -216,7 +241,7 @@ export const loginByAccount = async (req: Request, res: Response) => {
       return res.sendStatus(400);
     } else {
       const user = await getUserByPhone(phone).select(
-        "authentication.phone authentication.password authentication.sessionToken avatarImage"
+        "authentication.phone authentication.password authentication.sessionToken avatar"
       );
       if (!user) {
         return res.sendStatus(404);
@@ -249,10 +274,13 @@ export const loginByAccount = async (req: Request, res: Response) => {
 export const register = async (req: Request, res: Response) => {
   try {
     const { phone, password, name, avatar } = req.body;
+    console.log();
     if (!phone || !password || !name || !avatar) {
       return res.sendStatus(403);
     } else {
-      const checkPhone = await getUserByPhone(phone);
+      const checkPhone = await UserModel.findOne({ phone: phone }).select(
+        "phone"
+      );
       if (checkPhone) {
         return res.sendStatus(300);
       } else {
@@ -262,7 +290,7 @@ export const register = async (req: Request, res: Response) => {
           authentication: {
             password: await authentication(password),
           },
-          avatarImage: avatar,
+          avatar: avatar,
         });
         return res.status(200).json(newUser).end();
       }
@@ -273,19 +301,19 @@ export const register = async (req: Request, res: Response) => {
   }
 };
 
-export const handleStorageImg = async () => {
-  const uploadDir = path.join("D:/TypeScript/zalo-types/data", "avatar");
-  const storage = multer.diskStorage({
-    destination: (req, file, callback) => {
-      callback(null, uploadDir);
-    },
-    filename: (req, file, callback) => {
-      const uniqueSuffix = Date.now();
-      callback(
-        null,
-        file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
-      );
-    },
-  });
-  const upload = multer({ storage: storage });
-};
+// export const handleStorageImg = async () => {
+//   const uploadDir = path.join("D:/TypeScript/zalo-types/data", "avatar");
+//   const storage = multer.diskStorage({
+//     destination: (req, file, callback) => {
+//       callback(null, uploadDir);
+//     },
+//     filename: (req, file, callback) => {
+//       const uniqueSuffix = Date.now();
+//       callback(
+//         null,
+//         file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
+//       );
+//     },
+//   });
+//   const upload = multer({ storage: storage });
+// };

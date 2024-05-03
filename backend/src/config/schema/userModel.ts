@@ -1,12 +1,11 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
-const UserSchema = new mongoose.Schema(
+const UserSchema = new Schema(
   {
     username: { type: String, required: false, min: 3, select: true },
     phone: {
       type: String,
       required: false,
-      min: 6,
       unique: true,
       select: false,
     },
@@ -15,13 +14,18 @@ const UserSchema = new mongoose.Schema(
       saltRound: { type: Number, required: false, select: false },
       sessionToken: { type: String, required: false, min: 3, select: false },
     },
-    avatarImage: { type: String, required: true, select: false },
+    avatar: { type: String, required: true, select: false },
     sex: { type: String, required: false, min: 3, select: false },
     dob: { type: Date, required: false, select: false },
     address: { type: String, required: false, select: false },
-    friend: { type: [String], required: false, select: false },
-    friendSend: { type: [String], required: false, select: false },
-    friendRecieve: { type: [String], required: false, select: false },
+    friend: [
+      {
+        idUser: { type: String, ref: "User" },
+        idConversation: { type: String, ref: "Conversation" },
+      },
+    ],
+    friendSend: [{ type: String, ref: "User" }],
+    friendRecieve: [{ type: String, ref: "User" }],
   },
   {
     timestamps: true,

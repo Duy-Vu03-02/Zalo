@@ -6,7 +6,8 @@ import {
   HUY,
   HUY_LOI_MOI_KET_BAN,
   BAN_BE,
-} from "../controllers/userController";
+  XOA_BAN_BE,
+} from "../controllers/UserController";
 const app = express();
 const server = require("http").createServer(app);
 
@@ -59,9 +60,13 @@ io.on("connection", (socket: Socket) => {
     }
 
     if (data.state === DONG_Y) {
-      socket.to(idSend).emit("recieve-crud-fr", { mess: BAN_BE });
+      socket
+        .to(idSend)
+        .emit("recieve-crud-fr", { mess: BAN_BE, unfriend: XOA_BAN_BE });
       if (idRecieve) {
-        socket.to(idRecieve).emit("recieve-crud-fr", { mess: BAN_BE });
+        socket
+          .to(idRecieve)
+          .emit("recieve-crud-fr", { mess: BAN_BE, unfriend: XOA_BAN_BE });
       }
     }
 
@@ -73,6 +78,14 @@ io.on("connection", (socket: Socket) => {
     }
 
     if (data.state === HUY_LOI_MOI_KET_BAN) {
+      socket.to(idSend).emit("recieve-crud-fr", { mess: KET_BAN });
+      if (idRecieve) {
+        socket.to(idRecieve).emit("recieve-crud-fr", { mess: KET_BAN });
+      }
+    }
+
+    if (data.state === XOA_BAN_BE) {
+      console.log("xoa");
       socket.to(idSend).emit("recieve-crud-fr", { mess: KET_BAN });
       if (idRecieve) {
         socket.to(idRecieve).emit("recieve-crud-fr", { mess: KET_BAN });

@@ -1,13 +1,11 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const MessageSchema = new mongoose.Schema(
   {
-    message: { type: String, required: true },
-    user: {
-      from: { type: String, required: true },
-      to: { type: String, required: true },
-    },
+    idConversation: { type: String, ref: "Conversation" },
     sender: { type: String, required: true },
+    message: { type: String, required: true },
+    seen: { type: Boolean },
   },
   {
     timestamps: true,

@@ -10,7 +10,7 @@ export const UserProvider = ({ children }) => {
   };
   const socket = useRef();
   socket.current = io("http://localhost:8080", optionSocket);
-
+  console.log(userData);
   return (
     <UserContext.Provider value={{ userData, socket, setUserData }}>
       {children}

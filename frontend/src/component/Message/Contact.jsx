@@ -43,13 +43,14 @@ function Contact({ handleChangeContact }) {
     data: null,
     state: null,
     cancel: null,
+    unfriend: null,
   });
 
   const [dataGr, setDataGr] = useState({
     username: null,
     listMember: [],
     showAvt: false,
-    avatarImage: null,
+    avatar: null,
   });
   const listAvatarGr = [
     "https://res.zaloapp.com/pc/avt_group/1_family.jpg",
@@ -83,17 +84,21 @@ function Contact({ handleChangeContact }) {
 
   useEffect(() => {
     socket.current.on("recieve-crud-fr", (data) => {
+      console.log(data);
       setDataFr((prevState) => {
         return {
           ...prevState,
           state: data.mess,
           show: true,
           cancel: data.cancel ? data.cancel : null,
+          unfriend: data.unfriend ? data.unfriend : null,
         };
       });
     });
   }, [socket.current]);
-  useEffect(() => {}, [dataFr]);
+  useEffect(() => {
+    console.log(dataFr);
+  }, [dataFr]);
 
   useEffect(() => {
     if (textSearch === "") {
@@ -256,7 +261,7 @@ function Contact({ handleChangeContact }) {
     const data = {
       groupName: dataGr.username,
       member: [...dataGr.listMember, userData._id],
-      avatarImage: dataGr.avatarImage,
+      avatar: dataGr.avatar,
     };
     console.log(data);
     const response = await axios.post(url, data);
@@ -267,7 +272,7 @@ function Contact({ handleChangeContact }) {
           {
             _id: response.data._id,
             username: response.data.groupName,
-            avatarImage: response.data.avatarImage,
+            avatar: response.data.avatar,
           },
           ...prevState,
         ];
@@ -277,7 +282,7 @@ function Contact({ handleChangeContact }) {
       username: null,
       listMember: [],
       showAvt: false,
-      avatarImage: null,
+      avatar: null,
     });
   };
 
@@ -294,7 +299,7 @@ function Contact({ handleChangeContact }) {
     setDataGr((prevState) => {
       return {
         ...prevState,
-        avatarImage: value,
+        avatar: value,
       };
     });
   };
@@ -303,13 +308,13 @@ function Contact({ handleChangeContact }) {
     setDataGr((prevState) => {
       return {
         ...prevState,
-        avatarImage: e.target.value,
+        avatar: e.target.value,
       };
     });
   };
 
   const handleSaveAvatarGr = () => {
-    if (dataGr.avatarImage !== null) {
+    if (dataGr.avatar !== null) {
       handleShowAvatarGr(false);
     }
   };
@@ -344,6 +349,7 @@ function Contact({ handleChangeContact }) {
           data: response.data.data,
           state: response.data.state,
           cancel: response.data.cancel ? response.data.cancel : null,
+          unfriend: response.data.unfriend ? response.data.unfriend : null,
         });
       } else {
         setDataFr({
@@ -352,6 +358,7 @@ function Contact({ handleChangeContact }) {
           data: null,
           state: response.data.state,
           cancel: null,
+          unfriend: null,
         });
       }
     }
@@ -442,7 +449,7 @@ function Contact({ handleChangeContact }) {
                       {dataFr.data !== null && (
                         <div className="wrap-result-phone flex">
                           <div className="flex">
-                            <img src={dataFr.data.avatarImage} alt="" />
+                            <img src={dataFr.data.avatar} alt="" />
                             <div>
                               <p className="username ">
                                 {dataFr.data.username}
@@ -465,6 +472,23 @@ function Contact({ handleChangeContact }) {
                                 }
                               >
                                 {dataFr.cancel}
+                              </button>
+                            )}
+                            {dataFr.unfriend && dataFr.unfriend !== null && (
+                              <button
+                                style={{
+                                  backgroundColor: "#eaedf0",
+                                  color: "black",
+                                }}
+                                onClick={() =>
+                                  handleCRUDFriend(
+                                    dataFr.data._id,
+                                    dataFr.unfriend
+                                  )
+                                }
+                              >
+                                {console.log(dataFr.unfriend)}
+                                {dataFr.unfriend}
                               </button>
                             )}
                             <button
@@ -514,7 +538,7 @@ function Contact({ handleChangeContact }) {
                       <input
                         type="text"
                         placeholder="Nhập url hình ảnh"
-                        value={dataGr.avatarImage}
+                        value={dataGr.avatar}
                         onChange={handleChangURl}
                       />
                     </div>
@@ -529,9 +553,7 @@ function Contact({ handleChangeContact }) {
                               src={item}
                               alt=""
                               className={
-                                item === dataGr.avatarImage
-                                  ? "ex-avatar-choice"
-                                  : ""
+                                item === dataGr.avatar ? "ex-avatar-choice" : ""
                               }
                             />
                           </li>
@@ -567,9 +589,9 @@ function Contact({ handleChangeContact }) {
                     </div>
                     <div className="add-by-phone">
                       <div className="phone-group flex">
-                        {dataGr.avatarImage ? (
+                        {dataGr.avatar ? (
                           <img
-                            src={dataGr.avatarImage}
+                            src={dataGr.avatar}
                             onClick={() => handleShowAvatarGr(true)}
                           />
                         ) : (
@@ -619,7 +641,7 @@ function Contact({ handleChangeContact }) {
                                     ></label>
                                   </div>
                                   <div className="contact-avatar-friend">
-                                    <img src={item.avatarImage} alt="" />
+                                    <img src={item.avatar} alt="" />
                                   </div>
                                   <div className="contact-overview-mess">
                                     <h3>{item.username}</h3>
@@ -711,7 +733,7 @@ function Contact({ handleChangeContact }) {
                           onClick={() => handleChoiceContact(item)}
                         >
                           <div className="flex">
-                            <img src={item.avatarImage} alt="" />
+                            <img src={item.avatar} alt="" />
                             <p>{item.username}</p>
                           </div>
                         </li>
@@ -732,7 +754,7 @@ function Contact({ handleChangeContact }) {
                           onClick={() => handleChoiceContact(item)}
                         >
                           <div className="flex">
-                            <img src={item.avatarImage} alt="" />
+                            <img src={item.avatar} alt="" />
                             <p>{item.username}</p>
                           </div>
                         </li>
@@ -752,7 +774,7 @@ function Contact({ handleChangeContact }) {
                       <div className="contact-detial-conversation flex">
                         <div className="flex">
                           <div className="contact-avatar-friend">
-                            <img src={data.avatarImage} alt="" />
+                            <img src={data.avatar} alt="" />
                           </div>
                           <div className="contact-overview-mess">
                             <h3>{data.username || data.groupName}</h3>

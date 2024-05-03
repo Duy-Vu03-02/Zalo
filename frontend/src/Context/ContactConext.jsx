@@ -11,14 +11,14 @@ export const ContactProvider = ({ children }) => {
   useEffect(() => {
     const fetch = async () => {
       if (userData) {
-        const response = await axios.post(
-          "http://localhost:8080/user/getallfriend",
-          { id: userData._id }
-        );
-        if (response.status === 200) {
-          setContact(response.data);
-          console.log(response.data);
-        }
+        // const response = await axios.post(
+        //   "http://localhost:8080/user/getallfriend",
+        //   { id: userData._id }
+        // );
+        // if (response.status === 200) {
+        //   setContact(response.data);
+        //   console.log(response.data);
+        // }
       }
     };
     fetch();

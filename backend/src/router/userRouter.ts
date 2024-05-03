@@ -1,17 +1,17 @@
 import express, { Request, Response, Router } from "express";
 import {
   crudfriend,
-  getAllUsers,
+  getAllFriend,
   updateUser,
   userByName,
   userByPhone,
   loginByAccount,
   loginBySessiToken,
   register,
-} from "../controllers/userController";
+} from "../controllers/UserController";
 
 export default (router: express.Router) => {
-  router.post("/user/getallfriend", getAllUsers);
+  router.post("/user/getallfriend", getAllFriend);
   router.post("/user/crudfriend", crudfriend);
   router.post("/user/getphone", userByPhone);
   router.post("/user/getfriend", userByName);
