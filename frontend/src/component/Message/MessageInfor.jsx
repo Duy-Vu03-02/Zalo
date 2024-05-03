@@ -51,7 +51,7 @@ function MessageInfor({ contactData }) {
                 alt=""
               />
               <div className="mess-infor-nickname flex">
-                <p>{contactData.username}</p>
+                <p>{contactData.username || contactData.groupName}</p>
                 <CiEdit style={{ fontSize: "23px", cursor: "pointer" }} />
               </div>
             </div>

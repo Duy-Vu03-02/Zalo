@@ -138,7 +138,7 @@ function ContainerMess({ contactData }) {
               <img src={contactData.avatarImage} alt="" />
             </div>
             <div className="friend-mess-infor">
-              <h3>{contactData.username}</h3>
+              <h3>{contactData.username || contactData.groupName}</h3>
               <p>Truy cập 2 giờ trước</p>
             </div>
           </div>

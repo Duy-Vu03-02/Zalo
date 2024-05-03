@@ -12,11 +12,12 @@ export const ContactProvider = ({ children }) => {
     const fetch = async () => {
       if (userData) {
         const response = await axios.post(
-          "http://127.0.0.1:8080/user/getallfriend",
+          "http://localhost:8080/user/getallfriend",
           { id: userData._id }
         );
         if (response.status === 200) {
           setContact(response.data);
+          console.log(response.data);
         }
       }
     };

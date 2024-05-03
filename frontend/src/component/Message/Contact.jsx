@@ -755,7 +755,7 @@ function Contact({ handleChangeContact }) {
                             <img src={data.avatarImage} alt="" />
                           </div>
                           <div className="contact-overview-mess">
-                            <h3>{data.username}</h3>
+                            <h3>{data.username || data.groupName}</h3>
                             <p>A Âm và Khởi Nguyên chân thần</p>
                           </div>
                         </div>
