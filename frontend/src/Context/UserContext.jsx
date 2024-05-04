@@ -9,8 +9,8 @@ export const UserProvider = ({ children }) => {
     transports: ["websocket"],
   };
   const socket = useRef();
-  socket.current = io("http://localhost:8080", optionSocket);
-  console.log(userData);
+  socket.current = io("http://localhost:8080");
+
   return (
     <UserContext.Provider value={{ userData, socket, setUserData }}>
       {children}

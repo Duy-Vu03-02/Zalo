@@ -49,46 +49,58 @@ io.on("connection", (socket: Socket) => {
     const idRecieve = listRoom.get(data.friendId);
 
     if (data.state === KET_BAN) {
-      console.log(idSend, socket.id);
-
-      socket.to(idSend).emit("recieve-crud-fr", { mess: HUY_LOI_MOI_KET_BAN });
+      socket.emit("recieve-crud-fr", {
+        mess: HUY_LOI_MOI_KET_BAN,
+        id: data.friendId,
+      });
       if (idRecieve) {
-        socket
-          .to(idRecieve)
-          .emit("recieve-crud-fr", { mess: DONG_Y, cancel: HUY });
+        socket.to(idRecieve).emit("recieve-crud-fr", {
+          mess: DONG_Y,
+          cancel: HUY,
+          id: data.userId,
+        });
       }
     }
 
     if (data.state === DONG_Y) {
-      socket
-        .to(idSend)
-        .emit("recieve-crud-fr", { mess: BAN_BE, unfriend: XOA_BAN_BE });
+      socket.emit("recieve-crud-fr", {
+        mess: BAN_BE,
+        unfriend: XOA_BAN_BE,
+        id: data.friendId,
+      });
       if (idRecieve) {
-        socket
-          .to(idRecieve)
-          .emit("recieve-crud-fr", { mess: BAN_BE, unfriend: XOA_BAN_BE });
+        socket.to(idRecieve).emit("recieve-crud-fr", {
+          mess: BAN_BE,
+          unfriend: XOA_BAN_BE,
+          id: idSend,
+        });
       }
     }
 
     if (data.state === HUY) {
-      socket.to(idSend).emit("recieve-crud-fr", { mess: KET_BAN });
+      socket.emit("recieve-crud-fr", { mess: KET_BAN, id: data.friendId });
       if (idRecieve) {
-        socket.to(idRecieve).emit("recieve-crud-fr", { mess: KET_BAN });
+        socket
+          .to(idRecieve)
+          .emit("recieve-crud-fr", { mess: KET_BAN, id: data.userId });
       }
     }
 
     if (data.state === HUY_LOI_MOI_KET_BAN) {
-      socket.to(idSend).emit("recieve-crud-fr", { mess: KET_BAN });
+      socket.emit("recieve-crud-fr", { mess: KET_BAN, id: data.friendId });
       if (idRecieve) {
-        socket.to(idRecieve).emit("recieve-crud-fr", { mess: KET_BAN });
+        socket
+          .to(idRecieve)
+          .emit("recieve-crud-fr", { mess: KET_BAN, id: data.userId });
       }
     }
 
     if (data.state === XOA_BAN_BE) {
-      console.log("xoa");
-      socket.to(idSend).emit("recieve-crud-fr", { mess: KET_BAN });
+      socket.emit("recieve-crud-fr", { mess: KET_BAN, id: data.friendId });
       if (idRecieve) {
-        socket.to(idRecieve).emit("recieve-crud-fr", { mess: KET_BAN });
+        socket
+          .to(idRecieve)
+          .emit("recieve-crud-fr", { mess: KET_BAN, id: data.userId });
       }
     }
   });

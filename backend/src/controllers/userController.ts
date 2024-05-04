@@ -71,16 +71,18 @@ export const userByPhone = async (req: Request, res: Response) => {
     const user = await getUsersById(id).select(
       "friend friendSend friendRecieve"
     );
+
     if (user) {
       const friends = user.friend;
       const friendSends = user.friendSend;
       const friendRecieves = user.friendRecieve;
-
       const number = await getUserByPhone(phone).select("phone avatar");
+
       if (number) {
         const checkInFriend: boolean = friends.some(
-          (item: any) => item.idUser === number._id
+          (item: any) => item.idUser == number._id
         );
+
         if (!checkInFriend) {
           const newRespone = {
             data: number,
@@ -125,19 +127,31 @@ export const crudfriend = async (req: Request, res: Response) => {
     );
 
     if (user && friend) {
+      const optionResult = {
+        state: "",
+        show: true,
+        cancel: "",
+        unfriend: "",
+      };
       if (state === KET_BAN) {
-        user.friendSend.push(friendId);
-        friend.friendRecieve.push(userId);
-        user.save();
-        friend.save();
+        const checkUser = user.friendSend.includes(friendId);
+        const checkFriend = friend.friendRecieve.includes(userId);
+        if (!checkUser && !checkFriend) {
+          user.friendSend.push(friendId);
+          friend.friendRecieve.push(userId);
+          user.save();
+          friend.save();
+        } else {
+          return res.sendStatus(204);
+        }
       }
 
       if (state === DONG_Y) {
-        const zUser: number = user.friendSend.indexOf(friendId);
-        const zFriend: number = friend.friendRecieve.indexOf(userId);
-        if (zUser && zFriend) {
-          user.friendSend.splice(zUser, 1);
-          friend.friendRecieve.splice(zFriend, 1);
+        const zUser = user.friendRecieve.indexOf(friendId);
+        const zFriend = friend.friendSend.indexOf(userId);
+        if (zUser >= 0 && zFriend >= 0) {
+          user.friendRecieve.splice(zUser, 1);
+          friend.friendSend.splice(zFriend, 1);
           const newConversation = new ConversationModel({
             type: "single",
             member: [userId, friendId],
@@ -152,6 +166,7 @@ export const crudfriend = async (req: Request, res: Response) => {
             idUser: userId,
             idConversation: newConversation.id,
           });
+
           await user.save();
           await friend.save();
         }
@@ -160,37 +175,51 @@ export const crudfriend = async (req: Request, res: Response) => {
       if (state === HUY_LOI_MOI_KET_BAN) {
         const zUser: number = user.friendSend.indexOf(friendId);
         const zFriend: number = friend.friendRecieve.indexOf(userId);
-        if (zUser && zFriend) {
+        if (zUser >= 0 && zFriend >= 0) {
           user.friendSend.splice(zUser, 1);
           friend.friendRecieve.splice(zFriend, 1);
+          user.save();
+          friend.save();
         }
-        user.save();
-        friend.save();
       }
 
       if (state === HUY) {
         const zUser = user.friendRecieve.indexOf(friendId);
         const zFriend = friend.friendSend.indexOf(userId);
-        user.friendSend.splice(zUser, 1);
-        friend.friendRecieve.splice(zFriend, 1);
-        user.save();
-        friend.save();
+        if (zUser >= 0 && zFriend >= 0) {
+          user.friendRecieve.splice(zUser, 1);
+          friend.friendSend.splice(zFriend, 1);
+          user.save();
+          friend.save();
+        }
       }
 
       if (state === XOA_BAN_BE) {
-        const zUser = user.friend.indexOf(friendId);
-        const zFriend = friend.friend.indexOf(userId);
-        user.friend.splice(zUser, 1);
-        friend.friend.splice(zFriend, 1);
-        user.save();
-        friend.save();
+        let zUser = -1;
+        let zFriend = -1;
+        user.friend.map((item: any, index: number) => {
+          if (item.idUser == friendId) {
+            zUser = index;
+          }
+        });
+        friend.friend.map((item: any, index: number) => {
+          if (item.idUser == userId) {
+            zFriend = index;
+          }
+        });
+
+        if (zUser >= 0 && zFriend >= 0) {
+          user.friend.splice(zUser, 1);
+          friend.friend.splice(zFriend, 1);
+          user.save();
+          friend.save();
+        }
       }
       return res.sendStatus(200);
     } else {
       return res.sendStatus(204);
     }
   } catch (err) {
-    console.log("check er");
     console.error(err);
     return res.sendStatus(400);
   }

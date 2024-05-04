@@ -37,16 +37,17 @@ function Contact({ handleChangeContact }) {
   const [allMessActive, setAllMessActive] = useState(true);
   const [conversationList, setConversationList] = useState([]);
 
-  const [dataFr, setDataFr] = useState({
+  const [dataUserPhone, setDataUserPhone] = useState({
     username: "",
     show: false,
     data: null,
     state: null,
     cancel: null,
     unfriend: null,
+    checkId: null,
   });
 
-  const [dataGr, setDataGr] = useState({
+  const [dataCreateGr, setDataCreateGr] = useState({
     username: null,
     listMember: [],
     showAvt: false,
@@ -84,21 +85,20 @@ function Contact({ handleChangeContact }) {
 
   useEffect(() => {
     socket.current.on("recieve-crud-fr", (data) => {
-      console.log(data);
-      setDataFr((prevState) => {
-        return {
-          ...prevState,
-          state: data.mess,
-          show: true,
-          cancel: data.cancel ? data.cancel : null,
-          unfriend: data.unfriend ? data.unfriend : null,
-        };
-      });
+      if (dataUserPhone.data?._id == data.id) {
+        setDataUserPhone((prevState) => {
+          return {
+            ...prevState,
+            state: data.mess,
+            show: prevState.state !== null ? true : false,
+            cancel: data.cancel ? data.cancel : null,
+            unfriend: data.unfriend ? data.unfriend : null,
+            // checkId: data.id,
+          };
+        });
+      }
     });
-  }, [socket.current]);
-  useEffect(() => {
-    console.log(dataFr);
-  }, [dataFr]);
+  }, [dataUserPhone]);
 
   useEffect(() => {
     if (textSearch === "") {
@@ -211,7 +211,7 @@ function Contact({ handleChangeContact }) {
     });
 
     if (!value) {
-      setDataFr({
+      setDataUserPhone({
         username: "",
         show: false,
         data: null,
@@ -231,7 +231,7 @@ function Contact({ handleChangeContact }) {
   };
 
   const handleAddMember = (value) => {
-    setDataGr((prevState) => {
+    setDataCreateGr((prevState) => {
       if (prevState.listMember.length < 0) {
         return {
           ...prevState,
@@ -259,14 +259,12 @@ function Contact({ handleChangeContact }) {
     handleShowAddGroup(false);
     const url = "http://localhost:8080/group/creategroup";
     const data = {
-      groupName: dataGr.username,
-      member: [...dataGr.listMember, userData._id],
-      avatar: dataGr.avatar,
+      groupName: dataCreateGr.username,
+      member: [...dataCreateGr.listMember, userData._id],
+      avatar: dataCreateGr.avatar,
     };
-    console.log(data);
     const response = await axios.post(url, data);
     if (response.status === 200) {
-      console.log(response);
       setContact((prevState) => {
         return [
           {
@@ -278,7 +276,7 @@ function Contact({ handleChangeContact }) {
         ];
       });
     }
-    setDataGr({
+    setDataCreateGr({
       username: null,
       listMember: [],
       showAvt: false,
@@ -287,7 +285,7 @@ function Contact({ handleChangeContact }) {
   };
 
   const handleShowAvatarGr = (value) => {
-    setDataGr((prevState) => {
+    setDataCreateGr((prevState) => {
       return {
         ...prevState,
         showAvt: value,
@@ -296,7 +294,7 @@ function Contact({ handleChangeContact }) {
   };
 
   const handleChoiceAvatarGr = (value) => {
-    setDataGr((prevState) => {
+    setDataCreateGr((prevState) => {
       return {
         ...prevState,
         avatar: value,
@@ -305,7 +303,7 @@ function Contact({ handleChangeContact }) {
   };
 
   const handleChangURl = (e) => {
-    setDataGr((prevState) => {
+    setDataCreateGr((prevState) => {
       return {
         ...prevState,
         avatar: e.target.value,
@@ -314,12 +312,12 @@ function Contact({ handleChangeContact }) {
   };
 
   const handleSaveAvatarGr = () => {
-    if (dataGr.avatar !== null) {
+    if (dataCreateGr.avatar !== null) {
       handleShowAvatarGr(false);
     }
   };
   const handleChangeNameGr = (e) => {
-    setDataGr((prevState) => {
+    setDataCreateGr((prevState) => {
       return {
         ...prevState,
         username: e.target.value,
@@ -327,7 +325,7 @@ function Contact({ handleChangeContact }) {
     });
   };
   const handleChangePhone = (e) => {
-    setDataFr((prevState) => {
+    setDataUserPhone((prevState) => {
       return {
         ...prevState,
         username: e.target.value,
@@ -335,15 +333,14 @@ function Contact({ handleChangeContact }) {
     });
   };
   const handleFindUserByPhone = async () => {
-    if (dataFr.username !== "") {
+    if (dataUserPhone.username !== "") {
       const url = "http://localhost:8080/user/getphone";
       const response = await axios.post(url, {
-        phone: dataFr.username,
+        phone: dataUserPhone.username,
         id: userData._id,
       });
-
       if (response.status === 200) {
-        setDataFr({
+        setDataUserPhone({
           username: "",
           show: true,
           data: response.data.data,
@@ -352,7 +349,7 @@ function Contact({ handleChangeContact }) {
           unfriend: response.data.unfriend ? response.data.unfriend : null,
         });
       } else {
-        setDataFr({
+        setDataUserPhone({
           username: "",
           show: false,
           data: null,
@@ -363,7 +360,6 @@ function Contact({ handleChangeContact }) {
       }
     }
   };
-
   const handleCRUDFriend = async (friendId, state) => {
     const data = {
       userId: userData._id,
@@ -372,6 +368,7 @@ function Contact({ handleChangeContact }) {
     };
     const url = "http://localhost:8080/user/crudfriend";
     const response = await axios.post(url, data);
+
     if (response.status === 200) {
       socket.current.emit("crud-friend", data);
     }
@@ -437,77 +434,89 @@ function Contact({ handleChangeContact }) {
                         <div className="input-number">
                           <input
                             type="text"
-                            value={dataFr.username}
+                            value={dataUserPhone.username}
                             onChange={handleChangePhone}
                             placeholder="Số điện thoại"
                           />
                         </div>
                       </div>
                       <div className="recent-result">
-                        <p>Kết quả {dataFr.show !== null ? "" : "gần nhất"}</p>
+                        <p>
+                          Kết quả{" "}
+                          {dataUserPhone.show !== null ? "" : "gần nhất"}
+                        </p>
                       </div>
-                      {dataFr.data !== null && (
+                      {dataUserPhone.data !== null && (
                         <div className="wrap-result-phone flex">
                           <div className="flex">
-                            <img src={dataFr.data.avatar} alt="" />
+                            <img src={dataUserPhone.data.avatar} alt="" />
                             <div>
                               <p className="username ">
-                                {dataFr.data.username}
+                                {dataUserPhone.data.username}
                               </p>
-                              <p className="phone">{dataFr.data.phone}</p>
+                              <p className="phone">
+                                {dataUserPhone.data.phone}
+                              </p>
                             </div>
                           </div>
                           <div>
-                            {dataFr.cancel && dataFr.cancel !== null && (
-                              <button
-                                style={{
-                                  backgroundColor: "#eaedf0",
-                                  color: "black",
-                                }}
-                                onClick={() =>
-                                  handleCRUDFriend(
-                                    dataFr.data._id,
-                                    dataFr.cancel
-                                  )
-                                }
-                              >
-                                {dataFr.cancel}
-                              </button>
-                            )}
-                            {dataFr.unfriend && dataFr.unfriend !== null && (
-                              <button
-                                style={{
-                                  backgroundColor: "#eaedf0",
-                                  color: "black",
-                                }}
-                                onClick={() =>
-                                  handleCRUDFriend(
-                                    dataFr.data._id,
-                                    dataFr.unfriend
-                                  )
-                                }
-                              >
-                                {console.log(dataFr.unfriend)}
-                                {dataFr.unfriend}
-                              </button>
-                            )}
+                            {dataUserPhone.cancel &&
+                              dataUserPhone.cancel !== null && (
+                                <button
+                                  style={{
+                                    backgroundColor: "#eaedf0",
+                                    color: "black",
+                                  }}
+                                  onClick={() =>
+                                    handleCRUDFriend(
+                                      dataUserPhone.data._id,
+                                      dataUserPhone.cancel
+                                    )
+                                  }
+                                >
+                                  {dataUserPhone.cancel}
+                                </button>
+                              )}
+                            {dataUserPhone.unfriend &&
+                              dataUserPhone.unfriend !== null && (
+                                <button
+                                  style={{
+                                    backgroundColor: "#eaedf0",
+                                    color: "black",
+                                  }}
+                                  onClick={() =>
+                                    handleCRUDFriend(
+                                      dataUserPhone.data._id,
+                                      dataUserPhone.unfriend
+                                    )
+                                  }
+                                >
+                                  {dataUserPhone.unfriend}
+                                </button>
+                              )}
                             <button
                               onClick={() =>
-                                handleCRUDFriend(dataFr.data._id, dataFr.state)
+                                handleCRUDFriend(
+                                  dataUserPhone.data._id,
+                                  dataUserPhone.state
+                                )
                               }
                             >
-                              {dataFr?.state}
+                              {dataUserPhone?.state}
                             </button>
                           </div>
                         </div>
                       )}
-                      <div className="recent-result">
-                        <p>
-                          {dataFr.data === null &&
-                            dataFr.state &&
-                            `${dataFr.state}`}
-                        </p>
-                      </div>
+                      {dataUserPhone.show &&
+                        dataUserPhone.checkId == dataUserPhone.data._id && (
+                          <div className="recent-result">
+                            <p>
+                              {dataUserPhone.data === null &&
+                                dataUserPhone.state &&
+                                `${dataUserPhone.state}`}
+                            </p>
+                          </div>
+                        )}
                       <div className="btn-find-friend flex">
                         <button onClick={() => handleShowAddFriend(false)}>
                           Hủy
@@ -523,7 +532,7 @@ function Contact({ handleChangeContact }) {
                   </div>
                 </div>
               )}
-              {dataGr.showAvt && (
+              {dataCreateGr.showAvt && (
                 <div className="screen-mask" style={{ zIndex: 1001 }}>
                   <div className="choice-avatar-gr">
                     <div className="header-add-friend flex">
@@ -538,7 +547,7 @@ function Contact({ handleChangeContact }) {
                       <input
                         type="text"
                         placeholder="Nhập url hình ảnh"
-                        value={dataGr.avatar}
+                        value={dataCreateGr.avatar}
                         onChange={handleChangURl}
                       />
                     </div>
@@ -553,7 +562,9 @@ function Contact({ handleChangeContact }) {
                               src={item}
                               alt=""
                               className={
-                                item === dataGr.avatar ? "ex-avatar-choice" : ""
+                                item === dataCreateGr.avatar
+                                  ? "ex-avatar-choice"
+                                  : ""
                               }
                             />
                           </li>
@@ -589,9 +600,9 @@ function Contact({ handleChangeContact }) {
                     </div>
                     <div className="add-by-phone">
                       <div className="phone-group flex">
-                        {dataGr.avatar ? (
+                        {dataCreateGr.avatar ? (
                           <img
-                            src={dataGr.avatar}
+                            src={dataCreateGr.avatar}
                             onClick={() => handleShowAvatarGr(true)}
                           />
                         ) : (
@@ -605,7 +616,7 @@ function Contact({ handleChangeContact }) {
                             type="text"
                             placeholder="Nhập tên nhóm"
                             onChange={handleChangeNameGr}
-                            value={dataGr.username}
+                            value={dataCreateGr.username}
                           />
                         </div>
                       </div>
@@ -629,7 +640,7 @@ function Contact({ handleChangeContact }) {
                                     <input
                                       type="checkbox"
                                       id={`checkbox ${index}`}
-                                      checked={dataGr.listMember.some(
+                                      checked={dataCreateGr.listMember.some(
                                         (member) => {
                                           return item._id === member._id;
                                         }
@@ -664,9 +675,9 @@ function Contact({ handleChangeContact }) {
                           }}
                         >
                           Tạo nhóm{" "}
-                          {dataGr.listMember.length < 1
+                          {dataCreateGr.listMember.length < 1
                             ? ""
-                            : ` (${dataGr.listMember.length})`}
+                            : ` (${dataCreateGr.listMember.length})`}
                         </button>
                       </div>
                     </div>
