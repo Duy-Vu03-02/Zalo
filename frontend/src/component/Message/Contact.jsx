@@ -198,9 +198,10 @@ function Contact({ handleChangeContact }) {
 
   const storeLocal = (value) => {
     setDataSearch((prevState) => {
+      const filterRecent = prevState.recent.filter((x) => x._id !== value._id);
       return {
-        ...prevState,
-        recent: [value, ...prevState.recent],
+        response: prevState.response,
+        recent: [value, ...filterRecent],
       };
     });
     localStorage.setItem("user-search", JSON.stringify(dataSearch.recent));

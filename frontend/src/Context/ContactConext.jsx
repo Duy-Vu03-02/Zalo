@@ -15,7 +15,6 @@ export const ContactProvider = ({ children }) => {
           "http://localhost:8080/message/getallmessage",
           { id: userData._id }
         );
-        console.log(response);
         setContact(response.data);
       }
     };

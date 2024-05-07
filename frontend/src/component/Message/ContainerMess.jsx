@@ -142,7 +142,9 @@ function ContainerMess({ contactData }) {
               <h3>{contactData.username || contactData.groupName}</h3>
               <p>
                 {contactData.lastActive !== "Active" ? (
-                  `Truy cập ${contactData.lastActive} trước`
+                  `Truy cập ${contactData.lastActive} ${
+                    contactData.lastActive == "vừa xong" ? "" : "trước"
+                  }`
                 ) : (
                   <div className="flex">
                     <RxDotFilled
