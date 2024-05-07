@@ -2,7 +2,8 @@ import express, { Request, Response } from "express";
 import { UserModel, getUsersById } from "../config/schema/UserModel";
 import { ConversationModel } from "../config/schema/ConversationModel";
 import { MessagesModel } from "../config/schema/MessageModel";
-import { forEach } from "lodash";
+import { forEach, last, now } from "lodash";
+import { ACTIVE } from "./UserController";
 
 export const createConversation = async (userId: any, friendId: any) => {
   try {
@@ -63,16 +64,43 @@ const handleGetUserConversation = async (sortConversation: any, id: String) => {
       username: "",
       avatar: "",
       idChatWith: "",
+      lastActive: "",
     };
     for (let x of item.member) {
       if (x != id) {
-        const user = await getUsersById(x).select("avatar");
+        const user = await getUsersById(x).select("avatar lastActive");
         if (user) {
           resData.username = user.username;
           resData.avatar = user.avatar;
           resData.idChatWith = user._id;
-          listMember.push(resData);
-          console.log(resData);
+
+          // lastActive
+          if (user.lastActive === ACTIVE) {
+            resData.lastActive = ACTIVE;
+            listMember.push(resData);
+          } else {
+            const lastDate = new Date(user.lastActive);
+            const nowDate = new Date();
+
+            const farMonth = nowDate.getMonth() - lastDate.getMonth();
+            if (farMonth >= 1) {
+              resData.lastActive = `${lastDate.getDate()}/${
+                lastDate.getMonth() + 1
+              }/${lastDate.getFullYear()}`;
+            } else {
+              const farDate = nowDate.getTime() - lastDate.getTime();
+              if (farDate >= 86_400_000) {
+                resData.lastActive = `${Math.floor(farDate / 86_400_000)} ngày`;
+              } else if (farDate > 3_600_000) {
+                resData.lastActive = `${Math.floor(farDate / 3_600_600)} giờ`;
+              } else if (farDate >= 60_000) {
+                resData.lastActive = `${Math.floor(farDate / 60000)} phút`;
+              } else {
+                resData.lastActive = `vừa xong`;
+              }
+            }
+            listMember.push(resData);
+          }
         }
       }
     }

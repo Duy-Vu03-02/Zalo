@@ -27,6 +27,7 @@ export const DONG_Y = "Đồng ý";
 export const BAN_BE = "Bạn bè";
 export const XOA_BAN_BE = "Xóa kết bạn";
 export const HUY = "Hủy";
+export const ACTIVE = "Active";
 
 export const getAllFriend = async (req: Request, res: Response) => {
   try {
@@ -291,6 +292,7 @@ export const register = async (req: Request, res: Response) => {
             password: await authentication(password),
           },
           avatar: avatar,
+          lastActive: ACTIVE,
         });
         return res.status(200).json(newUser).end();
       }

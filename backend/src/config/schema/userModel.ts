@@ -18,7 +18,7 @@ const UserSchema = new Schema(
     sex: { type: String, required: false, min: 3, select: false },
     dob: { type: Date, required: false, select: false },
     address: { type: String, required: false, select: false },
-    lastActive: { type: Date, required: false, select: true },
+    lastActive: { type: String, required: true, select: true },
     friend: [{ type: String, ref: "User" }],
     friendSend: [{ type: String, ref: "User" }],
     friendRecieve: [{ type: String, ref: "User" }],

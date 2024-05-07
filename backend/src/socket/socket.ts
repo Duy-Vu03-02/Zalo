@@ -1,5 +1,6 @@
 import express from "express";
 import { Socket } from "socket.io";
+import { getUsersById } from "../config/schema/UserModel";
 import {
   KET_BAN,
   DONG_Y,
@@ -7,6 +8,7 @@ import {
   HUY_LOI_MOI_KET_BAN,
   BAN_BE,
   XOA_BAN_BE,
+  ACTIVE,
 } from "../controllers/UserController";
 const app = express();
 const server = require("http").createServer(app);
@@ -25,16 +27,14 @@ const listRoom = new Map();
 io.on("connection", (socket: Socket) => {
   // console.log("user connection: ", socket.id);
 
-  socket.on("disconnect", () => {
-    listRoom.forEach((item: String, key: String) => {
-      if (key === socket.id) {
-        listRoom.delete(item);
-      }
-    });
+  socket.on("disconnect", async () => {
+    const key = await handleStoreDate(new Date(), socket.id);
+    listRoom.delete(key);
   });
 
-  socket.on("add-user", (data: any) => {
+  socket.on("add-user", async (data: any) => {
     listRoom.set(data.id, socket.id);
+    await handleStoreDate(ACTIVE, socket.id);
   });
 
   socket.on("send-mess", (data: any) => {
@@ -106,39 +106,23 @@ io.on("connection", (socket: Socket) => {
   });
 });
 
+const handleStoreDate = async (value: any, id: any) => {
+  // if (value === ACTIVE) {
+  //   console.log("vao");
+  // } else {
+  //   console.log("ra");
+  // }
+  listRoom.forEach(async (item, key) => {
+    if (item == id) {
+      const user = await getUsersById(key);
+      if (user) {
+        // console.log("tan cung");
+        user.lastActive = value;
+        user.save();
+      }
+      return key;
+    }
+  });
+};
+
 export { server, app };
-
-// const io = require('socket.io')(server);
-
-// // Đối tượng lưu trữ thông tin về phòng của mỗi người dùng
-// const userRooms = {};
-
-// io.on('connection', (socket) => {
-//   socket.on('create-room', () => {
-//     const roomId = generateRoomId(); // Tạo ID phòng mới
-//     socket.join(roomId); // Người dùng tham gia vào phòng
-//     userRooms[socket.id] = roomId; // Lưu thông tin phòng của người dùng
-//     socket.emit('room-created', roomId); // Gửi ID phòng đến người dùng
-//   });
-
-//   socket.on('join-room', (roomIdToJoin) => {
-//     socket.join(roomIdToJoin); // Người dùng tham gia vào phòng
-//     userRooms[socket.id] = roomIdToJoin; // Lưu thông tin phòng của người dùng
-//     socket.emit('room-joined', roomIdToJoin); // Gửi ID phòng đến người dùng
-//   });
-
-//   socket.on('disconnect', () => {
-//     const roomId = userRooms[socket.id];
-//     if (roomId) {
-//       io.to(roomId).emit('user-left', socket.id); // Gửi thông báo cho tất cả các người dùng trong phòng rằng một người dùng đã rời phòng
-//       delete userRooms[socket.id]; // Xóa thông tin phòng của người dùng khi họ rời khỏi phòng
-//     }
-//   });
-
-//   socket.on('send-message', (message) => {
-//     const roomId = userRooms[socket.id];
-//     if (roomId) {
-//       io.to(roomId).emit('receive-message', { senderId: socket.id, message });
-//     }
-//   });
-// });

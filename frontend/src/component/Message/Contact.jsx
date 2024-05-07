@@ -17,6 +17,8 @@ import { IoIosMore } from "react-icons/io";
 import { IoMdClose } from "react-icons/io";
 import { IoTriangle } from "react-icons/io5";
 import { BsFillCameraFill } from "react-icons/bs";
+import { RxDotFilled } from "react-icons/rx";
+
 import axios from "axios";
 
 function Contact({ handleChangeContact }) {
@@ -799,7 +801,15 @@ function Contact({ handleChangeContact }) {
                           </div>
                         </div>
                         <div className="contact-last-onl">
-                          <p>3 giờ</p>
+                          <p>
+                            {data.lastActive === "Active" ? (
+                              <RxDotFilled
+                                style={{ fontSize: "20px", color: "#30a04b" }}
+                              />
+                            ) : (
+                              data.lastActive
+                            )}
+                          </p>
                         </div>
                       </div>
                     </li>

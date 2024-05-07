@@ -21,6 +21,7 @@ import { MdOutlineContactMail } from "react-icons/md";
 import { RiCalendarTodoFill } from "react-icons/ri";
 import { RiEmojiStickerLine } from "react-icons/ri";
 import { AiOutlineSend } from "react-icons/ai";
+import { RxDotFilled } from "react-icons/rx";
 import axios from "axios";
 
 function ContainerMess({ contactData }) {
@@ -139,7 +140,18 @@ function ContainerMess({ contactData }) {
             </div>
             <div className="friend-mess-infor">
               <h3>{contactData.username || contactData.groupName}</h3>
-              <p>Truy cập 2 giờ trước</p>
+              <p>
+                {contactData.lastActive !== "Active" ? (
+                  `Truy cập ${contactData.lastActive} trước`
+                ) : (
+                  <div className="flex">
+                    <RxDotFilled
+                      style={{ fontSize: "20px", color: "#30a04b" }}
+                    />
+                    <p>Đang hoạt động</p>
+                  </div>
+                )}
+              </p>
             </div>
           </div>
           <div className="group-choice flex">
