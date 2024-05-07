@@ -1,7 +1,7 @@
-import React from "react";
+import React, { memo } from "react";
 import "../resource/style/Login/loadding.css";
 
-export default function Loadding() {
+function Loadding() {
   return (
     <>
       <div className="loadding-title-container">
@@ -14,3 +14,4 @@ export default function Loadding() {
     </>
   );
 }
+export default memo(Loadding);

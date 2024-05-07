@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext, memo } from "react";
 import { UserContext } from "../Context/UserContext";
+import io from "socket.io-client";
 import "../resource/style/Chat/chat.css";
 import Message from "../component/Message/Message";
 import AddressBook from "../component/AddressBook/AddressBook";
@@ -25,6 +26,7 @@ function Chat({ handleLogout }) {
 
   useEffect(() => {
     if (userData !== null) {
+      socket.current = io("http://localhost:8080");
       socket.current.emit("add-user", { id: userData._id });
     }
   }, []);

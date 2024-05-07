@@ -84,20 +84,22 @@ function Contact({ handleChangeContact }) {
   }, []);
 
   useEffect(() => {
-    socket.current.on("recieve-crud-fr", (data) => {
-      if (dataUserPhone.data?._id == data.id) {
-        setDataUserPhone((prevState) => {
-          return {
-            ...prevState,
-            state: data.mess,
-            show: prevState.state !== null ? true : false,
-            cancel: data.cancel ? data.cancel : null,
-            unfriend: data.unfriend ? data.unfriend : null,
-            // checkId: data.id,
-          };
-        });
-      }
-    });
+    if (socket.current) {
+      socket.current.on("recieve-crud-fr", (data) => {
+        if (dataUserPhone.data?._id == data.id) {
+          setDataUserPhone((prevState) => {
+            return {
+              ...prevState,
+              state: data.mess,
+              show: prevState.state !== null ? true : false,
+              cancel: data.cancel ? data.cancel : null,
+              unfriend: data.unfriend ? data.unfriend : null,
+              // checkId: data.id,
+            };
+          });
+        }
+      });
+    }
   }, [dataUserPhone]);
 
   useEffect(() => {
