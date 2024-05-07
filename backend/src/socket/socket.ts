@@ -72,7 +72,7 @@ io.on("connection", (socket: Socket) => {
         socket.to(idRecieve).emit("recieve-crud-fr", {
           mess: BAN_BE,
           unfriend: XOA_BAN_BE,
-          id: idSend,
+          id: data.userId,
         });
       }
     }

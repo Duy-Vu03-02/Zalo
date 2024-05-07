@@ -18,12 +18,8 @@ const UserSchema = new Schema(
     sex: { type: String, required: false, min: 3, select: false },
     dob: { type: Date, required: false, select: false },
     address: { type: String, required: false, select: false },
-    friend: [
-      {
-        idUser: { type: String, ref: "User" },
-        idConversation: { type: String, ref: "Conversation" },
-      },
-    ],
+    lastActive: { type: Date, required: false, select: true },
+    friend: [{ type: String, ref: "User" }],
     friendSend: [{ type: String, ref: "User" }],
     friendRecieve: [{ type: String, ref: "User" }],
   },

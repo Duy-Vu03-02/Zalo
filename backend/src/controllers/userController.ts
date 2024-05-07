@@ -4,6 +4,7 @@ import { authentication, comparePass } from "../helper/helper";
 import multer from "multer";
 import path from "path";
 import { get } from "lodash";
+import { createConversation } from "./MessageController";
 import { MessagesModel } from "../config/schema/MessageModel";
 import {
   UserModel,
@@ -30,7 +31,7 @@ export const HUY = "Hủy";
 export const getAllFriend = async (req: Request, res: Response) => {
   try {
     const { id } = req.body;
-    const user = await getUsersById(id).select("friend.");
+    const user = await getUsersById(id).select("friend");
     const listFrinend = user.friend;
     if (listFrinend.length > 0) {
       const friends = await UserModel.find({
@@ -79,9 +80,7 @@ export const userByPhone = async (req: Request, res: Response) => {
       const number = await getUserByPhone(phone).select("phone avatar");
 
       if (number) {
-        const checkInFriend: boolean = friends.some(
-          (item: any) => item.idUser == number._id
-        );
+        const checkInFriend = friends.includes(number._id.toString());
 
         if (!checkInFriend) {
           const newRespone = {
@@ -127,12 +126,6 @@ export const crudfriend = async (req: Request, res: Response) => {
     );
 
     if (user && friend) {
-      const optionResult = {
-        state: "",
-        show: true,
-        cancel: "",
-        unfriend: "",
-      };
       if (state === KET_BAN) {
         const checkUser = user.friendSend.includes(friendId);
         const checkFriend = friend.friendRecieve.includes(userId);
@@ -152,23 +145,11 @@ export const crudfriend = async (req: Request, res: Response) => {
         if (zUser >= 0 && zFriend >= 0) {
           user.friendRecieve.splice(zUser, 1);
           friend.friendSend.splice(zFriend, 1);
-          const newConversation = new ConversationModel({
-            type: "single",
-            member: [userId, friendId],
-          });
-          await newConversation.save();
-
-          user.friend.push({
-            idUser: friendId,
-            idConversation: newConversation._id,
-          });
-          friend.friend.push({
-            idUser: userId,
-            idConversation: newConversation.id,
-          });
-
-          await user.save();
+          user.friend.push(friendId);
+          friend.friend.push(userId);
           await friend.save();
+          await user.save();
+          createConversation(userId, friendId);
         }
       }
 
@@ -195,18 +176,8 @@ export const crudfriend = async (req: Request, res: Response) => {
       }
 
       if (state === XOA_BAN_BE) {
-        let zUser = -1;
-        let zFriend = -1;
-        user.friend.map((item: any, index: number) => {
-          if (item.idUser == friendId) {
-            zUser = index;
-          }
-        });
-        friend.friend.map((item: any, index: number) => {
-          if (item.idUser == userId) {
-            zFriend = index;
-          }
-        });
+        const zUser = user.friend.indexOf(friendId);
+        const zFriend = friend.friend.indexOf(userId);
 
         if (zUser >= 0 && zFriend >= 0) {
           user.friend.splice(zUser, 1);

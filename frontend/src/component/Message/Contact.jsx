@@ -789,7 +789,11 @@ function Contact({ handleChangeContact }) {
                           </div>
                           <div className="contact-overview-mess">
                             <h3>{data.username || data.groupName}</h3>
-                            <p>A Âm và Khởi Nguyên chân thần</p>
+                            <p>
+                              {data.lastMessage
+                                ? data.lastMessage
+                                : `Gửi lời chào đến ${data.username}`}{" "}
+                            </p>
                           </div>
                         </div>
                         <div className="contact-last-onl">

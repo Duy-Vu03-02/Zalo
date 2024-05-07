@@ -135,7 +135,7 @@ function ContainerMess({ contactData }) {
         <div className="top-container flex">
           <div className="flex">
             <div className="zavatar">
-              <img src={contactData.avatarImage} alt="" />
+              <img src={contactData.avatar} alt="" />
             </div>
             <div className="friend-mess-infor">
               <h3>{contactData.username || contactData.groupName}</h3>
@@ -162,7 +162,7 @@ function ContainerMess({ contactData }) {
                       item.sender ? "my-mess" : ""
                     } flex`}
                   >
-                    <img src={contactData.avatarImage} alt="" />
+                    <img src={contactData.avatar} alt="" />
                     <div className="detail-mess">
                       <p className="name-mess">{contactData.username}</p>
                       <p className="text-mess">{item.message}</p>
@@ -216,7 +216,7 @@ function ContainerMess({ contactData }) {
                 type="text"
                 value={mess}
                 onChange={handleChangMess}
-                placeholder="Nhập @, tin nhắn tới A Âm"
+                placeholder={`Nhập @, tin nhắn tới ${contactData.username}`}
               />
             </div>
             <div className="flex">
