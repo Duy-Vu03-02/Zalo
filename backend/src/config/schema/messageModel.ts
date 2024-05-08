@@ -15,16 +15,9 @@ const MessageSchema = new mongoose.Schema(
 // == Messages Model ==
 export const MessagesModel = mongoose.model("messages", MessageSchema);
 
-export const getMessages = (from: string, to: string) =>
+export const getAllMessagesByConversation = (idConversation: String) =>
   MessagesModel.find({
-    $or: [
-      {
-        $and: [{ "user.from": from }, { "user.to": to }],
-      },
-      {
-        $and: [{ "user.from": to }, { "user.to": from }],
-      },
-    ],
+    idConversation,
   });
 
 export const createMessages = async (userMess: Record<string, any>) => {

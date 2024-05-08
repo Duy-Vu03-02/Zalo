@@ -1,6 +1,7 @@
 import express from "express";
 import { Socket } from "socket.io";
 import { getUsersById } from "../config/schema/UserModel";
+import { createMessagesByConversation } from "../controllers/MessageController";
 import {
   KET_BAN,
   DONG_Y,
@@ -37,8 +38,13 @@ io.on("connection", (socket: Socket) => {
     await handleStoreDate(ACTIVE, socket.id);
   });
 
-  socket.on("send-mess", (data: any) => {
+  socket.on("send-mess", async (data: any) => {
     const id = listRoom.get(data.idRecieve);
+    await createMessagesByConversation({
+      idConversation: data.idConversation,
+      sender: data.idSend,
+      message: data.mess,
+    });
     if (id) {
       socket.to(id).emit("recieve-mess", { send: false, message: data.mess });
     }
@@ -67,12 +73,14 @@ io.on("connection", (socket: Socket) => {
         mess: BAN_BE,
         unfriend: XOA_BAN_BE,
         id: data.friendId,
+        refreshCoversation: true,
       });
       if (idRecieve) {
         socket.to(idRecieve).emit("recieve-crud-fr", {
           mess: BAN_BE,
           unfriend: XOA_BAN_BE,
           id: data.userId,
+          refreshCoversation: true,
         });
       }
     }
@@ -96,11 +104,15 @@ io.on("connection", (socket: Socket) => {
     }
 
     if (data.state === XOA_BAN_BE) {
-      socket.emit("recieve-crud-fr", { mess: KET_BAN, id: data.friendId });
+      socket.emit("recieve-crud-fr", {
+        mess: KET_BAN,
+        id: data.friendId,
+      });
       if (idRecieve) {
-        socket
-          .to(idRecieve)
-          .emit("recieve-crud-fr", { mess: KET_BAN, id: data.userId });
+        socket.to(idRecieve).emit("recieve-crud-fr", {
+          mess: KET_BAN,
+          id: data.userId,
+        });
       }
     }
   });

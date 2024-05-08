@@ -69,7 +69,7 @@ function Contact({ handleChangeContact }) {
     "https://res.zaloapp.com/pc/avt_group/11_school.jpg",
     "https://res.zaloapp.com/pc/avt_group/12_school.jpg",
   ];
-  const { contact, setContact } = useContext(ContactContext);
+  const { contact, setContact, fetchConversation } = useContext(ContactContext);
   const { userData, socket } = useContext(UserContext);
   const searchTimeout = useRef(null);
 
@@ -89,6 +89,9 @@ function Contact({ handleChangeContact }) {
     if (socket.current) {
       socket.current.on("recieve-crud-fr", (data) => {
         if (dataUserPhone.data?._id == data.id) {
+          if (data.refreshCoversation) {
+            fetchConversation();
+          }
           setDataUserPhone((prevState) => {
             return {
               ...prevState,

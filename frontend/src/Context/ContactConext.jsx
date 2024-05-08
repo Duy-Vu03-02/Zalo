@@ -9,20 +9,22 @@ export const ContactProvider = ({ children }) => {
   const { userData } = useContext(UserContext);
 
   useEffect(() => {
-    const fetch = async () => {
-      if (userData) {
-        const response = await axios.post(
-          "http://localhost:8080/message/getallmessage",
-          { id: userData._id }
-        );
-        setContact(response.data);
-      }
-    };
-    fetch();
+    fetchConversation();
   }, [userData]);
 
+  const fetchConversation = async () => {
+    if (userData) {
+      const response = await axios.post(
+        "http://localhost:8080/conversation/getallconversationbyuser",
+        { id: userData._id }
+      );
+
+      setContact(response.data);
+    }
+  };
+
   return (
-    <ContactContext.Provider value={{ contact, setContact }}>
+    <ContactContext.Provider value={{ contact, setContact, fetchConversation }}>
       {children}
     </ContactContext.Provider>
   );

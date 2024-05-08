@@ -10,8 +10,8 @@ import { CiLock } from "react-icons/ci";
 export default function Login({ handleChangeStateChat }) {
   const [activeQr, setActiveQr] = useState(true);
 
-  const handleSetActive = () => {
-    activeQr ? setActiveQr(false) : setActiveQr(true);
+  const handleSetActive = (value) => {
+    setActiveQr(value);
   };
   return (
     <>
@@ -31,13 +31,13 @@ export default function Login({ handleChangeStateChat }) {
             <div className="login-header-login-wrap flex">
               <p
                 className={`${activeQr ? "login-header-login-active" : ""}`}
-                onClick={handleSetActive}
+                onClick={() => handleSetActive(true)}
               >
                 với mã qr
               </p>
               <p
                 className={`${activeQr ? "" : "login-header-login-active"}`}
-                onClick={handleSetActive}
+                onClick={() => handleSetActive(false)}
               >
                 với số điện thoại
               </p>

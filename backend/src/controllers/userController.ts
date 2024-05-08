@@ -4,7 +4,7 @@ import { authentication, comparePass } from "../helper/helper";
 import multer from "multer";
 import path from "path";
 import { get } from "lodash";
-import { createConversation } from "./MessageController";
+import { createConversation } from "./ConverationController";
 import { MessagesModel } from "../config/schema/MessageModel";
 import {
   UserModel,
@@ -28,6 +28,33 @@ export const BAN_BE = "Bạn bè";
 export const XOA_BAN_BE = "Xóa kết bạn";
 export const HUY = "Hủy";
 export const ACTIVE = "Active";
+
+export const calculatorLastActive = async (timeInput: any) => {
+  if (timeInput === ACTIVE) {
+    return ACTIVE;
+  } else {
+    const lastDate = new Date(timeInput);
+    const nowDate = new Date();
+
+    const farMonth = nowDate.getMonth() - lastDate.getMonth();
+    if (farMonth > 1) {
+      return `${lastDate.getDate()}/${
+        lastDate.getMonth() + 1
+      }/${lastDate.getFullYear()}`;
+    } else {
+      const farDate = nowDate.getTime() - lastDate.getTime();
+      if (farDate >= 86_400_000) {
+        return `${Math.floor(farDate / 86_400_000)} ngày`;
+      } else if (farDate > 3_600_000) {
+        return `${Math.floor(farDate / 3_600_600)} giờ`;
+      } else if (farDate >= 60_000) {
+        return `${Math.floor(farDate / 60000)} phút`;
+      } else {
+        return `vừa xong`;
+      }
+    }
+  }
+};
 
 export const getAllFriend = async (req: Request, res: Response) => {
   try {
@@ -205,6 +232,9 @@ export const userByName = async (req: Request, res: Response) => {
     if (!checkUserName || checkUserName.length === 0) {
       return res.status(204).json({ mess: "null" });
     } else {
+      for (let temp of checkUserName) {
+        temp.lastActive = await calculatorLastActive(temp.lastActive);
+      }
       return res.status(200).json(checkUserName).end();
     }
   } catch (err) {

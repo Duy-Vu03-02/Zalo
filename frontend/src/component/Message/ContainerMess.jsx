@@ -68,15 +68,24 @@ function ContainerMess({ contactData }) {
   const handleSendMess = async (e) => {
     e.preventDefault();
     if (mess !== "") {
+      console.log(contactData);
       const data = {
+        idRecieve: contactData.idChatWith,
         idSend: userData._id,
-        idRecieve: contactData._id,
+        idConversation: contactData.idConversation,
         mess: mess,
       };
       socket.current.emit("send-mess", data);
+      setMessages((prevMessage) => {
+        if (Array.isArray(prevMessage)) {
+          return [...prevMessage, { sender: true, message: data.mess }];
+        } else {
+          return [{ sender: true, message: data.mess }];
+        }
+      });
       setMess("");
     }
-    if (mess.trim() !== "") {
+    if (false && mess.trim() !== "") {
       const data = {
         message: mess.trim(),
         user: {
@@ -105,12 +114,12 @@ function ContainerMess({ contactData }) {
   useEffect(() => {
     const fetch = async () => {
       const data = {
-        from: userData._id,
-        to: contactData._id,
+        userId: userData._id,
+        friendId: contactData._id,
       };
       const response = await axios.post(
         "http://127.0.0.1:8080/message/getallmessage",
-        data
+        { idConversation: contactData.idConversation }
       );
       if (response.status === 200) {
         setMessages(response.data);
