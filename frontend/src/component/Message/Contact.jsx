@@ -288,8 +288,8 @@ function Contact({ handleChangeContact }) {
     const url = "http://localhost:8080/group/creategroup";
     const data = {
       groupName: dataCreateGr.username,
-      member: [...dataCreateGr.listMember, userData._id],
-      avatar: dataCreateGr.avatar,
+      listMember: [...dataCreateGr.listMember, userData._id],
+      avatarGroup: dataCreateGr.avatar,
     };
     const response = await axios.post(url, data);
     if (response.status === 200) {
@@ -656,28 +656,26 @@ function Contact({ handleChangeContact }) {
                         />
                       </div>
                       <div className="list-contact">
+                        {console.log(contact)}
                         {contact &&
                           contact.map((item, index) => (
                             <li
                               key={index}
-                              onClick={() => handleAddMember(item)}
+                              onClick={() => handleAddMember(item.idChatWith)}
                             >
                               <div className="contact-detial-conversation flex">
                                 <div className="flex">
                                   <div className="checkbox-add">
                                     <input
-                                      type="checkbox"
-                                      id={`checkbox ${index}`}
-                                      checked={dataCreateGr.listMember.some(
-                                        (member) => {
-                                          return item._id === member._id;
-                                        }
-                                      )}
-                                      onChange={handleChange}
+                                      type="button"
+                                      className={`${
+                                        dataCreateGr.listMember.includes(
+                                          item.idChatWith
+                                        )
+                                          ? "active"
+                                          : ""
+                                      }`}
                                     />
-                                    <label
-                                      htmlFor={`checkbox ${index}`}
-                                    ></label>
                                   </div>
                                   <div className="contact-avatar-friend">
                                     <img src={item.avatar} alt="" />

@@ -1,6 +1,7 @@
 import express from "express";
 import { Socket } from "socket.io";
 import { getUsersById } from "../config/schema/UserModel";
+import { updateLastMessgae } from "../controllers/ConverationController";
 import { createMessagesByConversation } from "../controllers/MessageController";
 import {
   KET_BAN,
@@ -40,13 +41,22 @@ io.on("connection", (socket: Socket) => {
 
   socket.on("send-mess", async (data: any) => {
     const id = listRoom.get(data.idRecieve);
-    await createMessagesByConversation({
+    const resData = {
       idConversation: data.idConversation,
       sender: data.idSend,
       message: data.mess,
-    });
+    };
+    await createMessagesByConversation(resData);
+    updateLastMessgae(resData);
     if (id) {
-      socket.to(id).emit("recieve-mess", { send: false, message: data.mess });
+      socket.to(id).emit("recieve-lastmess", {
+        lastMessage: data.mess,
+        lastSend: data.idSend,
+        idConversation: data.idConversation,
+      });
+      socket
+        .to(id)
+        .emit("recieve-mess", { sender: data.idSend, message: data.mess });
     }
   });
 

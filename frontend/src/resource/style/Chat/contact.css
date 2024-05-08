@@ -400,24 +400,6 @@
   align-items: center;
 }
 
-.checkbox-add input[type="checkbox"] {
-  display: none;
-  cursor: pointer;
-}
-
-.checkbox-add input[type="checkbox"] + label {
-  display: inline-block;
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  background-color: #fff;
-  border: 2px solid #d6dbe1;
-  cursor: pointer;
-}
-
-.checkbox-add input[type="checkbox"]:checked + label {
-  background-color: rgb(0, 104, 255);
-}
 .choice-avatar-gr {
   background-color: white;
   height: 470px;
@@ -466,4 +448,13 @@
 .wrap-result-phone .phone {
   font-size: 14px;
   color: #a09f9f;
+}
+.checkbox-add input {
+  border: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+}
+.checkbox-add .active {
+  background-color: #357de8 !important;
 }

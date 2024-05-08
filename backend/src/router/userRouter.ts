@@ -14,7 +14,7 @@ export default (router: express.Router) => {
   router.post("/user/getallfriend", getAllFriend);
   router.post("/user/crudfriend", crudfriend);
   router.post("/user/getphone", userByPhone);
-  router.post("/user/getfriend", userByName);
+  router.post("/user/getfriendbyname", userByName);
   router.post("/auth/register", register);
   router.post("/auth/login", loginByAccount);
   router.post("/auth/sessiontoken", loginBySessiToken);

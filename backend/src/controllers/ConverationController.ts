@@ -26,6 +26,23 @@ export const createConversation = async (userId: any, friendId: any) => {
   }
 };
 
+export const createGroupConversation = async (data: any) => {
+  try {
+    const { listMember, groupName, avatarGroup } = data;
+    const newConversation = new ConversationModel({
+      type: "group",
+      lastMessage: "",
+      member: listMember,
+      groupName: groupName,
+      avatarGroup: avatarGroup,
+    });
+    // await newConversation.save();
+    console.log(data);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 export const getAllConversationByUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.body;
@@ -58,6 +75,7 @@ const handleGetUserConversation = async (sortConversation: any, id: String) => {
   let listMember: any[] = [];
   for (let item of sortConversation) {
     const resData: any = {
+      type: item.type,
       idConversation: item.id,
       lastMessage: item.lastMessage,
       updatedAt: item.updatedAt,
@@ -80,6 +98,20 @@ const handleGetUserConversation = async (sortConversation: any, id: String) => {
     }
   }
   return Promise.all(listMember);
+};
+
+export const updateLastMessgae = async (data: any) => {
+  try {
+    const { idConversation, message, sender } = data;
+    const conversation = await ConversationModel.findById(idConversation);
+    if (conversation) {
+      conversation.lastMessage = message;
+      conversation.lastSend = sender;
+      conversation.save();
+    }
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 export const getOfCreateConversation = async (req: Request, res: Response) => {

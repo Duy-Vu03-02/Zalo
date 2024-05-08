@@ -43,14 +43,20 @@ export const calculatorLastActive = async (timeInput: any) => {
       }/${lastDate.getFullYear()}`;
     } else {
       const farDate = nowDate.getTime() - lastDate.getTime();
-      if (farDate >= 86_400_000) {
-        return `${Math.floor(farDate / 86_400_000)} ngày`;
-      } else if (farDate > 3_600_000) {
-        return `${Math.floor(farDate / 3_600_600)} giờ`;
-      } else if (farDate >= 60_000) {
-        return `${Math.floor(farDate / 60000)} phút`;
+      if (farDate >= 2_592_000_000) {
+        return `${lastDate.getDate()}/${
+          lastDate.getMonth() + 1
+        }/${lastDate.getFullYear()}`;
       } else {
-        return `vừa xong`;
+        if (farDate >= 86_400_000) {
+          return `${Math.floor(farDate / 86_400_000)} ngày`;
+        } else if (farDate > 3_600_000) {
+          return `${Math.floor(farDate / 3_600_600)} giờ`;
+        } else if (farDate >= 60_000) {
+          return `${Math.floor(farDate / 60000)} phút`;
+        } else {
+          return `vừa xong`;
+        }
       }
     }
   }

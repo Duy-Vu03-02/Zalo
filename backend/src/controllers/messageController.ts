@@ -12,7 +12,14 @@ import { ACTIVE, calculatorLastActive } from "./UserController";
 export const getAllMessageByUser = async (req: Request, res: Response) => {
   try {
     const { idConversation } = req.body;
-    const messgaes = await getAllMessagesByConversation(idConversation);
+    const messgaes = await getAllMessagesByConversation(idConversation).select(
+      "sender message"
+    );
+    if (messgaes) {
+      res.status(200).json(messgaes);
+    } else {
+      res.sendStatus(204);
+    }
   } catch (err) {
     console.error(err);
     res.sendStatus(400);
