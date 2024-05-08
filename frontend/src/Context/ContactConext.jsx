@@ -18,7 +18,7 @@ export const ContactProvider = ({ children }) => {
         "http://localhost:8080/conversation/getallconversationbyuser",
         { id: userData._id }
       );
-
+      console.log(response.data);
       setContact(response.data);
     }
   };

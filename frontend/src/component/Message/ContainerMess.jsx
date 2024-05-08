@@ -9,6 +9,7 @@ import React, {
 import "../../resource/style/Chat/containermess.css";
 import { ThemeContext } from "../../Context/ThemeContext";
 import { UserContext } from "../../Context/UserContext";
+import { ContactContext } from "../../Context/ContactConext";
 import { HiOutlineUsers } from "react-icons/hi2";
 import { CiSearch } from "react-icons/ci";
 import { IoSend, IoVideocamOutline } from "react-icons/io5";
@@ -33,6 +34,7 @@ function ContainerMess({ contactData }) {
   const [mess, setMess] = useState("");
   const [tableColor, setTableColr] = useState(false);
   const { userData, socket } = useContext(UserContext);
+  const { setContact } = useContext(ContactContext);
   const { theme, handleChangeTheme } = useContext(ThemeContext);
   const codeBackground = [
     "#34568B",
@@ -57,18 +59,17 @@ function ContainerMess({ contactData }) {
     scrollRef.current?.scrollIntoView();
   }, [messages]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (socket.current) {
       socket.current.on("recieve-mess", (data) => {
         setMessages((prevMessage) => [...prevMessage, data]);
       });
     }
-  }, [socket.current]);
+  }, []);
 
   const handleSendMess = async (e) => {
     e.preventDefault();
     if (mess !== "") {
-      console.log(contactData);
       const data = {
         idRecieve: contactData.idChatWith,
         idSend: userData._id,
@@ -78,13 +79,25 @@ function ContainerMess({ contactData }) {
       socket.current.emit("send-mess", data);
       setMessages((prevMessage) => {
         if (Array.isArray(prevMessage)) {
-          return [...prevMessage, { sender: true, message: data.mess }];
+          return [...prevMessage, { sender: userData._id, message: data.mess }];
         } else {
-          return [{ sender: true, message: data.mess }];
+          return [{ sender: userData._id, message: data.mess }];
         }
+      });
+      setContact((prevState) => {
+        const filter = prevState.map((item) => {
+          if (item.idConversation == data.idConversation) {
+            item.lastMessage = data.mess;
+            item.lastSend = userData._id;
+            return item;
+          }
+          return item;
+        });
+        return filter;
       });
       setMess("");
     }
+    // cmt
     if (false && mess.trim() !== "") {
       const data = {
         message: mess.trim(),
@@ -156,6 +169,7 @@ function ContainerMess({ contactData }) {
                   }`
                 ) : (
                   <div className="flex">
+                    {" "}
                     <RxDotFilled
                       style={{ fontSize: "20px", color: "#30a04b" }}
                     />
@@ -182,7 +196,7 @@ function ContainerMess({ contactData }) {
                     ref={scrollRef}
                     key={index}
                     className={`wrap-text-mess ${
-                      item.sender ? "my-mess" : ""
+                      item.sender === userData._id ? "my-mess" : ""
                     } flex`}
                   >
                     <img src={contactData.avatar} alt="" />

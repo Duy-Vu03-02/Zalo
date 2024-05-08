@@ -87,6 +87,26 @@ function Contact({ handleChangeContact }) {
 
   useEffect(() => {
     if (socket.current) {
+      socket.current.on("recieve-lastmess", (data) => {
+        console.log(data);
+        setContact((prevState) => {
+          const filter = prevState.map((item) => {
+            if (item.idConversation == data.idConversation) {
+              item.lastMessage = data.lastMessage;
+              item.lastSend = data.lastSend;
+              return item;
+            }
+            return item;
+          });
+          console.log(filter);
+          return filter;
+        });
+      });
+    }
+  }, [socket.current]);
+
+  useEffect(() => {
+    if (socket.current) {
       socket.current.on("recieve-crud-fr", (data) => {
         if (dataUserPhone.data?._id == data.id) {
           if (data.refreshCoversation) {
@@ -136,7 +156,7 @@ function Contact({ handleChangeContact }) {
           username: value,
         };
         const response = await axios.post(
-          "http://localhost:8080/user/getfriend",
+          "http://localhost:8080/user/getfriendbyname",
           data
         );
         if (response.status === 200) {
@@ -797,11 +817,23 @@ function Contact({ handleChangeContact }) {
                           </div>
                           <div className="contact-overview-mess">
                             <h3>{data.username || data.groupName}</h3>
-                            <p>
-                              {data.lastMessage
-                                ? data.lastMessage
-                                : `Gửi lời chào đến ${data.username}`}{" "}
-                            </p>
+                            {data.type !== "single" ? (
+                              <p>
+                                {data.lastMessage
+                                  ? `${
+                                      data.lastSend == userData._id
+                                        ? "Bạn: "
+                                        : `${data.username}: `
+                                    } ${data.lastMessage}`
+                                  : `Gửi lời chào đến ${data.username}`}{" "}
+                              </p>
+                            ) : (
+                              <p>
+                                {data.lastMessage
+                                  ? data.lastMessage
+                                  : `Gửi lời chào đến ${data.username}`}{" "}
+                              </p>
+                            )}
                           </div>
                         </div>
                         <div className="contact-last-onl">
