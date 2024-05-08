@@ -5,6 +5,9 @@ import { MessagesModel } from "../config/schema/MessageModel";
 import { forEach, last, now } from "lodash";
 import { ACTIVE, calculatorLastActive } from "./UserController";
 
+export const TYPE_SINGLE = "single";
+export const TYPE_GROUP = "group";
+
 export const createConversation = async (userId: any, friendId: any) => {
   try {
     const check = await ConversationModel.findOne({
@@ -12,7 +15,7 @@ export const createConversation = async (userId: any, friendId: any) => {
     });
     if (!check) {
       const newConversation = new ConversationModel({
-        type: "single",
+        type: TYPE_SINGLE,
         lastMessage: "",
         member: [userId, friendId],
       });
@@ -26,18 +29,18 @@ export const createConversation = async (userId: any, friendId: any) => {
   }
 };
 
-export const createGroupConversation = async (data: any) => {
+export const createGroupConversation = async (req: Request, res: Response) => {
   try {
-    const { listMember, groupName, avatarGroup } = data;
+    const { listMember, groupName, avatarGroup } = req.body;
     const newConversation = new ConversationModel({
-      type: "group",
-      lastMessage: "",
+      type: TYPE_GROUP,
+      lastMessage: `Gửi lời chào đến group ${groupName}`,
       member: listMember,
       groupName: groupName,
       avatarGroup: avatarGroup,
     });
-    // await newConversation.save();
-    console.log(data);
+    await newConversation.save();
+    res.status(200).json(newConversation);
   } catch (err) {
     console.error(err);
   }
@@ -47,16 +50,25 @@ export const getAllConversationByUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.body;
     const allConnversation = await ConversationModel.find({
-      member: { $in: [id] },
+      $and: [{ member: { $in: [id] } }, { type: TYPE_SINGLE }],
     });
+    const allGroupConversation = await ConversationModel.find({
+      $and: [{ member: { $in: [id] } }, { type: TYPE_GROUP }],
+    });
+
+    const convertGroupConversation = await handleConvertGroupConversation(
+      allGroupConversation
+    );
+    console.log(convertGroupConversation);
     if (allConnversation && allConnversation.length > 0) {
-      const sortConversation = allConnversation.sort(
-        (a: any, b: any) =>
-          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-      );
-      handleGetUserConversation(sortConversation, id)
+      handleGetUserConversation(allConnversation, id)
         .then((result) => {
-          return res.status(200).json(result);
+          const newReuslt = [...convertGroupConversation, ...result];
+          const sortConversation = newReuslt.sort(
+            (a: any, b: any) =>
+              new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+          );
+          return res.status(200).json(sortConversation);
         })
         .catch((err) => {
           console.error(err);
@@ -69,6 +81,25 @@ export const getAllConversationByUser = async (req: Request, res: Response) => {
     console.error(err);
     res.sendStatus(400);
   }
+};
+
+const handleConvertGroupConversation = async (data: any[]) => {
+  const list = [];
+  for (let item of data) {
+    const temp = {
+      type: item.type,
+      idConversation: item.id,
+      lastMessage: item.lastMessage,
+      updatedAt: item.updatedAt,
+      lastSend: item.lastSend,
+      groupName: item.groupName,
+      avatarGroup: item.avatarGroup,
+      member: item.member,
+      lastActive: await calculatorLastActive(item.lastActive),
+    };
+    list.push(temp);
+  }
+  return Promise.all(list);
 };
 
 const handleGetUserConversation = async (sortConversation: any, id: String) => {

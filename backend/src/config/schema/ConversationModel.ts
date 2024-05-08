@@ -6,8 +6,9 @@ const ConversationSchema = new Schema(
     lastMessage: { type: String, ref: "Message" },
     lastSend: { type: String, ref: "User" },
     member: [{ type: String, ref: "User" }],
-    nameGroup: { type: String, required: false },
+    groupName: { type: String, required: false },
     avatarGroup: { type: String, required: false },
+    lastActive: { type: Date, required: false },
   },
   {
     timestamps: true,
