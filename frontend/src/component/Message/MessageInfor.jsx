@@ -47,7 +47,7 @@ function MessageInfor({ contactData }) {
             <div className="mess-infor-wrap-avatar">
               <img
                 className="mess-infor-avatar-infor"
-                src={contactData.avatar}
+                src={contactData.avatar || contactData.avatarGroup}
                 alt=""
               />
               <div className="mess-infor-nickname flex">

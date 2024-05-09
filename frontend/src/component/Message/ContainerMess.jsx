@@ -1,11 +1,4 @@
-import React, {
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-  useContext,
-  memo,
-} from "react";
+import React, { useEffect, useRef, useState, useContext, memo } from "react";
 import "../../resource/style/Chat/containermess.css";
 import { ThemeContext } from "../../Context/ThemeContext";
 import { UserContext } from "../../Context/UserContext";
@@ -76,6 +69,7 @@ function ContainerMess({ contactData }) {
         idConversation: contactData.idConversation,
         mess: mess,
       };
+
       socket.current.emit("send-mess", data);
       setMessages((prevMessage) => {
         if (Array.isArray(prevMessage)) {
@@ -85,15 +79,26 @@ function ContainerMess({ contactData }) {
         }
       });
       setContact((prevState) => {
-        const filter = prevState.map((item) => {
+        let itemReviece = {};
+        const filter = prevState.filter((item) => {
           if (item.idConversation == data.idConversation) {
             item.lastMessage = data.mess;
             item.lastSend = userData._id;
+            itemReviece = item;
+          } else {
             return item;
           }
-          return item;
         });
-        return filter;
+        return [itemReviece, ...filter];
+        // const filter = prevState.map((item) => {
+        //   if (item.idConversation == data.idConversation) {
+        //     item.lastMessage = data.mess;
+        //     item.lastSend = userData._id;
+        //     return item;
+        //   }
+        //   return item;
+        // });
+        // return filter;
       });
       setMess("");
     }
@@ -158,7 +163,7 @@ function ContainerMess({ contactData }) {
         <div className="top-container flex">
           <div className="flex">
             <div className="zavatar">
-              <img src={contactData.avatar} alt="" />
+              <img src={contactData.avatar || contactData.avatarGroup} alt="" />
             </div>
             <div className="friend-mess-infor">
               <h3>{contactData.username || contactData.groupName}</h3>
@@ -199,9 +204,12 @@ function ContainerMess({ contactData }) {
                       item.sender === userData._id ? "my-mess" : ""
                     } flex`}
                   >
-                    <img src={contactData.avatar} alt="" />
+                    <img
+                      src={contactData.avatar || contactData.avatarGroup}
+                      alt=""
+                    />
                     <div className="detail-mess">
-                      <p className="name-mess">{contactData.username}</p>
+                      <p className="name-mess">{contactData.userData}</p>
                       <p className="text-mess">{item.message}</p>
                       <div className="time-mess">
                         <p>10:30</p>

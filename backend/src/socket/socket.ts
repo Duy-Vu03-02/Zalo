@@ -54,9 +54,7 @@ io.on("connection", (socket: Socket) => {
         lastSend: data.idSend,
         idConversation: data.idConversation,
       });
-      socket
-        .to(id)
-        .emit("recieve-mess", { sender: data.idSend, message: data.mess });
+      socket.to(id).emit("recieve-mess", { resData });
     }
   });
 

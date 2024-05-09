@@ -59,12 +59,13 @@ export const getAllConversationByUser = async (req: Request, res: Response) => {
     const convertGroupConversation = await handleConvertGroupConversation(
       allGroupConversation
     );
-    console.log(convertGroupConversation);
     if (allConnversation && allConnversation.length > 0) {
       handleGetUserConversation(allConnversation, id)
         .then((result) => {
-          const newReuslt = [...convertGroupConversation, ...result];
-          const sortConversation = newReuslt.sort(
+          // coomit phan group
+          // const newReuslt = [...convertGroupConversation, ...result];
+
+          const sortConversation = result.sort(
             (a: any, b: any) =>
               new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
           );
@@ -95,6 +96,7 @@ const handleConvertGroupConversation = async (data: any[]) => {
       groupName: item.groupName,
       avatarGroup: item.avatarGroup,
       member: item.member,
+      idChatWith: item.id,
       lastActive: await calculatorLastActive(item.lastActive),
     };
     list.push(temp);

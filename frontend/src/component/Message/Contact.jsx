@@ -88,18 +88,21 @@ function Contact({ handleChangeContact }) {
   useEffect(() => {
     if (socket.current) {
       socket.current.on("recieve-lastmess", (data) => {
-        console.log(data);
         setContact((prevState) => {
-          const filter = prevState.map((item) => {
+          let itemReviece = {};
+          const filter = prevState.filter((item) => {
             if (item.idConversation == data.idConversation) {
               item.lastMessage = data.lastMessage;
               item.lastSend = data.lastSend;
+              itemReviece = item;
+            } else {
               return item;
             }
-            return item;
           });
-          console.log(filter);
-          return filter;
+          console.log(itemReviece);
+          // console.log(filter);
+
+          return [itemReviece, ...filter];
         });
       });
     }
@@ -297,8 +300,11 @@ function Contact({ handleChangeContact }) {
         return [
           {
             _id: response.data._id,
-            username: response.data.groupName,
-            avatar: response.data.avatar,
+            groupName: response.data.groupName,
+            avatarGroup: response.data.avatarGroup,
+            type: response.data.type,
+            lastMessage: response.data.lastMessage,
+            member: response.data.member,
           },
           ...prevState,
         ];
@@ -656,7 +662,6 @@ function Contact({ handleChangeContact }) {
                         />
                       </div>
                       <div className="list-contact">
-                        {console.log(contact)}
                         {contact &&
                           contact.map((item, index) => (
                             <li
@@ -811,11 +816,22 @@ function Contact({ handleChangeContact }) {
                       <div className="contact-detial-conversation flex">
                         <div className="flex">
                           <div className="contact-avatar-friend">
-                            <img src={data.avatar} alt="" />
+                            <img
+                              src={
+                                data.type === "single"
+                                  ? data.avatar
+                                  : data.avatarGroup
+                              }
+                              alt=""
+                            />
                           </div>
                           <div className="contact-overview-mess">
-                            <h3>{data.username || data.groupName}</h3>
-                            {data.type !== "single" ? (
+                            <h3>
+                              {data.type == "single"
+                                ? data.username
+                                : data.groupName}
+                            </h3>
+                            {data.type == "single" ? (
                               <p>
                                 {data.lastMessage
                                   ? `${
@@ -829,7 +845,7 @@ function Contact({ handleChangeContact }) {
                               <p>
                                 {data.lastMessage
                                   ? data.lastMessage
-                                  : `Gửi lời chào đến ${data.username}`}{" "}
+                                  : `Gửi lời chào đến ${data.groupName}`}{" "}
                               </p>
                             )}
                           </div>
