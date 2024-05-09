@@ -26,7 +26,7 @@ export const KET_BAN = "Kết bạn";
 export const DONG_Y = "Đồng ý";
 export const BAN_BE = "Bạn bè";
 export const XOA_BAN_BE = "Xóa kết bạn";
-export const HUY = "Hủy";
+export const BO_QUA = "Bỏ qua";
 export const ACTIVE = "Active";
 
 export const calculatorLastActive = async (timeInput: any) => {
@@ -127,7 +127,7 @@ export const userByPhone = async (req: Request, res: Response) => {
             newRespone.state = HUY_LOI_MOI_KET_BAN;
           } else if (friendRecieves.includes(number._id.toString())) {
             newRespone.state = DONG_Y;
-            newRespone.cancel = HUY;
+            newRespone.cancel = BO_QUA;
           } else {
             newRespone.state = KET_BAN;
           }
@@ -198,7 +198,7 @@ export const crudfriend = async (req: Request, res: Response) => {
         }
       }
 
-      if (state === HUY) {
+      if (state === BO_QUA) {
         const zUser = user.friendRecieve.indexOf(friendId);
         const zFriend = friend.friendSend.indexOf(userId);
         if (zUser >= 0 && zFriend >= 0) {

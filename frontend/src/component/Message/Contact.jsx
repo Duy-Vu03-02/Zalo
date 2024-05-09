@@ -1,11 +1,4 @@
-import React, {
-  useEffect,
-  useLayoutEffect,
-  useState,
-  useContext,
-  useRef,
-  memo,
-} from "react";
+import React, { useEffect, useState, useContext, useRef, memo } from "react";
 import { UserContext } from "../../Context/UserContext";
 import { ContactContext } from "../../Context/ContactConext";
 import "../../resource/style/Chat/contact.css";
@@ -105,7 +98,6 @@ function Contact({ handleChangeContact }) {
       socket.current.on("recieve-count-seen", (data) => {
         setContact((prevState) => {
           const filter = prevState.map((item) => {
-            console.log(item.idChatWith + " - " + data.idConversation);
             if (item.idConversation == data.idConversation) {
               item.countMessseen = data.countMessseen;
             }
@@ -113,6 +105,19 @@ function Contact({ handleChangeContact }) {
           });
           return filter;
         });
+      });
+      socket.current.on("state-friend-active", (data) => {
+        // if (data.state) {
+        //   setContact((prevState) => {
+        //     const filter = prevState.map((item) => {
+        //       if (item.idChatWith == data.idFriendActive) {
+        //         item.lastActive = data.text;
+        //       }
+        //       return item;
+        //     });
+        //     return filter;
+        //   });
+        // }
       });
     }
   }, [socket.current]);

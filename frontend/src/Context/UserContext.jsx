@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState, useRef } from "react";
+import { createContext, useEffect, useState, useRef, useContext } from "react";
 import io from "socket.io-client";
 
 export const UserContext = createContext(null);
@@ -9,6 +9,13 @@ export const UserProvider = ({ children }) => {
     transports: ["websocket"],
   };
   const socket = useRef();
+
+  useEffect(() => {
+    if (userData !== null) {
+      socket.current = io("http://localhost:8080");
+      // socket.current.emit("add-user", { id: userData._id });
+    }
+  }, [userData]);
 
   return (
     <UserContext.Provider value={{ userData, socket, setUserData }}>

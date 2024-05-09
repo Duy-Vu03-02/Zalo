@@ -6,7 +6,7 @@ export const ContactContext = createContext(null);
 
 export const ContactProvider = ({ children }) => {
   const [contact, setContact] = useState([]);
-  const { userData } = useContext(UserContext);
+  const { userData, socket } = useContext(UserContext);
 
   useEffect(() => {
     fetchConversation();
@@ -19,6 +19,8 @@ export const ContactProvider = ({ children }) => {
         { id: userData._id }
       );
       setContact(response.data);
+      const listID = response.data.map((item) => item.idChatWith);
+      socket.current.emit("add-user", { id: userData._id, listFriend: listID });
     }
   };
 

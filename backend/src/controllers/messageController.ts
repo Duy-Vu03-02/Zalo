@@ -8,6 +8,7 @@ import {
 } from "../config/schema/MessageModel";
 import { forEach, last, now } from "lodash";
 import { ACTIVE, calculatorLastActive } from "./UserController";
+import { send } from "process";
 
 export const getAllMessageByUser = async (req: Request, res: Response) => {
   try {
@@ -35,7 +36,16 @@ export const createMessagesByConversation = async (data: any) => {
         idConversation,
         sender,
         message,
+        seen: false,
       });
+
+      const conversation = await ConversationModel.findById(idConversation);
+      if (conversation) {
+        conversation.countMessseen = (
+          parseInt(conversation.countMessseen) + 1
+        ).toString();
+        await conversation.save();
+      }
     } else {
     }
   } catch (err) {

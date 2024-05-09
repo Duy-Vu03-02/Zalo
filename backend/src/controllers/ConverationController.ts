@@ -4,6 +4,7 @@ import { ConversationModel } from "../config/schema/ConversationModel";
 import { MessagesModel } from "../config/schema/MessageModel";
 import { forEach, last, now } from "lodash";
 import { ACTIVE, calculatorLastActive } from "./UserController";
+import { Model } from "mongoose";
 
 export const TYPE_SINGLE = "single";
 export const TYPE_GROUP = "group";
@@ -18,6 +19,7 @@ export const createConversation = async (userId: any, friendId: any) => {
         type: TYPE_SINGLE,
         lastMessage: "",
         member: [userId, friendId],
+        countMesssenn: 0,
       });
       await newConversation.save();
       return;
@@ -38,11 +40,23 @@ export const createGroupConversation = async (req: Request, res: Response) => {
       member: listMember,
       groupName: groupName,
       avatarGroup: avatarGroup,
+      countMesssenn: 0,
     });
     await newConversation.save();
     res.status(200).json(newConversation);
   } catch (err) {
     console.error(err);
+  }
+};
+
+export const getAllIDConversationByUser = async (id: String) => {
+  try {
+    const allConnversation = await ConversationModel.find({
+      $and: [{ member: { $in: [id] } }, { type: TYPE_SINGLE }],
+    }).select("_id");
+    console.log(allConnversation);
+  } catch (err) {
+    console.log(err);
   }
 };
 
@@ -56,9 +70,10 @@ export const getAllConversationByUser = async (req: Request, res: Response) => {
       $and: [{ member: { $in: [id] } }, { type: TYPE_GROUP }],
     });
 
-    const convertGroupConversation = await handleConvertGroupConversation(
-      allGroupConversation
-    );
+    // coomit phan group
+    // const convertGroupConversation = await handleConvertGroupConversation(
+    //   allGroupConversation
+    // );
     if (allConnversation && allConnversation.length > 0) {
       handleGetUserConversation(allConnversation, id)
         .then((result) => {
@@ -98,6 +113,7 @@ const handleConvertGroupConversation = async (data: any[]) => {
       member: item.member,
       idChatWith: item.id,
       lastActive: await calculatorLastActive(item.lastActive),
+      countMessseen: item.countMessseen,
     };
     list.push(temp);
   }
@@ -112,6 +128,8 @@ const handleGetUserConversation = async (sortConversation: any, id: String) => {
       idConversation: item.id,
       lastMessage: item.lastMessage,
       updatedAt: item.updatedAt,
+      lastSend: item.lastSend,
+      countMessseen: item.countMessseen,
       username: "",
       avatar: "",
       idChatWith: "",
@@ -131,6 +149,28 @@ const handleGetUserConversation = async (sortConversation: any, id: String) => {
     }
   }
   return Promise.all(listMember);
+};
+
+export const updateCountSeenConversation = async (data: any) => {
+  try {
+    const { idConversation, number, idSeend } = data;
+    const conversation = await ConversationModel.findById(idConversation);
+    if (conversation) {
+      if (number == -1) {
+        if (idSeend !== conversation.lastSend) {
+          conversation.countMessseen = "0";
+        }
+      } else {
+        conversation.countMessseen = (
+          parseInt(conversation.countMessseen) + number
+        ).toString();
+      }
+    }
+    await conversation.save();
+    return conversation.countMessseen;
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 export const updateLastMessgae = async (data: any) => {

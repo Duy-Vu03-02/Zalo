@@ -24,12 +24,12 @@ function Chat({ handleLogout }) {
   const CurrentComponent = listComponent[menuActive];
   const [isShowStartup, setIsShoeStartup] = useState(false);
 
-  useEffect(() => {
-    if (userData !== null) {
-      socket.current = io("http://localhost:8080");
-      socket.current.emit("add-user", { id: userData._id });
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (userData !== null) {
+  //     socket.current = io("http://localhost:8080");
+  //     socket.current.emit("add-user", { id: userData._id });
+  //   }
+  // }, []);
 
   const handleChangeMenuActive = (index) => {
     setMenuactive(index);

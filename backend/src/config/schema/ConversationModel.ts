@@ -9,6 +9,7 @@ const ConversationSchema = new Schema(
     groupName: { type: String, required: false },
     avatarGroup: { type: String, required: false },
     lastActive: { type: Date, required: false },
+    countMessseen: { type: String, required: false },
   },
   {
     timestamps: true,

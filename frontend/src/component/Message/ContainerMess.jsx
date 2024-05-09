@@ -163,7 +163,7 @@ function ContainerMess({ contactData }) {
             </div>
             <div className="friend-mess-infor">
               <h3>{contactData.username || contactData.groupName}</h3>
-              <p>
+              <div>
                 {contactData.lastActive !== "Active" ? (
                   `Truy cập ${contactData.lastActive} ${
                     contactData.lastActive == "vừa xong" ? "" : "trước"
@@ -177,7 +177,7 @@ function ContainerMess({ contactData }) {
                     <p>Đang hoạt động</p>
                   </div>
                 )}
-              </p>
+              </div>
             </div>
           </div>
           <div className="group-choice flex">

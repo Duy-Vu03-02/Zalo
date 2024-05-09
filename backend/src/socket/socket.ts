@@ -1,12 +1,15 @@
 import express from "express";
 import { Socket } from "socket.io";
 import { getUsersById } from "../config/schema/UserModel";
-import { updateLastMessgae } from "../controllers/ConverationController";
+import {
+  updateLastMessgae,
+  updateCountSeenConversation,
+} from "../controllers/ConverationController";
 import { createMessagesByConversation } from "../controllers/MessageController";
 import {
   KET_BAN,
   DONG_Y,
-  HUY,
+  BO_QUA,
   HUY_LOI_MOI_KET_BAN,
   BAN_BE,
   XOA_BAN_BE,
@@ -37,6 +40,16 @@ io.on("connection", (socket: Socket) => {
   socket.on("add-user", async (data: any) => {
     listRoom.set(data.id, socket.id);
     await handleStoreDate(ACTIVE, socket.id);
+
+    for (let id of data.listFriend) {
+      socket
+        .to(listRoom.get(id))
+        .emit("state-friend-active", {
+          idFriendActive: id,
+          state: true,
+          text: ACTIVE,
+        });
+    }
   });
 
   socket.on("send-mess", async (data: any) => {
@@ -47,14 +60,27 @@ io.on("connection", (socket: Socket) => {
       message: data.mess,
     };
     await createMessagesByConversation(resData);
-    updateLastMessgae(resData);
+    await updateLastMessgae(resData);
+    const countMessseen = await updateCountSeenConversation({
+      idConversation: data.idConversation,
+      number: 1,
+    });
+
     if (id) {
       socket.to(id).emit("recieve-lastmess", {
         lastMessage: data.mess,
         lastSend: data.idSend,
         idConversation: data.idConversation,
       });
-      socket.to(id).emit("recieve-mess", { resData });
+      socket
+        .to(id)
+        .emit("recieve-mess", { sender: data.idSend, message: data.mess });
+      if (countMessseen) {
+        socket.to(id).emit("recieve-count-seen", {
+          countMessseen: countMessseen,
+          idConversation: data.idConversation,
+        });
+      }
     }
   });
 
@@ -70,7 +96,7 @@ io.on("connection", (socket: Socket) => {
       if (idRecieve) {
         socket.to(idRecieve).emit("recieve-crud-fr", {
           mess: DONG_Y,
-          cancel: HUY,
+          cancel: BO_QUA,
           id: data.userId,
         });
       }
@@ -93,7 +119,7 @@ io.on("connection", (socket: Socket) => {
       }
     }
 
-    if (data.state === HUY) {
+    if (data.state === BO_QUA) {
       socket.emit("recieve-crud-fr", { mess: KET_BAN, id: data.friendId });
       if (idRecieve) {
         socket
@@ -124,19 +150,30 @@ io.on("connection", (socket: Socket) => {
       }
     }
   });
+
+  socket.on("seen-mess", async (data) => {
+    const countMessseen = await updateCountSeenConversation({
+      number: -1,
+      idConversation: data.idConversation,
+      idSeend: data.idSeend,
+    });
+    if (countMessseen) {
+      const idChatWith = listRoom.get(data.idChatWith);
+      if (idChatWith) {
+        socket.emit("recieve-count-seen", {
+          countMessseen: countMessseen,
+          idConversation: data.idConversation,
+        });
+      }
+    }
+  });
 });
 
 const handleStoreDate = async (value: any, id: any) => {
-  // if (value === ACTIVE) {
-  //   console.log("vao");
-  // } else {
-  //   console.log("ra");
-  // }
   listRoom.forEach(async (item, key) => {
     if (item == id) {
       const user = await getUsersById(key);
       if (user) {
-        // console.log("tan cung");
         user.lastActive = value;
         user.save();
       }
