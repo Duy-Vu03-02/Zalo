@@ -198,6 +198,27 @@
   color: #7589a3;
   font-weight: 400;
 }
+.contact-last-onl {
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: end;
+}
+.contact-last-onl .wrap-count-seen {
+  background-color: #db2222;
+  height: 18px;
+  width: 18px;
+  border-radius: 50%;
+  padding: 0;
+}
+.contact-last-onl .count-seen {
+  font-size: 12px;
+  font-weight: bold;
+  display: flex;
+  color: white;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+}
 .contact-last-onl p {
   font-size: 13px;
   font-weight: 500;

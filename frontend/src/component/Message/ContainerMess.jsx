@@ -56,9 +56,15 @@ function ContainerMess({ contactData }) {
     if (socket.current) {
       socket.current.on("recieve-mess", (data) => {
         setMessages((prevMessage) => [...prevMessage, data]);
+        console.log(messages);
+      });
+      socket.current.emit("seen-mess", {
+        idConversation: contactData.idConversation,
+        idSeend: userData._id,
+        idChatWith: contactData.idChatWith,
       });
     }
-  }, []);
+  }, [contactData]);
 
   const handleSendMess = async (e) => {
     e.preventDefault();
@@ -90,15 +96,6 @@ function ContainerMess({ contactData }) {
           }
         });
         return [itemReviece, ...filter];
-        // const filter = prevState.map((item) => {
-        //   if (item.idConversation == data.idConversation) {
-        //     item.lastMessage = data.mess;
-        //     item.lastSend = userData._id;
-        //     return item;
-        //   }
-        //   return item;
-        // });
-        // return filter;
       });
       setMess("");
     }
@@ -145,7 +142,6 @@ function ContainerMess({ contactData }) {
     };
     fetch();
   }, [contactData]);
-
   const handleChangMess = (e) => {
     setMess(e.target.value);
   };

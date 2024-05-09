@@ -99,10 +99,19 @@ function Contact({ handleChangeContact }) {
               return item;
             }
           });
-          console.log(itemReviece);
-          // console.log(filter);
-
           return [itemReviece, ...filter];
+        });
+      });
+      socket.current.on("recieve-count-seen", (data) => {
+        setContact((prevState) => {
+          const filter = prevState.map((item) => {
+            console.log(item.idChatWith + " - " + data.idConversation);
+            if (item.idConversation == data.idConversation) {
+              item.countMessseen = data.countMessseen;
+            }
+            return item;
+          });
+          return filter;
         });
       });
     }
@@ -850,7 +859,7 @@ function Contact({ handleChangeContact }) {
                             )}
                           </div>
                         </div>
-                        <div className="contact-last-onl">
+                        <div className="contact-last-onl flex">
                           <p>
                             {data.lastActive === "Active" ? (
                               <RxDotFilled
@@ -860,6 +869,14 @@ function Contact({ handleChangeContact }) {
                               data.lastActive
                             )}
                           </p>
+                          {parseInt(data.countMessseen) > 0 &&
+                            data.lastSend !== userData._id && (
+                              <div className="wrap-count-seen">
+                                <p className="count-seen">
+                                  {parseInt(data.countMessseen)}
+                                </p>
+                              </div>
+                            )}
                         </div>
                       </div>
                     </li>
