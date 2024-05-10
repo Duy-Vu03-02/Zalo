@@ -20,9 +20,10 @@ function Chat({ handleLogout }) {
   const topMenu = [mess, addressbook, todo];
   const bottomMenu = [cloud, toolbox, setting];
   const [menuActive, setMenuactive] = useState(0);
-  const listComponent = [Message, AddressBook, ToDo, Clod, ToolBox, Setting];
+  const listComponent = [Message, AddressBook, ToDo, Clod, ToolBox];
   const CurrentComponent = listComponent[menuActive];
   const [isShowStartup, setIsShoeStartup] = useState(false);
+  const [showSetting, setShowSetting] = useState(false);
 
   // useEffect(() => {
   //   if (userData !== null) {
@@ -32,7 +33,14 @@ function Chat({ handleLogout }) {
   // }, []);
 
   const handleChangeMenuActive = (index) => {
-    setMenuactive(index);
+    if (index !== 5) {
+      setMenuactive(index);
+    } else {
+      handleShowSetting(true);
+    }
+  };
+  const handleShowSetting = (value) => {
+    setShowSetting(value);
   };
 
   const handleShowStartup = () => {
@@ -94,6 +102,9 @@ function Chat({ handleLogout }) {
         </div>
         <div>
           <CurrentComponent />
+        </div>
+        <div>
+          {showSetting && <Setting handleShowSetting={handleShowSetting} />}
         </div>
       </div>
     </>

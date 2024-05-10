@@ -253,7 +253,7 @@ export const loginBySessiToken = async (req: Request, res: Response) => {
   try {
     const { sessiontoken } = req.body;
     const user = await getUserBySessionToken(sessiontoken).select(
-      "authentication.sessionToken avatar"
+      "authentication.sessionToken avatar phone"
     );
     if (!user) {
       return res.status(205).json("Không tồn tại user");
@@ -278,7 +278,7 @@ export const loginByAccount = async (req: Request, res: Response) => {
       return res.sendStatus(400);
     } else {
       const user = await getUserByPhone(phone).select(
-        "authentication.phone authentication.password authentication.sessionToken avatar"
+        "phone authentication.password authentication.sessionToken avatar"
       );
       if (!user) {
         return res.sendStatus(404);
