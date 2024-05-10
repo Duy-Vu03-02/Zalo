@@ -48,9 +48,10 @@
 .infor-container {
   height: calc(100vh - 180px);
   overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: end;
+  /* display: flex; */
+  /* flex-direction: column; */
+  /* justify-content: end; */
+  /* place-content: flex-end; */
 }
 
 .footer-chat {

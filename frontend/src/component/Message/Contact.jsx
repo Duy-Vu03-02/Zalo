@@ -226,7 +226,7 @@ function Contact({ handleChangeContact }) {
 
   const handleChoiceContact = (value) => {
     storeLocal(value);
-    handleChangeContact(value);
+    handleChangeContact({ ...value, userId: userData._id });
     setIsSearch((prevState) => {
       return {
         ...prevState,

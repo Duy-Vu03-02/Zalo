@@ -60,6 +60,34 @@ export const getAllIDConversationByUser = async (id: String) => {
   }
 };
 
+export const getConversationByFriendID = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { userId, friendId } = req.body;
+    const conversation = await ConversationModel.findOne({
+      member: { $all: [userId, friendId] },
+    });
+    if (conversation) {
+      const newConversation: any = {
+        idConversation: conversation._id,
+        countMessseen: conversation.countMessseen,
+        type: conversation.type,
+        idChatWith: friendId,
+        lastMessage: conversation.lastMessage,
+        lastSend: conversation.lastSend,
+      };
+      res.status(200).json(newConversation);
+    } else {
+      res.sendStatus(204);
+    }
+  } catch (err) {
+    console.error(err);
+    res.sendStatus(400);
+  }
+};
+
 export const getAllConversationByUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.body;

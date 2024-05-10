@@ -4,6 +4,7 @@ import { getUsersById } from "../config/schema/UserModel";
 import {
   updateLastMessgae,
   updateCountSeenConversation,
+  getAllIDConversationByUser,
 } from "../controllers/ConverationController";
 import { createMessagesByConversation } from "../controllers/MessageController";
 import {
@@ -42,13 +43,11 @@ io.on("connection", (socket: Socket) => {
     await handleStoreDate(ACTIVE, socket.id);
 
     for (let id of data.listFriend) {
-      socket
-        .to(listRoom.get(id))
-        .emit("state-friend-active", {
-          idFriendActive: id,
-          state: true,
-          text: ACTIVE,
-        });
+      socket.to(listRoom.get(id)).emit("state-friend-active", {
+        idFriendActive: id,
+        state: true,
+        text: ACTIVE,
+      });
     }
   });
 
