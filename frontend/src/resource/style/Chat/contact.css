@@ -197,6 +197,10 @@
   font-size: 14px;
   color: #7589a3;
   font-weight: 400;
+  width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .contact-last-onl {
   flex-direction: column;
