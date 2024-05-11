@@ -183,7 +183,8 @@ export const crudfriend = async (req: Request, res: Response) => {
           friend.friend.push(userId);
           await friend.save();
           await user.save();
-          createConversation(userId, friendId);
+          const newConversation = createConversation(userId, friendId);
+          return res.status(200).json(newConversation);
         }
       }
 
@@ -336,6 +337,23 @@ export const register = async (req: Request, res: Response) => {
   } catch (err) {
     console.error(err);
     return res.sendStatus(400);
+  }
+};
+
+export const updateAvatar = async (req: Request, res: Response) => {
+  try {
+    const { url, userId } = req.body;
+    const user = await UserModel.findById(userId);
+    if (user) {
+      user.avatar = url;
+      user.save();
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(204);
+    }
+  } catch (err) {
+    console.error(err);
+    res.sendStatus(400);
   }
 };
 

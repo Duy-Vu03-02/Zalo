@@ -22,7 +22,7 @@ export const createConversation = async (userId: any, friendId: any) => {
         countMesssenn: 0,
       });
       await newConversation.save();
-      return;
+      return newConversation;
     } else {
       return;
     }

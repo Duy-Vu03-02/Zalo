@@ -30,7 +30,7 @@ const io = socket(server, {
 
 const listRoom = new Map();
 
-io.on("connection", (socket: Socket) => {
+io.on("connection", async (socket: Socket) => {
   // console.log("user connection: ", socket.id);
 
   socket.on("disconnect", async () => {
@@ -42,13 +42,16 @@ io.on("connection", (socket: Socket) => {
     listRoom.set(data.id, socket.id);
     await handleStoreDate(ACTIVE, socket.id);
 
-    for (let id of data.listFriend) {
-      socket.to(listRoom.get(id)).emit("state-friend-active", {
-        idFriendActive: id,
-        state: true,
-        text: ACTIVE,
-      });
-    }
+    // socket friend onl-offfline
+    // if (data.listFriend) {
+    //   for (let id of data.listFriend) {
+    //     socket.to(listRoom.get(id)).emit("state-friend-active", {
+    //       idFriendActive: id,
+    //       state: true,
+    //       text: ACTIVE,
+    //     });
+    //   }
+    // }
   });
 
   socket.on("send-mess", async (data: any) => {
@@ -92,6 +95,7 @@ io.on("connection", (socket: Socket) => {
         mess: HUY_LOI_MOI_KET_BAN,
         id: data.friendId,
       });
+
       if (idRecieve) {
         socket.to(idRecieve).emit("recieve-crud-fr", {
           mess: DONG_Y,
