@@ -19,8 +19,13 @@ export const ContactProvider = ({ children }) => {
         { id: userData._id }
       );
       setContact(response.data);
-      const listID = response.data.map((item) => item.idChatWith);
-      socket.current.emit("add-user", { id: userData._id, listFriend: listID });
+      // if (response.data && response.data.length > 0) {
+      //   const listID = response.data.map((item) => item.idChatWith);
+      //   socket.current.emit("add-user", {
+      //     id: userData._id,
+      //     listFriend: listID,
+      //   });
+      // }
     }
   };
 

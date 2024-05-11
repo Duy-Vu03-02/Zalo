@@ -13,7 +13,7 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     if (userData !== null) {
       socket.current = io("http://localhost:8080");
-      // socket.current.emit("add-user", { id: userData._id });
+      socket.current.emit("add-user", { id: userData._id });
     }
   }, [userData]);
 

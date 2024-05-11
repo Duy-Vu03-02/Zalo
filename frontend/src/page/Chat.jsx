@@ -17,10 +17,17 @@ import setting from "../resource/svg/chat/setting.svg";
 
 function Chat({ handleLogout }) {
   const { userData, socket } = useContext(UserContext);
+
   const topMenu = [mess, addressbook, todo];
   const bottomMenu = [cloud, toolbox, setting];
   const [menuActive, setMenuactive] = useState(0);
-  const listComponent = [Message, AddressBook, ToDo, Clod, ToolBox];
+  const listComponent = [
+    <Message />,
+    <AddressBook />,
+    <ToDo />,
+    <Clod />,
+    <ToolBox />,
+  ];
   const CurrentComponent = listComponent[menuActive];
   const [isShowStartup, setIsShoeStartup] = useState(false);
   const [showSetting, setShowSetting] = useState(false);
@@ -100,9 +107,7 @@ function Chat({ handleLogout }) {
             </div>
           </div>
         </div>
-        <div>
-          <CurrentComponent />
-        </div>
+        <div>{CurrentComponent}</div>
         <div>
           {showSetting && <Setting handleShowSetting={handleShowSetting} />}
         </div>

@@ -9,17 +9,30 @@
 }
 .account-infor {
   position: relative;
-  height: 285px;
+  height: 240px;
   background-color: white;
   margin-bottom: 5px;
   border-radius: 5px;
 }
+
 .account-infor h3,
 .user-infor h3 {
-  padding: 12px 0;
+  padding: 13px 0;
   margin: 0;
   font-weight: 500;
   margin-left: 20px;
+  display: flex;
+  align-items: center;
+  align-content: center;
+}
+.box-setting .icon-back {
+  font-weight: 100;
+  color: #7589a3;
+  width: 23px;
+  height: 23px;
+  margin-right: 5px;
+  border-radius: 50%;
+  cursor: pointer;
 }
 .account-infor .btn-close {
   width: 25px;
@@ -30,6 +43,7 @@
   border-radius: 50%;
   padding: 5px;
 }
+/* .account-infor .icon-back:hover, */
 .account-infor .btn-close:hover {
   background-color: #dfe2e7;
   cursor: pointer;
@@ -48,7 +62,7 @@
 }
 .account-infor .avatar-img {
   position: absolute;
-  top: 120px;
+  top: 70px;
   left: 35%;
 }
 .account-infor .icon-camera {
@@ -60,10 +74,11 @@
   border-radius: 50%;
   background-color: #eaedf0;
   cursor: pointer;
-  top: 203px;
+  top: 153px;
   left: 57%;
 }
 .account-infor .username,
+.box-setting.icon-back,
 .box-setting .icon-edit {
   text-align: center;
   /* padding: 3px; */
@@ -100,4 +115,10 @@
 }
 .box-setting .wrap-btn-update:hover {
   background-color: #dfe2e7;
+}
+.box-setting .change-avatar {
+  position: relative;
+  height: calc(535px - 55px);
+  border-radius: 5px;
+  background-color: white;
 }

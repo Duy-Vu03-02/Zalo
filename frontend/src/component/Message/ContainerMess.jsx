@@ -153,9 +153,16 @@ function ContainerMess({ contactData }) {
   const handleTableColor = () => {
     tableColor ? setTableColr(false) : setTableColr(true);
   };
+  const handleSeenMess = () => {
+    socket.current.emit("seen-mess", {
+      idConversation: contactData.idConversation,
+      idSeend: userData._id,
+      idChatWith: contactData.idChatWith,
+    });
+  };
   return (
     <>
-      <div className="container-containermess">
+      <div className="container-containermess" onClick={handleSeenMess}>
         <div className="top-container flex">
           <div className="flex">
             <div className="zavatar">

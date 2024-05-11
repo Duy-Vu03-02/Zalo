@@ -106,19 +106,21 @@ function Contact({ handleChangeContact }) {
           return filter;
         });
       });
-      socket.current.on("state-friend-active", (data) => {
-        // if (data.state) {
-        //   setContact((prevState) => {
-        //     const filter = prevState.map((item) => {
-        //       if (item.idChatWith == data.idFriendActive) {
-        //         item.lastActive = data.text;
-        //       }
-        //       return item;
-        //     });
-        //     return filter;
-        //   });
-        // }
-      });
+      // socket friend onl-offfline
+
+      // socket.current.on("state-friend-active", (data) => {
+      // if (data.state) {
+      //   setContact((prevState) => {
+      //     const filter = prevState.map((item) => {
+      //       if (item.idChatWith == data.idFriendActive) {
+      //         item.lastActive = data.text;
+      //       }
+      //       return item;
+      //     });
+      //     return filter;
+      //   });
+      // }
+      // });
     }
   }, [socket.current]);
 
@@ -496,7 +498,7 @@ function Contact({ handleChangeContact }) {
                       </div>
                       {dataUserPhone.data !== null && (
                         <div className="wrap-result-phone flex">
-                          <div className="flex">
+                          <div className="flex" style={{ maxWidth: "200px" }}>
                             <img src={dataUserPhone.data.avatar} alt="" />
                             <div>
                               <p className="username ">
