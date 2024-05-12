@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, memo } from "react";
+import React, { useState, useEffect, useContext, memo, useRef } from "react";
 import { UserContext } from "../Context/UserContext";
 import io from "socket.io-client";
 import "../resource/style/Chat/chat.css";
@@ -32,13 +32,26 @@ function Chat({ handleLogout }) {
   const CurrentComponent = listComponent[menuActive];
   const [isShowStartup, setIsShoeStartup] = useState(false);
   const [showSetting, setShowSetting] = useState(false);
-
+  const boxRef = useRef();
   // useEffect(() => {
   //   if (userData !== null) {
   //     socket.current = io("http://localhost:8080");
   //     socket.current.emit("add-user", { id: userData._id });
   //   }
   // }, []);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (boxRef.current && !boxRef.current.contains(event.target)) {
+        setIsShoeStartup(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [boxRef, setIsShoeStartup]);
 
   const handleChangeMenuActive = (index) => {
     if (index !== 5) {
@@ -66,7 +79,7 @@ function Chat({ handleLogout }) {
             <div className="chat-avatar-user">
               <img src={userData.avatar} alt="" onClick={handleShowStartup} />
               {isShowStartup && (
-                <div className="startup">
+                <div ref={boxRef} className="startup">
                   <p>{userData.username}</p>
                   <div>
                     <p>Hồ sơ của bạn</p>
