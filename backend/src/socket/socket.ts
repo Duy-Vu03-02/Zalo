@@ -74,9 +74,12 @@ io.on("connection", async (socket: Socket) => {
         lastSend: data.idSend,
         idConversation: data.idConversation,
       });
-      socket
-        .to(id)
-        .emit("recieve-mess", { sender: data.idSend, message: data.mess });
+      // Emit "recieve-mess" event only once
+      socket.to(id).emit("recieve-mess", {
+        sender: data.idSend,
+        message: data.mess,
+      });
+
       if (countMessseen) {
         socket.to(id).emit("recieve-count-seen", {
           countMessseen: countMessseen,
@@ -160,6 +163,7 @@ io.on("connection", async (socket: Socket) => {
       idConversation: data.idConversation,
       idSeend: data.idSeend,
     });
+
     if (countMessseen) {
       const idChatWith = listRoom.get(data.idChatWith);
       if (idChatWith) {

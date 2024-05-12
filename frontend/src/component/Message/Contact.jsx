@@ -97,17 +97,7 @@ function Contact({ handleChangeContact, showPageAddressBook }) {
           return [itemReviece, ...filter];
         });
       });
-      socket.current.on("recieve-count-seen", (data) => {
-        setContact((prevState) => {
-          const filter = prevState.map((item) => {
-            if (item.idConversation == data.idConversation) {
-              item.countMessseen = data.countMessseen;
-            }
-            return item;
-          });
-          return filter;
-        });
-      });
+      socket.current.on("recieve-count-seen", handleRecieveCountMess);
       // socket friend onl-offfline
 
       // socket.current.on("state-friend-active", (data) => {
@@ -124,7 +114,26 @@ function Contact({ handleChangeContact, showPageAddressBook }) {
       // }
       // });
     }
+    if (socket.current) {
+      return () => {
+        socket.current.off("recieve-lastmess");
+        socket.current.off("recieve-count-seen", handleRecieveCountMess);
+      };
+    }
   }, [socket.current]);
+
+  const handleRecieveCountMess = (data) => {
+    console.log(data);
+    setContact((prevState) => {
+      const filter = prevState.map((item) => {
+        if (item.idConversation == data.idConversation) {
+          item.countMessseen = data.countMessseen;
+        }
+        return item;
+      });
+      return filter;
+    });
+  };
 
   useEffect(() => {
     if (socket.current) {
@@ -764,7 +773,12 @@ function Contact({ handleChangeContact, showPageAddressBook }) {
                         Chưa đọc
                       </p>
                     ) : (
-                      "Liên hệ"
+                      <p
+                        onClick={() => handleChangeShowMessSeen(true)}
+                        className={`${allMessActive ? "" : "all-mess-active"}`}
+                      >
+                        Liên hệ
+                      </p>
                     )}
                   </div>
                   <hr

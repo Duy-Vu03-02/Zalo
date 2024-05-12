@@ -113,6 +113,12 @@ export const userByPhone = async (req: Request, res: Response) => {
       const friendRecieves = user.friendRecieve;
       const number = await getUserByPhone(phone).select("phone avatar");
 
+      if (number && number._id == id) {
+        return res.status(203).json({
+          state: "Không thể thêm bản thân thành bạn bè",
+        });
+      }
+
       if (number) {
         const checkInFriend = friends.includes(number._id.toString());
 

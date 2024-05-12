@@ -54,17 +54,23 @@ function ContainerMess({ contactData }) {
 
   useEffect(() => {
     if (socket.current) {
-      socket.current.on("recieve-mess", (data) => {
-        setMessages((prevMessage) => [...prevMessage, data]);
-        console.log(data);
-      });
+      socket.current.on("recieve-mess", handleRecieveMessage);
       socket.current.emit("seen-mess", {
         idConversation: contactData.idConversation,
         idSeend: userData._id,
         idChatWith: contactData.idChatWith,
       });
     }
+    return () => {
+      if (socket.current) {
+        socket.current.off("recieve-mess", handleRecieveMessage);
+      }
+    };
   }, [contactData]);
+
+  const handleRecieveMessage = (data) => {
+    setMessages((prevMessage) => [...prevMessage, data]);
+  };
 
   const handleSendMess = async (e) => {
     e.preventDefault();

@@ -183,6 +183,7 @@ export const updateCountSeenConversation = async (data: any) => {
   try {
     const { idConversation, number, idSeend } = data;
     const conversation = await ConversationModel.findById(idConversation);
+
     if (conversation) {
       if (number == -1) {
         if (idSeend !== conversation.lastSend) {
@@ -194,6 +195,7 @@ export const updateCountSeenConversation = async (data: any) => {
         ).toString();
       }
     }
+
     await conversation.save();
     return conversation.countMessseen;
   } catch (err) {

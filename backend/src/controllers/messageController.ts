@@ -41,9 +41,10 @@ export const createMessagesByConversation = async (data: any) => {
 
       const conversation = await ConversationModel.findById(idConversation);
       if (conversation) {
-        conversation.countMessseen = (
-          parseInt(conversation.countMessseen) + 1
-        ).toString();
+        // Khoong update count vi socket se update
+        // conversation.countMessseen = parseInt(
+        // conversation.countMessseen
+        // ).toString();
         await conversation.save();
       }
     } else {
