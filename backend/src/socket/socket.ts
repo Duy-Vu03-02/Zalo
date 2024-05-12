@@ -74,7 +74,7 @@ io.on("connection", async (socket: Socket) => {
         lastSend: data.idSend,
         idConversation: data.idConversation,
       });
-      // Emit "recieve-mess" event only once
+
       socket.to(id).emit("recieve-mess", {
         sender: data.idSend,
         message: data.mess,

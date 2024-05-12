@@ -123,7 +123,6 @@ function Contact({ handleChangeContact, showPageAddressBook }) {
   }, [socket.current]);
 
   const handleRecieveCountMess = (data) => {
-    console.log(data);
     setContact((prevState) => {
       const filter = prevState.map((item) => {
         if (item.idConversation == data.idConversation) {

@@ -87,8 +87,8 @@ function LoginAccount({ handleChangeStateChat }) {
     phone: "",
     password: "",
   });
+  const [stateLogin, setStateLogin] = useState("");
   const [disableBtn, setDisableBtn] = useState(true);
-  const navigation = useNavigate();
 
   useEffect(() => {
     if (value.phone.length >= 4 && value.password.length >= 4) {
@@ -113,11 +113,21 @@ function LoginAccount({ handleChangeStateChat }) {
             JSON.stringify(response.data.authentication.sessionToken)
           );
           handleChangeStateChat();
+          setStateLogin("");
         }
       })
       .catch((err) => {
+        setStateLogin("Tài khoản hoặc mật khẩu không đúng");
         console.error(err);
       });
+  };
+
+  const handleButtonLogin = (e) => {
+    if (!disableBtn) {
+      if (e.code == "Enter") {
+        handleLoginAccount();
+      }
+    }
   };
 
   return (
@@ -133,6 +143,7 @@ function LoginAccount({ handleChangeStateChat }) {
                 name="phone"
                 value={value.phone}
                 onChange={(e) => handleChangeData(e)}
+                onKeyDown={handleButtonLogin}
               />
             </div>
             <div className="flex">
@@ -143,9 +154,11 @@ function LoginAccount({ handleChangeStateChat }) {
                 value={value.password}
                 name="password"
                 onChange={(e) => handleChangeData(e)}
+                onKeyDown={handleButtonLogin}
               />
             </div>
           </div>
+          {stateLogin && <div className="state-login">{stateLogin}</div>}
           <div
             className={`login-container-btn ${
               disableBtn ? "login-disable" : ""

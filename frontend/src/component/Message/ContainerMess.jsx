@@ -156,9 +156,11 @@ function ContainerMess({ contactData }) {
     handleChangeTheme(bg);
     setTableColr(false);
   };
+
   const handleTableColor = () => {
     tableColor ? setTableColr(false) : setTableColr(true);
   };
+
   const handleSeenMess = () => {
     socket.current.emit("seen-mess", {
       idConversation: contactData.idConversation,
@@ -166,6 +168,14 @@ function ContainerMess({ contactData }) {
       idChatWith: contactData.idChatWith,
     });
   };
+
+  const handleButtonSendMess = (e) => {
+    console.log(e.code);
+    if (e.code == "Enter") {
+      handleSendMess(e);
+    }
+  };
+
   return (
     <>
       <div className="container-containermess" onClick={handleSeenMess}>
@@ -272,6 +282,7 @@ function ContainerMess({ contactData }) {
                 value={mess}
                 onChange={handleChangMess}
                 placeholder={`Nhập @, tin nhắn tới ${contactData.username}`}
+                onKeyDown={handleButtonSendMess}
               />
             </div>
             <div className="flex">

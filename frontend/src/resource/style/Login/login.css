@@ -122,6 +122,17 @@
 }
 .login-form-login-account {
   padding-top: 30px;
+  position: relative;
+}
+.login-form-login-account .state-login {
+  position: absolute;
+  color: red;
+  font-size: 13px;
+  left: 50%;
+  top: 145px;
+  right: 50%;
+  width: 217px;
+  transform: translate(-50%, -50%);
 }
 .login-form-login-account .icon-login {
   width: 20px;
