@@ -62,11 +62,11 @@ io.on("connection", async (socket: Socket) => {
       message: data.mess,
     };
     await createMessagesByConversation(resData);
-    await updateLastMessgae(resData);
     const countMessseen = await updateCountSeenConversation({
       idConversation: data.idConversation,
       number: 1,
     });
+    await updateLastMessgae(resData);
 
     if (id) {
       socket.to(id).emit("recieve-lastmess", {

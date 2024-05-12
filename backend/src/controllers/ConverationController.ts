@@ -196,7 +196,11 @@ export const updateCountSeenConversation = async (data: any) => {
       }
     }
 
-    await conversation.save();
+    const newConversation = Object.assign({}, conversation);
+    delete newConversation._id;
+    await ConversationModel.findByIdAndUpdate(idConversation, newConversation, {
+      timestamps: false,
+    });
     return conversation.countMessseen;
   } catch (err) {
     console.error(err);
