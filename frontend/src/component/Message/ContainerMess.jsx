@@ -56,7 +56,7 @@ function ContainerMess({ contactData }) {
     if (socket.current) {
       socket.current.on("recieve-mess", (data) => {
         setMessages((prevMessage) => [...prevMessage, data]);
-        console.log(messages);
+        console.log(data);
       });
       socket.current.emit("seen-mess", {
         idConversation: contactData.idConversation,

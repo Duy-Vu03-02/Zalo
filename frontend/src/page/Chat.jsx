@@ -18,12 +18,13 @@ import setting from "../resource/svg/chat/setting.svg";
 function Chat({ handleLogout }) {
   const { userData, socket } = useContext(UserContext);
 
+  const [showPageAddressBook, setShowPageAddressBook] = useState(false);
   const topMenu = [mess, addressbook, todo];
   const bottomMenu = [cloud, toolbox, setting];
   const [menuActive, setMenuactive] = useState(0);
   const listComponent = [
-    <Message />,
-    <AddressBook />,
+    <Message showPageAddressBook={showPageAddressBook} />,
+    <AddressBook onClick={() => handleShowPageAddressBook(true)} />,
     <ToDo />,
     <Clod />,
     <ToolBox />,
@@ -52,6 +53,9 @@ function Chat({ handleLogout }) {
 
   const handleShowStartup = () => {
     isShowStartup ? setIsShoeStartup(false) : setIsShoeStartup(true);
+  };
+  const handleShowPageAddressBook = (value) => {
+    setShowPageAddressBook(value);
   };
 
   return (

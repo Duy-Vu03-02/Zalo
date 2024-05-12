@@ -20,7 +20,7 @@ export const ContactProvider = ({ children }) => {
       }
       fetchContact.current = setTimeout(() => {
         fetchConversation();
-      }, 60000);
+      }, 30000);
     };
     fetch();
   });

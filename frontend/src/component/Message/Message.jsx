@@ -6,7 +6,7 @@ import WellCome from "./WellCome";
 import ContainerMess from "./ContainerMess";
 import axios from "axios";
 
-export default function Message() {
+export default function Message({ showPageAddressBook }) {
   const [dataContact, setDataContact] = useState(null);
 
   const handleChangeContact = async (value) => {
@@ -45,7 +45,10 @@ export default function Message() {
     <>
       <div className="container-mess flex">
         <div>
-          <Contact handleChangeContact={handleChangeContact} />
+          <Contact
+            handleChangeContact={handleChangeContact}
+            showPageAddressBook={showPageAddressBook}
+          />
         </div>
         <div>
           {dataContact !== null ? (

@@ -11,11 +11,18 @@ import { IoMdClose } from "react-icons/io";
 import { IoTriangle } from "react-icons/io5";
 import { BsFillCameraFill } from "react-icons/bs";
 import { RxDotFilled } from "react-icons/rx";
-import MenuContact from "../AddressBook/MenuContact";
-
 import axios from "axios";
 
-function Contact({ handleChangeContact, showPageAddressBook }) {
+function MenuContact({ handleChangeContact }) {
+  const listMenu = [
+    { title: "Danh sách bạn bè", icon: <HiOutlineUsers /> },
+    {
+      title: "Danh sách nhóm",
+      icon: <HiOutlineUser />,
+    },
+    { title: "Lời mời kết bạn", icon: <HiOutlineUser /> },
+    { title: "Lời mời vào nhóm", icon: <HiOutlineUsers /> },
+  ];
   const [textSearch, setTextSearch] = useState("");
   const [isSearch, setIsSearch] = useState({
     state: false,
@@ -32,7 +39,6 @@ function Contact({ handleChangeContact, showPageAddressBook }) {
   });
   const [allMessActive, setAllMessActive] = useState(true);
   const [conversationList, setConversationList] = useState([]);
-  const [conversationListNotSeen, setConversationListNotSeen] = useState([]);
 
   const [dataUserPhone, setDataUserPhone] = useState({
     username: "",
@@ -212,16 +218,8 @@ function Contact({ handleChangeContact, showPageAddressBook }) {
     handleSearchDb(data);
   };
 
-  const handleChangeShowMessSeen = () => {
+  const handleChangeShowMess = () => {
     allMessActive ? setAllMessActive(false) : setAllMessActive(true);
-    const filterMessSeen = conversationList.filter((item) => {
-      if (item.countMessseen > 0 && item.lastSend !== userData._id) {
-        return item;
-      }
-    });
-    setConversationListNotSeen((prevState) => {
-      return filterMessSeen;
-    });
   };
 
   const handleChangeIsSearch = (value) => {
@@ -434,7 +432,6 @@ function Contact({ handleChangeContact, showPageAddressBook }) {
     }
   };
 
-  const handleChange = () => {};
   return (
     <>
       <div className="contact-container-contact">
@@ -505,7 +502,6 @@ function Contact({ handleChangeContact, showPageAddressBook }) {
                           Kết quả{" "}
                           {dataUserPhone.show !== null ? "" : "gần nhất"}
                         </p>
-                        {dataUserPhone.state && <p>{dataUserPhone.state}</p>}
                       </div>
                       {dataUserPhone.data !== null && (
                         <div className="wrap-result-phone flex">
@@ -744,53 +740,6 @@ function Contact({ handleChangeContact, showPageAddressBook }) {
               )}
             </div>
           </div>
-          {((!showPageAddressBook && !isSearch.state) ||
-            (isSearch.response && !isSearch.recent)) && (
-            <div className="contact-filter-converstation flex">
-              <div className="contact-left-filter">
-                <div className="flex">
-                  <p
-                    className={`${allMessActive ? "all-mess-active" : ""}`}
-                    onClick={() => handleChangeShowMessSeen(false)}
-                  >
-                    Tất cả
-                  </p>
-                  <div>
-                    {!isSearch.state ? (
-                      <p
-                        onClick={() => handleChangeShowMessSeen(true)}
-                        className={`${allMessActive ? "" : "all-mess-active"}`}
-                      >
-                        Chưa đọc
-                      </p>
-                    ) : (
-                      "Liên hệ"
-                    )}
-                  </div>
-                  <hr
-                    className={`contact-hr-left-filter ${
-                      allMessActive ? "" : "contact-hr-left-filter-active"
-                    }`}
-                  />
-                </div>
-              </div>
-              {!isSearch.state ? (
-                <div className="contact-right-filter">
-                  <div className="contact- flex">
-                    <div className="contact-classification-filter flex">
-                      <p>Phân loại</p>
-                      <MdExpandMore className="icon-filter" />
-                    </div>
-                    <div className="contact-more-filter">
-                      <IoIosMore className="icon-filter" />
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                ""
-              )}
-            </div>
-          )}
         </div>
         {isSearch.state ? (
           <div className="recent-search">
@@ -841,159 +790,11 @@ function Contact({ handleChangeContact, showPageAddressBook }) {
             </ul>
           </div>
         ) : (
-          !showPageAddressBook && (
-            <div className="contact-wrap-conversation">
-              <div className="contact-listConversation">
-                {allMessActive ? (
-                  <ul>
-                    {conversationList &&
-                      conversationList.map((data, index) => (
-                        <li
-                          key={index}
-                          onClick={() => handleChangeContact(data)}
-                        >
-                          <div className="contact-detial-conversation flex">
-                            <div className="flex">
-                              <div className="contact-avatar-friend">
-                                <img
-                                  src={
-                                    data.type === "single"
-                                      ? data.avatar
-                                      : data.avatarGroup
-                                  }
-                                  alt=""
-                                />
-                              </div>
-                              <div className="contact-overview-mess">
-                                <h3>
-                                  {data.type == "single"
-                                    ? data.username
-                                    : data.groupName}
-                                </h3>
-                                {data.type == "single" ? (
-                                  <p>
-                                    {data.lastMessage
-                                      ? `${
-                                          data.lastSend == userData._id
-                                            ? "Bạn: "
-                                            : `${data.username}: `
-                                        } ${data.lastMessage}`
-                                      : `Gửi lời chào đến ${data.username}`}{" "}
-                                  </p>
-                                ) : (
-                                  <p>
-                                    {data.lastMessage
-                                      ? data.lastMessage
-                                      : `Gửi lời chào đến ${data.groupName}`}{" "}
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-                            <div className="contact-last-onl flex">
-                              <p>
-                                {data.lastActive === "Active" ? (
-                                  <RxDotFilled
-                                    style={{
-                                      fontSize: "20px",
-                                      color: "#30a04b",
-                                    }}
-                                  />
-                                ) : (
-                                  data.lastActive
-                                )}
-                              </p>
-                              {parseInt(data.countMessseen) > 0 &&
-                                data.lastSend !== userData._id && (
-                                  <div className="wrap-count-seen">
-                                    <p className="count-seen">
-                                      {parseInt(data.countMessseen)}
-                                    </p>
-                                  </div>
-                                )}
-                            </div>
-                          </div>
-                        </li>
-                      ))}
-                  </ul>
-                ) : (
-                  <ul>
-                    {conversationListNotSeen &&
-                      conversationListNotSeen.map((data, index) => (
-                        <li
-                          key={index}
-                          onClick={() => handleChangeContact(data)}
-                        >
-                          <div className="contact-detial-conversation flex">
-                            <div className="flex">
-                              <div className="contact-avatar-friend">
-                                <img
-                                  src={
-                                    data.type === "single"
-                                      ? data.avatar
-                                      : data.avatarGroup
-                                  }
-                                  alt=""
-                                />
-                              </div>
-                              <div className="contact-overview-mess">
-                                <h3>
-                                  {data.type == "single"
-                                    ? data.username
-                                    : data.groupName}
-                                </h3>
-                                {data.type == "single" ? (
-                                  <p>
-                                    {data.lastMessage
-                                      ? `${
-                                          data.lastSend == userData._id
-                                            ? "Bạn: "
-                                            : `${data.username}: `
-                                        } ${data.lastMessage}`
-                                      : `Gửi lời chào đến ${data.username}`}{" "}
-                                  </p>
-                                ) : (
-                                  <p>
-                                    {data.lastMessage
-                                      ? data.lastMessage
-                                      : `Gửi lời chào đến ${data.groupName}`}{" "}
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-                            <div className="contact-last-onl flex">
-                              <p>
-                                {data.lastActive === "Active" ? (
-                                  <RxDotFilled
-                                    style={{
-                                      fontSize: "20px",
-                                      color: "#30a04b",
-                                    }}
-                                  />
-                                ) : (
-                                  data.lastActive
-                                )}
-                              </p>
-                              {parseInt(data.countMessseen) > 0 &&
-                                data.lastSend !== userData._id && (
-                                  <div className="wrap-count-seen">
-                                    <p className="count-seen">
-                                      {parseInt(data.countMessseen)}
-                                    </p>
-                                  </div>
-                                )}
-                            </div>
-                          </div>
-                        </li>
-                      ))}
-                  </ul>
-                )}
-              </div>
-            </div>
-          )
+          ""
         )}
       </div>
     </>
   );
 }
 
-export default memo(Contact);
+export default memo(MenuContact);
