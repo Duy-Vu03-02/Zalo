@@ -11,6 +11,7 @@
   justify-content: space-between;
 }
 .zavatar {
+  display: flex;
   margin: 6px 6px 6px 12px;
 }
 .zavatar img {
@@ -170,4 +171,10 @@
   font-size: 11px;
   font-weight: 500;
   color: #7589a3;
+}
+.wrap-set-icon {
+  position: relative;
+}
+.wrap-seticon {
+  position: absolute;
 }

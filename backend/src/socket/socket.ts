@@ -78,6 +78,7 @@ io.on("connection", async (socket: Socket) => {
       socket.to(id).emit("recieve-mess", {
         sender: data.idSend,
         message: data.mess,
+        updatedAt: data.updatedAt,
       });
 
       if (countMessseen) {

@@ -124,7 +124,8 @@ function LoginAccount({ handleChangeStateChat }) {
 
   const handleButtonLogin = (e) => {
     if (!disableBtn) {
-      if (e.code == "Enter") {
+      console.log(e);
+      if (e.code == "Enter" || e.code == "NumpadEnter") {
         handleLoginAccount();
       }
     }

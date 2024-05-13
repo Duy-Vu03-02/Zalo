@@ -3,6 +3,7 @@ import "../../resource/style/Chat/containermess.css";
 import { ThemeContext } from "../../Context/ThemeContext";
 import { UserContext } from "../../Context/UserContext";
 import { ContactContext } from "../../Context/ContactConext";
+import Icon from "./Icon";
 import { HiOutlineUsers } from "react-icons/hi2";
 import { CiSearch } from "react-icons/ci";
 import { IoSend, IoVideocamOutline } from "react-icons/io5";
@@ -26,9 +27,15 @@ function ContainerMess({ contactData }) {
   });
   const [mess, setMess] = useState("");
   const [tableColor, setTableColr] = useState(false);
+  const [menuControl, setMenuControl] = useState({
+    tableColor: false,
+    tableIcon: false,
+  });
   const { userData, socket } = useContext(UserContext);
   const { setContact } = useContext(ContactContext);
   const { theme, handleChangeTheme } = useContext(ThemeContext);
+  const inputMessage = useRef(null);
+  const tableIconRef = useRef(null);
   const codeBackground = [
     "#34568B",
     "rgb(8 108 167)",
@@ -47,6 +54,27 @@ function ContainerMess({ contactData }) {
     "#f4f3f3",
     "#b4426e",
   ];
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        tableIconRef.current &&
+        !tableIconRef.current.contains(event.target)
+      ) {
+        setMenuControl((prevState) => {
+          return {
+            ...prevState,
+            inputMessage: !prevState.inputMessage,
+          };
+        });
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [tableIconRef, menuControl]);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView();
@@ -80,12 +108,20 @@ function ContainerMess({ contactData }) {
         idSend: userData._id,
         idConversation: contactData.idConversation,
         mess: mess,
+        updatedAt: new Date(),
       };
 
       socket.current.emit("send-mess", data);
       setMessages((prevMessage) => {
         if (Array.isArray(prevMessage)) {
-          return [...prevMessage, { sender: userData._id, message: data.mess }];
+          return [
+            ...prevMessage,
+            {
+              sender: userData._id,
+              message: data.mess,
+              updatedAt: data.updatedAt,
+            },
+          ];
         } else {
           return [{ sender: userData._id, message: data.mess }];
         }
@@ -161,6 +197,16 @@ function ContainerMess({ contactData }) {
     tableColor ? setTableColr(false) : setTableColr(true);
   };
 
+  const handleChangeMenuControl = (e) => {
+    const name = e.target.getAttribute("name");
+    setMenuControl((prevState) => {
+      return {
+        ...prevState,
+        [name]: !prevState[name],
+      };
+    });
+  };
+
   const handleSeenMess = () => {
     socket.current.emit("seen-mess", {
       idConversation: contactData.idConversation,
@@ -170,10 +216,20 @@ function ContainerMess({ contactData }) {
   };
 
   const handleButtonSendMess = (e) => {
-    console.log(e.code);
-    if (e.code == "Enter") {
+    if (e.code == "Enter" || e.code == "NumpadEnter") {
       handleSendMess(e);
+      setMenuControl({
+        tableColor: false,
+        tableIcon: false,
+      });
     }
+  };
+
+  const handleGetIcon = (value) => {
+    setMess((prevMessage) => {
+      return prevMessage + value;
+    });
+    inputMessage.current.focus();
   };
 
   return (
@@ -231,9 +287,16 @@ function ContainerMess({ contactData }) {
                     <div className="detail-mess">
                       <p className="name-mess">{contactData.userData}</p>
                       <p className="text-mess">{item.message}</p>
-                      <div className="time-mess">
-                        <p>10:30</p>
-                      </div>
+                      {index == messages.length - 1 && (
+                        <div className="time-mess">
+                          <p>
+                            {new Date(item.updatedAt).getHours() < 2 && 0}
+                            {new Date(item.updatedAt).getHours()}:
+                            {new Date(item.updatedAt).getMinutes() < 2 && 0}
+                            {new Date(item.updatedAt).getMinutes()}
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </li>
                 ))}
@@ -243,7 +306,18 @@ function ContainerMess({ contactData }) {
         <div className="footer-chat">
           <div className="chat-input flex">
             <div className="flex">
-              <RiEmojiStickerLine className="icon-header" />
+              <div className="wrap-set-icon">
+                <RiEmojiStickerLine
+                  className="icon-header"
+                  name="tableIcon"
+                  onClick={handleChangeMenuControl}
+                />
+                {menuControl.tableIcon && (
+                  <div ref={tableIconRef} className="wrap-seticon">
+                    <Icon handleGetIcon={handleGetIcon} />
+                  </div>
+                )}
+              </div>
               <AiOutlinePicture className="icon-header" />
               <IoMdAttach className="icon-header" />
               <IoCameraOutline className="icon-header" />
@@ -252,12 +326,13 @@ function ContainerMess({ contactData }) {
 
               <div className="wrap-setbackground">
                 <TbBackground
-                  onClick={handleTableColor}
+                  name="tableColor"
+                  onClick={handleChangeMenuControl}
                   className="icon-header"
                 />
                 <div
                   className={`set-background ${
-                    tableColor ? "set-background-active" : ""
+                    menuControl.tableColor ? "set-background-active" : ""
                   }`}
                 >
                   <ul className="ul-set-background flex">
@@ -279,6 +354,7 @@ function ContainerMess({ contactData }) {
             <div className="wrap-input-chat">
               <input
                 type="text"
+                ref={inputMessage}
                 value={mess}
                 onChange={handleChangMess}
                 placeholder={`Nhập @, tin nhắn tới ${contactData.username}`}

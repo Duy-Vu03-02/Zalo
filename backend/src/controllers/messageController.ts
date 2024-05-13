@@ -14,8 +14,9 @@ export const getAllMessageByUser = async (req: Request, res: Response) => {
   try {
     const { idConversation } = req.body;
     const messgaes = await getAllMessagesByConversation(idConversation).select(
-      "sender message"
+      "sender message updatedAt"
     );
+
     if (messgaes) {
       res.status(200).json(messgaes);
     } else {
