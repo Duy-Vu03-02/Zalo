@@ -150,6 +150,18 @@
   height: 600px;
 }
 .contact-listConversation::-webkit-scrollbar {
+  width: 5px; /* Chiều rộng của thanh cuộn */
+}
+
+.contact-listConversation::-webkit-scrollbar-track {
+  background: transparent; /* Màu nền của phần track */
+}
+
+.contact-listConversation::-webkit-scrollbar-thumb {
+  background-color: #b9b8b8; /* Màu của thanh cuộn */
+  border-radius: 10px; /* Bo góc của thanh cuộn */
+}
+/* .contact-listConversation::-webkit-scrollbar {
   width: 10px;
   height: 12px;
 }
@@ -162,7 +174,7 @@
 }
 .contact-listConversation::-webkit-scrollbar-track {
   background-color: #f1f1f1;
-}
+} */
 
 .contact-detial-conversation {
   padding: 10px 0;

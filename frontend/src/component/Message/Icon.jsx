@@ -493,7 +493,7 @@ export default function Icon({ handleGetIcon }) {
     "🌻",
     "🌷",
     "🌹",
-    "🥀",
+    // "🥀",
     // "💐",
     // "🌾",
     // "🎋",

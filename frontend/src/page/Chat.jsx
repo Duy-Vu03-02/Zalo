@@ -32,7 +32,8 @@ function Chat({ handleLogout }) {
   const CurrentComponent = listComponent[menuActive];
   const [isShowStartup, setIsShoeStartup] = useState(false);
   const [showSetting, setShowSetting] = useState(false);
-  const boxRef = useRef();
+  const boxRef = useRef(null);
+  const boxAvatar = useRef(null);
   // useEffect(() => {
   //   if (userData !== null) {
   //     socket.current = io("http://localhost:8080");
@@ -42,7 +43,11 @@ function Chat({ handleLogout }) {
 
   useEffect(() => {
     function handleClickOutside(event) {
-      if (boxRef.current && !boxRef.current.contains(event.target)) {
+      if (
+        !boxAvatar.current.contains(event.target) &&
+        boxRef.current &&
+        !boxRef.current.contains(event.target)
+      ) {
         setIsShoeStartup(false);
       }
     }
@@ -77,7 +82,12 @@ function Chat({ handleLogout }) {
         <div className="chat-menu-left ">
           <div className="chat-top-menu">
             <div className="chat-avatar-user">
-              <img src={userData.avatar} alt="" onClick={handleShowStartup} />
+              <img
+                ref={boxAvatar}
+                src={userData.avatar}
+                alt=""
+                onClick={handleShowStartup}
+              />
               {isShowStartup && (
                 <div ref={boxRef} className="startup">
                   <p>{userData.username}</p>

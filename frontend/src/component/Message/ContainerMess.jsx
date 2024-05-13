@@ -36,6 +36,10 @@ function ContainerMess({ contactData }) {
   const { theme, handleChangeTheme } = useContext(ThemeContext);
   const inputMessage = useRef(null);
   const tableIconRef = useRef(null);
+  const iconRef = useRef(null);
+  const tableBackIconRef = useRef(null);
+  const backgroundRef = useRef(null);
+
   const codeBackground = [
     "#34568B",
     "rgb(8 108 167)",
@@ -56,23 +60,24 @@ function ContainerMess({ contactData }) {
   ];
 
   useEffect(() => {
-    function handleClickOutside(event) {
+    function handleClickOutsideMenu(event) {
       if (
+        !iconRef.current.contains(event.target) &&
         tableIconRef.current &&
         !tableIconRef.current.contains(event.target)
       ) {
         setMenuControl((prevState) => {
           return {
             ...prevState,
-            inputMessage: !prevState.inputMessage,
+            tableIcon: false,
           };
         });
       }
     }
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutsideMenu);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutsideMenu);
     };
   }, [tableIconRef, menuControl]);
 
@@ -184,6 +189,7 @@ function ContainerMess({ contactData }) {
     };
     fetch();
   }, [contactData]);
+
   const handleChangMess = (e) => {
     setMess(e.target.value);
   };
@@ -306,7 +312,7 @@ function ContainerMess({ contactData }) {
         <div className="footer-chat">
           <div className="chat-input flex">
             <div className="flex">
-              <div className="wrap-set-icon">
+              <div className="wrap-set-icon" ref={iconRef}>
                 <RiEmojiStickerLine
                   className="icon-header"
                   name="tableIcon"
@@ -324,13 +330,14 @@ function ContainerMess({ contactData }) {
               <MdOutlineContactMail className="icon-header" />
               <RiCalendarTodoFill className="icon-header" />
 
-              <div className="wrap-setbackground">
+              <div className="wrap-setbackground" ref={backgroundRef}>
                 <TbBackground
                   name="tableColor"
                   onClick={handleChangeMenuControl}
                   className="icon-header"
                 />
                 <div
+                  ref={tableBackIconRef}
                   className={`set-background ${
                     menuControl.tableColor ? "set-background-active" : ""
                   }`}
