@@ -4,16 +4,17 @@ import { ThemeContext } from "../../Context/ThemeContext";
 import { UserContext } from "../../Context/UserContext";
 import { ContactContext } from "../../Context/ContactConext";
 import Icon from "./Icon";
-import { HiOutlineUsers } from "react-icons/hi2";
+import { HiOutlineUserGroup } from "react-icons/hi2";
 import { CiSearch } from "react-icons/ci";
 import { IoSend, IoVideocamOutline } from "react-icons/io5";
 import { AiOutlineLike } from "react-icons/ai";
+import { IoMdClose } from "react-icons/io";
 import { TbBackground } from "react-icons/tb";
 import { AiOutlinePicture } from "react-icons/ai";
 import { IoMdAttach } from "react-icons/io";
 import { IoCameraOutline } from "react-icons/io5";
 import { MdOutlineContactMail } from "react-icons/md";
-import { RiCalendarTodoFill } from "react-icons/ri";
+import { RiCalendarTodoFill, RiChatCheckFill } from "react-icons/ri";
 import { RiEmojiStickerLine } from "react-icons/ri";
 import { AiOutlineSend } from "react-icons/ai";
 import { RxDotFilled } from "react-icons/rx";
@@ -25,20 +26,24 @@ function ContainerMess({ contactData }) {
     sender: null,
     message: null,
   });
-  const [mess, setMess] = useState("");
+  const [listMessImg, setListMessImg] = useState([]);
   const [tableColor, setTableColr] = useState(false);
   const [menuControl, setMenuControl] = useState({
     tableColor: false,
     tableIcon: false,
+    tablePicture: false,
   });
   const { userData, socket } = useContext(UserContext);
   const { setContact } = useContext(ContactContext);
   const { theme, handleChangeTheme } = useContext(ThemeContext);
+  const [activeIconSend, setActiveIconSend] = useState(false);
   const inputMessage = useRef(null);
   const tableIconRef = useRef(null);
   const iconRef = useRef(null);
-  const tableBackIconRef = useRef(null);
-  const backgroundRef = useRef(null);
+  const tableBackgroundRef = useRef(null);
+  const iconBackgroundRef = useRef(null);
+  const tablePictureRef = useRef(null);
+  const iconPictureRef = useRef(null);
 
   const codeBackground = [
     "#34568B",
@@ -61,25 +66,42 @@ function ContainerMess({ contactData }) {
 
   useEffect(() => {
     function handleClickOutsideMenu(event) {
-      if (
-        !iconRef.current.contains(event.target) &&
-        tableIconRef.current &&
-        !tableIconRef.current.contains(event.target)
-      ) {
-        setMenuControl((prevState) => {
-          return {
-            ...prevState,
-            tableIcon: false,
-          };
-        });
+      const option = {
+        tableIcon: iconRef.current.contains(event.target),
+        tablePicture: iconPictureRef.current.contains(event.target),
+        tableColor: iconBackgroundRef.current.contains(event.target),
+      };
+      // if (
+      //   (iconBackgroundRef && !option.tableColor) ||
+      //   (iconRef && !option.tableIconRef) ||
+      //   (iconPicture && !option.tablePicture)
+      // ) {
+      //   // setMenuControl({
+      //   //   tableColor: false,
+      //   //   tableIcon: false,
+      //   //   tablePicture: false,
+      //   // });
+      //   // handleChangeMenuControl(event);
+      //   console.log(event);
+      // }
+      if (!option.tableIcon && !option.tablePicture && !option.tableColor) {
+        // setMenuControl(option);
+        return;
       }
+      // if (menuControl.tableIcon && !option.tableIcon) {
+      //   setMenuControl({
+      //     tableIcon: false,
+      //     tablePicture: "",
+      //     tableColor: ,
+      //   });
+      // }
     }
 
     document.addEventListener("mousedown", handleClickOutsideMenu);
     return () => {
       document.removeEventListener("mousedown", handleClickOutsideMenu);
     };
-  }, [tableIconRef, menuControl]);
+  }, [menuControl]);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView();
@@ -106,16 +128,18 @@ function ContainerMess({ contactData }) {
   };
 
   const handleSendMess = async (e) => {
-    e.preventDefault();
-    if (mess !== "") {
+    const message = inputMessage.current.textContent;
+    if (message !== "" && message !== null) {
+      setActiveIconSend(false);
       const data = {
         idRecieve: contactData.idChatWith,
         idSend: userData._id,
         idConversation: contactData.idConversation,
-        mess: mess,
+        mess: message,
         updatedAt: new Date(),
       };
-
+      inputMessage.current.textContent = "";
+      e.preventDefault();
       socket.current.emit("send-mess", data);
       setMessages((prevMessage) => {
         if (Array.isArray(prevMessage)) {
@@ -144,32 +168,6 @@ function ContainerMess({ contactData }) {
         });
         return [itemReviece, ...filter];
       });
-      setMess("");
-    }
-    // cmt
-    if (false && mess.trim() !== "") {
-      const data = {
-        message: mess.trim(),
-        user: {
-          from: userData._id,
-          to: contactData._id,
-        },
-        sender: userData._id,
-      };
-      const response = await axios.post(
-        "http://127.0.0.1:8080/message/createmessage",
-        data
-      );
-      if (response.status === 200) {
-        setMessages((prevMessage) => {
-          if (Array.isArray(prevMessage)) {
-            return [...prevMessage, { sender: true, message: data.message }];
-          } else {
-            return [{ sender: true, message: data.message }];
-          }
-        });
-        setMess("");
-      }
     }
   };
 
@@ -189,10 +187,6 @@ function ContainerMess({ contactData }) {
     };
     fetch();
   }, [contactData]);
-
-  const handleChangMess = (e) => {
-    setMess(e.target.value);
-  };
 
   const handleSetBackground = (bg) => {
     handleChangeTheme(bg);
@@ -221,20 +215,45 @@ function ContainerMess({ contactData }) {
     });
   };
 
+  const handleCheckImg = () => {
+    let listImg = [];
+    const childNodes = inputMessage.current.childNodes;
+    // if (childNodes && childNodes.length > 0 && childNodes.includes("img")) {
+    //   console.log("chcek");
+    // }
+    childNodes?.forEach((item) => {
+      if (item.nodeName == "IMG") {
+        listImg = [...listImg, item.getAttribute("src")];
+      }
+    });
+    setListMessImg(listImg);
+  };
+
+  const handleDelImg = (index) => {
+    setListMessImg((prevState) => {
+      if (index > 0 || index < prevState.length) {
+        const filter = prevState.filter((item, index) => index !== index);
+        return filter;
+      }
+    });
+  };
+
   const handleButtonSendMess = (e) => {
-    if (e.code == "Enter" || e.code == "NumpadEnter") {
+    inputMessage.current.textContent == ""
+      ? setActiveIconSend(false)
+      : setActiveIconSend(true);
+    if (e.key === "Enter" || e.key === "NumpadEnter") {
       handleSendMess(e);
       setMenuControl({
         tableColor: false,
         tableIcon: false,
       });
+      return;
     }
   };
 
   const handleGetIcon = (value) => {
-    setMess((prevMessage) => {
-      return prevMessage + value;
-    });
+    inputMessage.current.textContent += value;
     inputMessage.current.focus();
   };
 
@@ -252,7 +271,7 @@ function ContainerMess({ contactData }) {
                 {contactData.lastActive !== "Active" ? (
                   <p>
                     Truy cập {contactData.lastActive}
-                    {contactData.lastActive == "vừa xong" ? "" : " trước"}
+                    {contactData.lastActive === "vừa xong" ? "" : " trước"}
                   </p>
                 ) : (
                   <div className="flex">
@@ -267,7 +286,7 @@ function ContainerMess({ contactData }) {
             </div>
           </div>
           <div className="group-choice flex">
-            <HiOutlineUsers className="icon-header" />
+            <HiOutlineUserGroup className="icon-header" />
             <CiSearch className="icon-header" />
             <IoVideocamOutline className="icon-header" />
           </div>
@@ -293,12 +312,12 @@ function ContainerMess({ contactData }) {
                     <div className="detail-mess">
                       <p className="name-mess">{contactData.userData}</p>
                       <p className="text-mess">{item.message}</p>
-                      {index == messages.length - 1 && (
+                      {index === messages.length - 1 && (
                         <div className="time-mess">
                           <p>
-                            {new Date(item.updatedAt).getHours() < 2 && 0}
+                            {new Date(item.updatedAt).getHours() < 10 && 0}
                             {new Date(item.updatedAt).getHours()}:
-                            {new Date(item.updatedAt).getMinutes() < 2 && 0}
+                            {new Date(item.updatedAt).getMinutes() < 10 && 0}
                             {new Date(item.updatedAt).getMinutes()}
                           </p>
                         </div>
@@ -324,62 +343,97 @@ function ContainerMess({ contactData }) {
                   </div>
                 )}
               </div>
-              <AiOutlinePicture className="icon-header" />
+              <div ref={iconPictureRef} className="wrap-set-picture">
+                <AiOutlinePicture className="icon-header" />
+                {menuControl.tablePicture && (
+                  <div ref={tablePictureRef}>
+                    <p>Table picture o day</p>
+                  </div>
+                )}
+              </div>
               <IoMdAttach className="icon-header" />
               <IoCameraOutline className="icon-header" />
               <MdOutlineContactMail className="icon-header" />
               <RiCalendarTodoFill className="icon-header" />
 
-              <div className="wrap-setbackground" ref={backgroundRef}>
+              <div className="wrap-setbackground" ref={iconBackgroundRef}>
                 <TbBackground
                   name="tableColor"
                   onClick={handleChangeMenuControl}
                   className="icon-header"
                 />
-                <div
-                  ref={tableBackIconRef}
-                  className={`set-background ${
-                    menuControl.tableColor ? "set-background-active" : ""
-                  }`}
-                >
-                  <ul className="ul-set-background flex">
-                    {codeBackground.map((value, index) => (
-                      <li
-                        key={index}
-                        onClick={() => handleSetBackground(value)}
-                        style={{ backgroundColor: value }}
-                      >
-                        &nbsp;
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                {menuControl.tableColor && (
+                  <div
+                    ref={tableBackgroundRef}
+                    className={`set-background ${
+                      menuControl.tableColor ? "set-background-active" : ""
+                    }`}
+                  >
+                    <ul className="ul-set-background flex">
+                      {codeBackground.map((value, index) => (
+                        <li
+                          key={index}
+                          onClick={() => handleSetBackground(value)}
+                          style={{ backgroundColor: value }}
+                        >
+                          &nbsp;
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             </div>
           </div>
-          <div className="chat-input-web flex">
-            <div className="wrap-input-chat">
-              <input
-                type="text"
-                ref={inputMessage}
-                value={mess}
-                onChange={handleChangMess}
-                placeholder={`Nhập @, tin nhắn tới ${contactData.username}`}
-                onKeyDown={handleButtonSendMess}
-              />
+          <form>
+            <div className="chat-input-web">
+              <ul className="list-img flex">
+                {listMessImg?.map((item, index) => (
+                  <li>
+                    <img src={item} alt="" />
+                    <p onClick={() => handleDelImg(index)}>
+                      <IoMdClose />
+                    </p>
+                  </li>
+                ))}
+              </ul>
+              <div
+                className={`wrap-input-chat ${
+                  listMessImg && listMessImg.length > 0 && "content-chat-height"
+                }`}
+              >
+                {/* <input
+                  type="text"
+                  ref={inputMessage}
+                  value={mess}
+                  onChange={handleChangMess}
+                  placeholder={`Nhập @, tin nhắn tới ${contactData.username}`}
+                  onKeyDown={handleButtonSendMess}
+                /> */}
+                <div
+                  contentEditable="true"
+                  spellCheck="false"
+                  className="contentEditable"
+                  ref={inputMessage}
+                  onInput={handleCheckImg}
+                  onKeyDown={handleButtonSendMess}
+                ></div>
+              </div>
+              <div className="flex">
+                <AiOutlineSend
+                  className={`icon-header icon-send-mess ${
+                    activeIconSend && "activeIconSend"
+                  }`}
+                  style={{
+                    color: "rgb(107 173 223)",
+                    backgroundColor: "#dff3ff",
+                  }}
+                  onClick={handleSendMess}
+                />
+                <AiOutlineLike className="icon-header" />
+              </div>
             </div>
-            <div className="flex">
-              <AiOutlineSend
-                className="icon-header icon-send-mess"
-                style={{
-                  color: "rgb(107 173 223)",
-                  backgroundColor: "#dff3ff",
-                }}
-                onClick={handleSendMess}
-              />
-              <AiOutlineLike className="icon-header" />
-            </div>
-          </div>
+          </form>
         </div>
       </div>
     </>

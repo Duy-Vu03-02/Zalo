@@ -10,17 +10,17 @@ export default function Zalo() {
   const { setUserData } = useContext(UserContext);
   const [isLoadding, setIsLoadding] = useState(true);
 
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if ((e.ctrlKey || e.mateKey) && e.key === "a") {
-        e.preventDefault();
-      }
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
+  // useEffect(() => {
+  //   const handleKeyDown = (e) => {
+  //     if ((e.ctrlKey || e.mateKey) && e.key === "a") {
+  //       e.preventDefault();
+  //     }
+  //   };
+  //   document.addEventListener("keydown", handleKeyDown);
+  //   return () => {
+  //     document.removeEventListener("keydown", handleKeyDown);
+  //   };
+  // }, []);
 
   const handleChangeStateChat = () => {
     setChat(true);

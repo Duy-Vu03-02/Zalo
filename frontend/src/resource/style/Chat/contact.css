@@ -150,31 +150,17 @@
   height: 600px;
 }
 .contact-listConversation::-webkit-scrollbar {
-  width: 5px; /* Chiều rộng của thanh cuộn */
+  width: 5px;
 }
 
 .contact-listConversation::-webkit-scrollbar-track {
-  background: transparent; /* Màu nền của phần track */
+  background: transparent;
 }
 
 .contact-listConversation::-webkit-scrollbar-thumb {
-  background-color: #b9b8b8; /* Màu của thanh cuộn */
-  border-radius: 10px; /* Bo góc của thanh cuộn */
+  background-color: #b9b8b8;
+  border-radius: 10px;
 }
-/* .contact-listConversation::-webkit-scrollbar {
-  width: 10px;
-  height: 12px;
-}
-.contact-listConversation::-webkit-scrollbar-thumb {
-  background-color: #c0bfbf;
-  border-radius: 6px;
-}
-.contact-listConversation::-webkit-scrollbar-thumb:hover {
-  background-color: #a09f9f;
-}
-.contact-listConversation::-webkit-scrollbar-track {
-  background-color: #f1f1f1;
-} */
 
 .contact-detial-conversation {
   padding: 10px 0;
@@ -182,9 +168,12 @@
 }
 .list-contact li:hover,
 .contact-listConversation li:hover {
-  background-color: #e6e8eb;
+  background-color: #ecedef;
   cursor: pointer;
   transition: background-color 0.3s;
+}
+.conversation-active {
+  background-color: #e5efff !important;
 }
 .contact-detial-conversation div {
   padding: 0 5px;

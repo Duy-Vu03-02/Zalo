@@ -118,13 +118,13 @@ function LoginAccount({ handleChangeStateChat }) {
       })
       .catch((err) => {
         setStateLogin("Tài khoản hoặc mật khẩu không đúng");
+        // setStateLogin(err);
         console.error(err);
       });
   };
 
   const handleButtonLogin = (e) => {
     if (!disableBtn) {
-      console.log(e);
       if (e.code == "Enter" || e.code == "NumpadEnter") {
         handleLoginAccount();
       }

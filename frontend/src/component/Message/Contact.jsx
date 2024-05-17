@@ -3,8 +3,8 @@ import { UserContext } from "../../Context/UserContext";
 import { ContactContext } from "../../Context/ContactConext";
 import "../../resource/style/Chat/contact.css";
 import { CiSearch } from "react-icons/ci";
-import { HiOutlineUsers } from "react-icons/hi2";
-import { HiOutlineUser } from "react-icons/hi2";
+import { HiOutlineUserPlus } from "react-icons/hi2";
+import { HiOutlineUserGroup } from "react-icons/hi2";
 import { MdExpandMore } from "react-icons/md";
 import { IoIosMore } from "react-icons/io";
 import { IoMdClose } from "react-icons/io";
@@ -14,6 +14,7 @@ import { RxDotFilled } from "react-icons/rx";
 import MenuContact from "../AddressBook/MenuContact";
 
 import axios from "axios";
+import { IconBase } from "react-icons/lib";
 
 function Contact({ handleChangeContact, showPageAddressBook }) {
   const [textSearch, setTextSearch] = useState("");
@@ -43,7 +44,6 @@ function Contact({ handleChangeContact, showPageAddressBook }) {
     unfriend: null,
     checkId: null,
   });
-
   const [dataCreateGr, setDataCreateGr] = useState({
     username: null,
     listMember: [],
@@ -67,6 +67,7 @@ function Contact({ handleChangeContact, showPageAddressBook }) {
   const { contact, setContact, fetchConversation } = useContext(ContactContext);
   const { userData, socket } = useContext(UserContext);
   const searchTimeout = useRef(null);
+  const conversationAvticve = useRef(null);
 
   useEffect(() => {
     const local = localStorage.getItem("user-search");
@@ -172,8 +173,24 @@ function Contact({ handleChangeContact, showPageAddressBook }) {
   useEffect(() => {
     if (contact !== null) {
       setConversationList(contact);
+      if (!allMessActive) {
+        // handleChangeShowMessSeen();
+      }
     }
   }, [contact]);
+  // useEffect(() => {
+  //   if (contact !== null) {
+  //     setConversationListNotSeen((prevState) => {
+  //       const filter = contact.map((item) => {
+  //         console.log(item);
+  //         // if (item.countMessseen > 0) {
+  //         //   return item;
+  //         // }
+  //       });
+  //       return filter;
+  //     });
+  //   }
+  // }, [contact]);
 
   const handleSearchDb = (value) => {
     if (value !== "") {
@@ -220,16 +237,17 @@ function Contact({ handleChangeContact, showPageAddressBook }) {
     handleSearchDb(data);
   };
 
-  const handleChangeShowMessSeen = () => {
-    allMessActive ? setAllMessActive(false) : setAllMessActive(true);
-    const filterMessSeen = conversationList.filter((item) => {
-      if (item.countMessseen > 0 && item.lastSend !== userData._id) {
-        return item;
-      }
-    });
-    setConversationListNotSeen((prevState) => {
-      return filterMessSeen;
-    });
+  const handleChangeShowMessSeen = (value) => {
+    console.log("check");
+    setAllMessActive(value);
+    if (!value) {
+      const filterMessSeen = conversationList.filter((item) => {
+        if (item.countMessseen > 0 && item.lastSend !== userData._id) {
+          return item;
+        }
+      });
+      setConversationListNotSeen(filterMessSeen);
+    }
   };
 
   const handleChangeIsSearch = (value) => {
@@ -441,6 +459,9 @@ function Contact({ handleChangeContact, showPageAddressBook }) {
       socket.current.emit("crud-friend", data);
     }
   };
+  const handleChangeConversationActive = (data) => {
+    conversationAvticve.current = data.idConversation;
+  };
 
   const handleChange = () => {};
   return (
@@ -464,11 +485,11 @@ function Contact({ handleChangeContact, showPageAddressBook }) {
               </div>
             ) : (
               <div className="contact-group-add-user flex">
-                <HiOutlineUser
+                <HiOutlineUserPlus
                   className="icon-user-contact"
                   onClick={() => handleShowAddFriend(true)}
                 />
-                <HiOutlineUsers
+                <HiOutlineUserGroup
                   className="icon-user-contact"
                   onClick={() => handleShowAddGroup(true)}
                 />
@@ -759,21 +780,21 @@ function Contact({ handleChangeContact, showPageAddressBook }) {
                 <div className="flex">
                   <p
                     className={`${allMessActive ? "all-mess-active" : ""}`}
-                    onClick={() => handleChangeShowMessSeen(false)}
+                    onClick={() => handleChangeShowMessSeen(true)}
                   >
                     Tất cả
                   </p>
                   <div>
                     {!isSearch.state ? (
                       <p
-                        onClick={() => handleChangeShowMessSeen(true)}
+                        onClick={() => handleChangeShowMessSeen(false)}
                         className={`${allMessActive ? "" : "all-mess-active"}`}
                       >
                         Chưa đọc
                       </p>
                     ) : (
                       <p
-                        onClick={() => handleChangeShowMessSeen(true)}
+                        // onClick={() => handleChangeShowMessSeen(true)}
                         className={`${allMessActive ? "" : "all-mess-active"}`}
                       >
                         Liên hệ
@@ -862,8 +883,16 @@ function Contact({ handleChangeContact, showPageAddressBook }) {
                     {conversationList &&
                       conversationList.map((data, index) => (
                         <li
+                          className={
+                            data.idConversation === conversationAvticve.current
+                              ? "conversation-active "
+                              : ""
+                          }
                           key={index}
-                          onClick={() => handleChangeContact(data)}
+                          onClick={() => {
+                            handleChangeContact(data);
+                            handleChangeConversationActive(data);
+                          }}
                         >
                           <div className="contact-detial-conversation flex">
                             <div className="flex">

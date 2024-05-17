@@ -159,6 +159,7 @@
   outline: none;
 }
 .login-container-btn {
+  transition: opacity 0.3s;
   margin-top: 40px;
 }
 .login-container-btn div {
@@ -237,5 +238,6 @@
 .login-disable {
   pointer-events: none;
   cursor: default;
-  opacity: 0.7;
+  opacity: 0.5;
+  transition: opacity 0.3s;
 }
