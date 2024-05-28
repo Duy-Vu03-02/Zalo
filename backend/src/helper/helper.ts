@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import crypto from "crypto";
+import sharp from "sharp";
 import { head, slice } from "lodash";
 // import * as dotenv from "dotenv";
 // dotenv.config();
@@ -38,4 +39,30 @@ export const genderJWT = (body: String) => {
   const hmac = crypto.createHmac("sha256", jwtSecretkey);
   const signature = hmac.update(token).digest("base64url");
   return signature;
+};
+
+export const imageCompression = async (
+  stringBase64: string[]
+): Promise<string[]> => {
+  const result = await Promise.all(
+    stringBase64.map(async (item) => {
+      if (!item.includes("base64")) {
+        return item;
+      }
+      try {
+        const buffer = await sharp(
+          Buffer.from(item.replace(/^data:image\/\w+;base64,/, ""), "base64")
+        )
+          .jpeg({ quality: 80 })
+          .toBuffer();
+        const base64Image = buffer.toString("base64");
+        return `data:image/png;base64,${base64Image}`;
+      } catch (err) {
+        console.error(err);
+        return item;
+      }
+    })
+  );
+
+  return result;
 };

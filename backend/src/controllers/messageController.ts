@@ -9,6 +9,7 @@ import {
 import { forEach, last, now } from "lodash";
 import { ACTIVE, calculatorLastActive } from "./UserController";
 import { send } from "process";
+import { imageCompression } from "../helper/helper";
 
 export const getAllMessageByUser = async (req: Request, res: Response) => {
   try {
@@ -38,7 +39,7 @@ export const createMessagesByConversation = async (data: any) => {
         sender,
         message,
         seen: false,
-        imgMess: imgMess ? imgMess : undefined,
+        imgMess: imgMess ? await imageCompression(imgMess) : undefined,
       });
 
       const conversation = await ConversationModel.findById(idConversation);
