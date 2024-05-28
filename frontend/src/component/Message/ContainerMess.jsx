@@ -129,13 +129,17 @@ function ContainerMess({ contactData }) {
 
   const handleSendMess = async (e) => {
     const message = inputMessage.current.textContent;
-    if ((message !== "" && message !== null) || listMessImg.length > 0) {
+    if (
+      (message !== "" && message !== null) ||
+      (listMessImg && listMessImg.length > 0)
+    ) {
       setActiveIconSend(false);
       const data = {
         idRecieve: contactData.idChatWith,
         idSend: userData._id,
         idConversation: contactData.idConversation,
         mess: message,
+        imgMess: listMessImg,
         updatedAt: new Date(),
       };
       inputMessage.current.textContent = "";
@@ -150,6 +154,7 @@ function ContainerMess({ contactData }) {
             {
               sender: userData._id,
               message: data.mess,
+              imgMess: data.imgMess,
               updatedAt: data.updatedAt,
             },
           ];
@@ -315,6 +320,16 @@ function ContainerMess({ contactData }) {
                     />
                     <div className="detail-mess">
                       <p className="name-mess">{contactData.userData}</p>
+
+                      {item.imgMess?.length > 0 && (
+                        <ul className="list-imgs-mess flex">
+                          {item.imgMess.map((item, index) => (
+                            <li key={index}>
+                              <img src={item} alt="" />
+                            </li>
+                          ))}
+                        </ul>
+                      )}
                       <p className="text-mess">{item.message}</p>
                       {index === messages.length - 1 && (
                         <div className="time-mess">

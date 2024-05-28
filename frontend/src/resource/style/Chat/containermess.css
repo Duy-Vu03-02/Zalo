@@ -50,6 +50,7 @@
 .infor-container {
   height: calc(100vh - 170px);
   overflow-y: auto;
+  overflow-x: hidden;
   /* display: flex; */
   /* flex-direction: column; */
   /* justify-content: end; */
@@ -134,7 +135,7 @@
 .wrap-text-mess {
   margin: 10px 20px;
 }
-.wrap-text-mess img {
+.wrap-text-mess > img {
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -160,6 +161,9 @@
 .my-mess {
   justify-content: right;
   text-align: left;
+}
+.my-mess .detail-mess {
+  background-color: #eaf0fc;
 }
 .my-mess img,
 .my-mess .name-mess {
@@ -274,4 +278,17 @@
   justify-content: center;
   align-items: center;
   align-content: center;
+}
+.list-imgs-mess {
+  flex-wrap: wrap;
+}
+.list-imgs-mess img {
+  display: block;
+  max-height: 200px;
+  max-width: 150px;
+  margin: 0 auto;
+  cursor: pointer;
+}
+.list-imgs-mess li {
+  margin: 3px;
 }
