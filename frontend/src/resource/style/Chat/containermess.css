@@ -29,7 +29,7 @@
 .friend-mess-infor h3 {
   margin: 5px 0;
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: default;
 }
 .friend-mess-infor p {
@@ -73,7 +73,7 @@
 }
 .chat-input-web {
   background-color: white;
-  height: 60px;
+  height: 50px;
   justify-content: space-between;
   align-items: center;
 }
@@ -212,6 +212,7 @@
   min-height: 50px;
 }
 .wrap-input-chat {
+  min-height: 50px;
   overflow-y: auto;
   position: relative;
   background-color: white;

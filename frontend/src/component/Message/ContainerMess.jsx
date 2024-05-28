@@ -84,10 +84,10 @@ function ContainerMess({ contactData }) {
       //   // handleChangeMenuControl(event);
       //   console.log(event);
       // }
-      if (!option.tableIcon && !option.tablePicture && !option.tableColor) {
-        // setMenuControl(option);
-        return;
-      }
+      // if (!option.tableIcon && !option.tablePicture && !option.tableColor) {
+      //   // setMenuControl(option);
+      //   return;
+      // }
       // if (menuControl.tableIcon && !option.tableIcon) {
       //   setMenuControl({
       //     tableIcon: false,
@@ -129,7 +129,7 @@ function ContainerMess({ contactData }) {
 
   const handleSendMess = async (e) => {
     const message = inputMessage.current.textContent;
-    if (message !== "" && message !== null) {
+    if ((message !== "" && message !== null) || listMessImg.length > 0) {
       setActiveIconSend(false);
       const data = {
         idRecieve: contactData.idChatWith,
@@ -139,8 +139,10 @@ function ContainerMess({ contactData }) {
         updatedAt: new Date(),
       };
       inputMessage.current.textContent = "";
+      setListMessImg(null);
       e.preventDefault();
       socket.current.emit("send-mess", data);
+      // set mess
       setMessages((prevMessage) => {
         if (Array.isArray(prevMessage)) {
           return [
@@ -155,6 +157,8 @@ function ContainerMess({ contactData }) {
           return [{ sender: userData._id, message: data.mess }];
         }
       });
+
+      // set last mess of contact
       setContact((prevState) => {
         let itemReviece = {};
         const filter = prevState.filter((item) => {
@@ -216,11 +220,14 @@ function ContainerMess({ contactData }) {
   };
 
   const handleCheckImg = () => {
+    // Set hover button send mess
+    inputMessage.current.textContent == ""
+      ? setActiveIconSend(false)
+      : setActiveIconSend(true);
+
+    // Handle img
     let listImg = [];
     const childNodes = inputMessage.current.childNodes;
-    // if (childNodes && childNodes.length > 0 && childNodes.includes("img")) {
-    //   console.log("chcek");
-    // }
     childNodes?.forEach((item) => {
       if (item.nodeName == "IMG") {
         listImg = [...listImg, item.getAttribute("src")];
@@ -239,9 +246,6 @@ function ContainerMess({ contactData }) {
   };
 
   const handleButtonSendMess = (e) => {
-    inputMessage.current.textContent == ""
-      ? setActiveIconSend(false)
-      : setActiveIconSend(true);
     if (e.key === "Enter" || e.key === "NumpadEnter") {
       handleSendMess(e);
       setMenuControl({
@@ -389,7 +393,7 @@ function ContainerMess({ contactData }) {
             <div className="chat-input-web">
               <ul className="list-img flex">
                 {listMessImg?.map((item, index) => (
-                  <li>
+                  <li key={index}>
                     <img src={item} alt="" />
                     <p onClick={() => handleDelImg(index)}>
                       <IoMdClose />
@@ -401,6 +405,10 @@ function ContainerMess({ contactData }) {
                 className={`wrap-input-chat ${
                   listMessImg && listMessImg.length > 0 && "content-chat-height"
                 }`}
+                style={{
+                  maxHeight:
+                    listMessImg && listMessImg.length > 0 ? undefined : "170px",
+                }}
               >
                 {/* <input
                   type="text"

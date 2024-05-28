@@ -14,7 +14,7 @@ const corsOptions = {
   origin: "*",
   methods: ["GET", "POST"],
 };
-app.use(cors());
+app.use(cors(corsOptions));
 
 app.use(compression());
 app.use(bodyParser.json());
