@@ -46,7 +46,7 @@ export const imageCompression = async (
 ): Promise<string[]> => {
   const result = await Promise.all(
     stringBase64.map(async (item) => {
-      if (!item.includes("base64")) {
+      if (item.includes("base64")) {
         return item;
       }
       try {
