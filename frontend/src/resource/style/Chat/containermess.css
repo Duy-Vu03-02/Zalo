@@ -133,7 +133,7 @@
   width: 100%;
 }
 .wrap-text-mess {
-  margin: 10px 20px;
+  margin: 15px 20px;
 }
 .wrap-text-mess > img {
   width: 40px;
@@ -281,6 +281,9 @@
 }
 .list-imgs-mess {
   flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
 }
 .list-imgs-mess img {
   display: block;

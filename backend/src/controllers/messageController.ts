@@ -14,7 +14,7 @@ export const getAllMessageByUser = async (req: Request, res: Response) => {
   try {
     const { idConversation } = req.body;
     const messgaes = await getAllMessagesByConversation(idConversation).select(
-      "sender message updatedAt"
+      "sender message updatedAt imgMess"
     );
 
     if (messgaes) {
@@ -30,7 +30,7 @@ export const getAllMessageByUser = async (req: Request, res: Response) => {
 
 export const createMessagesByConversation = async (data: any) => {
   try {
-    const { idConversation, sender, message } = data;
+    const { idConversation, sender, message, imgMess } = data;
     const conversation = await ConversationModel.findById(idConversation);
     if (conversation) {
       const newMess = await createMessages({
@@ -38,6 +38,7 @@ export const createMessagesByConversation = async (data: any) => {
         sender,
         message,
         seen: false,
+        imgMess: imgMess ? imgMess : undefined,
       });
 
       const conversation = await ConversationModel.findById(idConversation);

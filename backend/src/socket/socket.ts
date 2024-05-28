@@ -16,6 +16,7 @@ import {
   XOA_BAN_BE,
   ACTIVE,
 } from "../controllers/UserController";
+import { last } from "lodash";
 const app = express();
 const server = require("http").createServer(app);
 
@@ -60,6 +61,7 @@ io.on("connection", async (socket: Socket) => {
       idConversation: data.idConversation,
       sender: data.idSend,
       message: data.mess,
+      imgMess: data.imgMess ? data.imgMess : null,
     };
     await createMessagesByConversation(resData);
     const countMessseen = await updateCountSeenConversation({
@@ -70,7 +72,9 @@ io.on("connection", async (socket: Socket) => {
 
     if (id) {
       socket.to(id).emit("recieve-lastmess", {
-        lastMessage: data.mess,
+        lastMessage: data.mess
+          ? data.mess
+          : `đã gửi ${data.imgMess?.length} ảnh`,
         lastSend: data.idSend,
         idConversation: data.idConversation,
       });
@@ -79,6 +83,7 @@ io.on("connection", async (socket: Socket) => {
         sender: data.idSend,
         message: data.mess,
         updatedAt: data.updatedAt,
+        imgMess: data.imgMess,
       });
 
       if (countMessseen) {

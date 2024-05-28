@@ -209,10 +209,12 @@ export const updateCountSeenConversation = async (data: any) => {
 
 export const updateLastMessgae = async (data: any) => {
   try {
-    const { idConversation, message, sender } = data;
+    const { idConversation, message, sender, imgMess } = data;
     const conversation = await ConversationModel.findById(idConversation);
     if (conversation) {
-      conversation.lastMessage = message;
+      conversation.lastMessage = message
+        ? message
+        : `đã gửi ${imgMess?.length} ảnh`;
       conversation.lastSend = sender;
       conversation.save();
     }

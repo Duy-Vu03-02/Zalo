@@ -4,7 +4,9 @@ const MessageSchema = new mongoose.Schema(
   {
     idConversation: { type: String, ref: "Conversation" },
     sender: { type: String, required: true },
-    message: { type: String, required: true },
+    message: { type: String, required: false },
+    imgMess: { type: [String], require: false },
+    videoMess: { type: [String], require: false },
     seen: { type: Boolean },
   },
   {

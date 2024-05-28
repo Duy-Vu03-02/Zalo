@@ -25,6 +25,7 @@ function ContainerMess({ contactData }) {
   const [messages, setMessages] = useState({
     sender: null,
     message: null,
+    imgMess: null,
   });
   const [listMessImg, setListMessImg] = useState([]);
   const [tableColor, setTableColr] = useState(false);
@@ -130,7 +131,7 @@ function ContainerMess({ contactData }) {
   const handleSendMess = async (e) => {
     const message = inputMessage.current.textContent;
     if (
-      (message !== "" && message !== null) ||
+      (message.trim() !== "" && message.trim() !== null) ||
       (listMessImg && listMessImg.length > 0)
     ) {
       setActiveIconSend(false);
@@ -138,7 +139,7 @@ function ContainerMess({ contactData }) {
         idRecieve: contactData.idChatWith,
         idSend: userData._id,
         idConversation: contactData.idConversation,
-        mess: message,
+        mess: message.trim(),
         imgMess: listMessImg,
         updatedAt: new Date(),
       };
@@ -168,7 +169,9 @@ function ContainerMess({ contactData }) {
         let itemReviece = {};
         const filter = prevState.filter((item) => {
           if (item.idConversation == data.idConversation) {
-            item.lastMessage = data.mess;
+            item.lastMessage = data.mess
+              ? data.mess
+              : `đã gửi ${listMessImg?.length} ảnh`;
             item.lastSend = userData._id;
             itemReviece = item;
           } else {
