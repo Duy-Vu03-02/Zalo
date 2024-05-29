@@ -5,6 +5,8 @@ import {
   updateLastMessgae,
   updateCountSeenConversation,
   getAllIDConversationByUser,
+  createConversation,
+  handleGetUserByConversation,
 } from "../controllers/ConverationController";
 import { createMessagesByConversation } from "../controllers/MessageController";
 import {
@@ -179,6 +181,17 @@ io.on("connection", async (socket: Socket) => {
         });
       }
     }
+  });
+
+  socket.on("create-new-conversation", async (data) => {
+    const resultConversation = await createConversation(
+      data.userId,
+      data.friendId
+    );
+    socket.emit(
+      "received-new-conversation",
+      await handleGetUserByConversation(resultConversation)
+    );
   });
 });
 

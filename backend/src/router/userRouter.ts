@@ -3,7 +3,7 @@ import {
   crudfriend,
   getAllFriend,
   updateUser,
-  userByName,
+  friendByName,
   userByPhone,
   loginByAccount,
   loginBySessiToken,
@@ -15,7 +15,7 @@ export default (router: express.Router) => {
   router.post("/user/getallfriend", getAllFriend);
   router.post("/user/crudfriend", crudfriend);
   router.post("/user/getphone", userByPhone);
-  router.post("/user/getfriendbyname", userByName);
+  router.post("/user/getfriendbyname", friendByName);
   router.post("/user/updateavatarbyid", updateAvatar);
   router.post("/auth/register", register);
   router.post("/auth/login", loginByAccount);

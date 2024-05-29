@@ -54,7 +54,6 @@ export const getAllIDConversationByUser = async (id: String) => {
     const allConnversation = await ConversationModel.find({
       $and: [{ member: { $in: [id] } }, { type: TYPE_SINGLE }],
     }).select("_id");
-    console.log(allConnversation);
   } catch (err) {
     console.log(err);
   }
@@ -148,33 +147,37 @@ const handleConvertGroupConversation = async (data: any[]) => {
   return Promise.all(list);
 };
 
+export const handleGetUserByConversation = async (item: any) => {
+  const resData: any = {
+    type: item.type,
+    idConversation: item.id,
+    lastMessage: item.lastMessage,
+    updatedAt: item.updatedAt,
+    lastSend: item.lastSend,
+    countMessseen: item.countMessseen,
+    username: "",
+    avatar: "",
+    idChatWith: "",
+    lastActive: "",
+  };
+  for (let x of item.member) {
+    if (x != item.member[0]) {
+      const user = await getUsersById(x).select("avatar lastActive");
+      if (user) {
+        resData.username = user.username;
+        resData.avatar = user.avatar;
+        resData.idChatWith = user._id;
+        resData.lastActive = await calculatorLastActive(user.lastActive);
+        return resData;
+      }
+    }
+  }
+};
+
 const handleGetUserConversation = async (sortConversation: any, id: String) => {
   let listMember: any[] = [];
   for (let item of sortConversation) {
-    const resData: any = {
-      type: item.type,
-      idConversation: item.id,
-      lastMessage: item.lastMessage,
-      updatedAt: item.updatedAt,
-      lastSend: item.lastSend,
-      countMessseen: item.countMessseen,
-      username: "",
-      avatar: "",
-      idChatWith: "",
-      lastActive: "",
-    };
-    for (let x of item.member) {
-      if (x != id) {
-        const user = await getUsersById(x).select("avatar lastActive");
-        if (user) {
-          resData.username = user.username;
-          resData.avatar = user.avatar;
-          resData.idChatWith = user._id;
-          resData.lastActive = await calculatorLastActive(user.lastActive);
-          listMember.push(resData);
-        }
-      }
-    }
+    listMember.push(await handleGetUserByConversation(item));
   }
   return Promise.all(listMember);
 };

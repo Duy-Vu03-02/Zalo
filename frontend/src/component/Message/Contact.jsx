@@ -12,7 +12,6 @@ import { IoTriangle } from "react-icons/io5";
 import { BsFillCameraFill } from "react-icons/bs";
 import { RxDotFilled } from "react-icons/rx";
 import MenuContact from "../AddressBook/MenuContact";
-
 import axios from "axios";
 import { IconBase } from "react-icons/lib";
 
@@ -99,24 +98,14 @@ function Contact({ handleChangeContact, showPageAddressBook }) {
         });
       });
       socket.current.on("recieve-count-seen", handleRecieveCountMess);
-      // socket friend onl-offfline
-
-      // socket.current.on("state-friend-active", (data) => {
-      // if (data.state) {
-      //   setContact((prevState) => {
-      //     const filter = prevState.map((item) => {
-      //       if (item.idChatWith == data.idFriendActive) {
-      //         item.lastActive = data.text;
-      //       }
-      //       return item;
-      //     });
-      //     return filter;
-      //   });
-      // }
-      // });
+      socket.current.on("received-new-conversation", (newConversation) => {
+        setContact((prevContact) => [newConversation, ...prevContact]);
+        handleChangeContact(newConversation);
+      });
     }
     if (socket.current) {
       return () => {
+        socket.current.off("received-new-conversation");
         socket.current.off("recieve-lastmess");
         socket.current.off("recieve-count-seen", handleRecieveCountMess);
       };
@@ -199,7 +188,8 @@ function Contact({ handleChangeContact, showPageAddressBook }) {
       }
       searchTimeout.current = setTimeout(async () => {
         const data = {
-          username: value,
+          friendName: value,
+          userId: userData._id,
         };
         const response = await axios.post(
           "http://localhost:8080/user/getfriendbyname",
@@ -238,7 +228,6 @@ function Contact({ handleChangeContact, showPageAddressBook }) {
   };
 
   const handleChangeShowMessSeen = (value) => {
-    console.log("check");
     setAllMessActive(value);
     if (!value) {
       const filterMessSeen = conversationList.filter((item) => {
@@ -534,7 +523,10 @@ function Contact({ handleChangeContact, showPageAddressBook }) {
                           Kết quả{" "}
                           {dataUserPhone.show !== null ? "" : "gần nhất"}
                         </p>
-                        {dataUserPhone.state && <p>{dataUserPhone.state}</p>}
+                        {dataUserPhone.state &&
+                          dataUserPhone.state.length > 20 && (
+                            <p>{dataUserPhone.state}</p>
+                          )}
                       </div>
                       {dataUserPhone.data !== null && (
                         <div className="wrap-result-phone flex">

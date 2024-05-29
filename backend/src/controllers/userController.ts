@@ -12,7 +12,7 @@ import {
   getUsers,
   getFriendRecieve,
   getFriendSend,
-  getUserByName,
+  getFriendByName,
   getUserByPhone,
   getUserBySessionToken,
   getUsersById,
@@ -237,11 +237,13 @@ export const crudfriend = async (req: Request, res: Response) => {
   }
 };
 
-export const userByName = async (req: Request, res: Response) => {
+export const friendByName = async (req: Request, res: Response) => {
   try {
-    const { username } = req.body;
-    const lowerName = username.toLowerCase();
-    const checkUserName = await getUserByName(lowerName).select("avatar");
+    const { friendName, userId } = req.body;
+    const lowerName = friendName.toLowerCase();
+    const checkUserName = await getFriendByName(lowerName, userId).select(
+      "avatar"
+    );
     if (!checkUserName || checkUserName.length === 0) {
       return res.status(204).json({ mess: "null" });
     } else {

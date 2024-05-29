@@ -229,7 +229,7 @@ function ContainerMess({ contactData }) {
 
   const handleCheckImg = () => {
     // Set hover button send mess
-    inputMessage.current.textContent == ""
+    inputMessage.current.textContent.trim() == ""
       ? setActiveIconSend(false)
       : setActiveIconSend(true);
 
