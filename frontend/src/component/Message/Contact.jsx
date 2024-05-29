@@ -15,7 +15,11 @@ import MenuContact from "../AddressBook/MenuContact";
 import axios from "axios";
 import { IconBase } from "react-icons/lib";
 
-function Contact({ handleChangeContact, showPageAddressBook }) {
+function Contact({
+  handleChangeContact,
+  showPageAddressBook,
+  handleChangeSoftContact,
+}) {
   const [textSearch, setTextSearch] = useState("");
   const [isSearch, setIsSearch] = useState({
     state: false,
@@ -83,29 +87,38 @@ function Contact({ handleChangeContact, showPageAddressBook }) {
   useEffect(() => {
     if (socket.current) {
       socket.current.on("recieve-lastmess", (data) => {
-        setContact((prevState) => {
-          let itemReviece = {};
-          const filter = prevState.filter((item) => {
-            if (item.idConversation == data.idConversation) {
-              item.lastMessage = data.lastMessage;
-              item.lastSend = data.lastSend;
-              itemReviece = item;
-            } else {
-              return item;
-            }
+        if (contact && contact.length > 0) {
+          setContact((prevState) => {
+            let itemReviece = {};
+            const filter = prevState.filter((item) => {
+              if (item.idConversation == data.idConversation) {
+                item.lastMessage = data.lastMessage;
+                item.lastSend = data.lastSend;
+                itemReviece = item;
+              } else {
+                return item;
+              }
+            });
+            return [itemReviece, ...filter];
           });
-          return [itemReviece, ...filter];
-        });
+        }
       });
       socket.current.on("recieve-count-seen", handleRecieveCountMess);
-      socket.current.on("received-new-conversation", (newConversation) => {
-        setContact((prevContact) => [newConversation, ...prevContact]);
-        handleChangeContact(newConversation);
+      socket.current.on("received-soft-conversation", (data) => {
+        data.idChatWith = data._id;
+        handleChangeSoftContact(data);
+      });
+      socket.current.on("received-soft-contact-conversation", (data) => {
+        console.log(data);
+        setContact((prevContact) => [data, ...prevContact]);
+        handleChangeContact({ ...data, userId: userData._id });
+        conversationAvticve.current = data._id;
       });
     }
     if (socket.current) {
       return () => {
-        socket.current.off("received-new-conversation");
+        socket.current.off("received-soft-contact-conversation");
+        socket.current.off("received-soft-conversation");
         socket.current.off("recieve-lastmess");
         socket.current.off("recieve-count-seen", handleRecieveCountMess);
       };
@@ -113,15 +126,17 @@ function Contact({ handleChangeContact, showPageAddressBook }) {
   }, [socket.current]);
 
   const handleRecieveCountMess = (data) => {
-    setContact((prevState) => {
-      const filter = prevState.map((item) => {
-        if (item.idConversation == data.idConversation) {
-          item.countMessseen = data.countMessseen;
-        }
-        return item;
+    if (contact && contact.length > 0) {
+      setContact((prevState) => {
+        const filter = prevState.map((item) => {
+          if (item.idConversation == data.idConversation) {
+            item.countMessseen = data.countMessseen;
+          }
+          return item;
+        });
+        return filter;
       });
-      return filter;
-    });
+    }
   };
 
   useEffect(() => {
@@ -162,9 +177,6 @@ function Contact({ handleChangeContact, showPageAddressBook }) {
   useEffect(() => {
     if (contact !== null) {
       setConversationList(contact);
-      if (!allMessActive) {
-        // handleChangeShowMessSeen();
-      }
     }
   }, [contact]);
   // useEffect(() => {
@@ -876,7 +888,7 @@ function Contact({ handleChangeContact, showPageAddressBook }) {
                       conversationList.map((data, index) => (
                         <li
                           className={
-                            data.idConversation === conversationAvticve.current
+                            data?.idConversation === conversationAvticve.current
                               ? "conversation-active "
                               : ""
                           }
@@ -891,9 +903,9 @@ function Contact({ handleChangeContact, showPageAddressBook }) {
                               <div className="contact-avatar-friend">
                                 <img
                                   src={
-                                    data.type === "single"
-                                      ? data.avatar
-                                      : data.avatarGroup
+                                    data?.type === "single"
+                                      ? data?.avatar
+                                      : data?.avatarGroup
                                   }
                                   alt=""
                                 />

@@ -135,6 +135,9 @@ function ContainerMess({ contactData }) {
       (listMessImg && listMessImg.length > 0)
     ) {
       setActiveIconSend(false);
+      inputMessage.current.textContent = "";
+      setListMessImg(null);
+      e.preventDefault();
       const data = {
         idRecieve: contactData.idChatWith,
         idSend: userData._id,
@@ -143,9 +146,6 @@ function ContainerMess({ contactData }) {
         imgMess: listMessImg,
         updatedAt: new Date(),
       };
-      inputMessage.current.textContent = "";
-      setListMessImg(null);
-      e.preventDefault();
       socket.current.emit("send-mess", data);
       // set mess
       setMessages((prevMessage) => {
@@ -165,21 +165,23 @@ function ContainerMess({ contactData }) {
       });
 
       // set last mess of contact
-      setContact((prevState) => {
-        let itemReviece = {};
-        const filter = prevState.filter((item) => {
-          if (item.idConversation == data.idConversation) {
-            item.lastMessage = data.mess
-              ? data.mess
-              : `đã gửi ${listMessImg?.length} ảnh`;
-            item.lastSend = userData._id;
-            itemReviece = item;
-          } else {
-            return item;
-          }
+      if (contactData?.idConversation) {
+        setContact((prevState) => {
+          let itemReviece = {};
+          const filter = prevState.filter((item) => {
+            if (item.idConversation == data.idConversation) {
+              item.lastMessage = data.mess
+                ? data.mess
+                : `đã gửi ${listMessImg?.length} ảnh`;
+              item.lastSend = userData._id;
+              itemReviece = item;
+            } else {
+              return item;
+            }
+          });
+          return [itemReviece, ...filter];
         });
-        return [itemReviece, ...filter];
-      });
+      }
     }
   };
 

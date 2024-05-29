@@ -7,6 +7,7 @@ import {
   getAllIDConversationByUser,
   createConversation,
   handleGetUserByConversation,
+  getConversationByFriendID,
 } from "../controllers/ConverationController";
 import { createMessagesByConversation } from "../controllers/MessageController";
 import {
@@ -17,6 +18,7 @@ import {
   BAN_BE,
   XOA_BAN_BE,
   ACTIVE,
+  getUserById,
 } from "../controllers/UserController";
 import { last } from "lodash";
 const app = express();
@@ -58,45 +60,91 @@ io.on("connection", async (socket: Socket) => {
   });
 
   socket.on("send-mess", async (data: any) => {
-    const id = listRoom.get(data.idRecieve);
-    const resData = {
-      idConversation: data.idConversation,
-      sender: data.idSend,
-      message: data.mess,
-      imgMess: data.imgMess ? data.imgMess : null,
-    };
-    await createMessagesByConversation(resData);
-    const countMessseen = await updateCountSeenConversation({
-      idConversation: data.idConversation,
-      number: 1,
-    });
-    await updateLastMessgae(resData);
-
-    if (id) {
-      socket.to(id).emit("recieve-lastmess", {
-        lastMessage: data.mess
+    if (!data.idConversation) {
+      const newConversation = await createConversation(
+        data.idSend,
+        data.idRecieve
+      );
+      if (newConversation) {
+        const id = listRoom.get(data.idRecieve);
+        const resData = {
+          idConversation: newConversation._id,
+          sender: data.idSend,
+          message: data.mess,
+          imgMess: data.imgMess ? data.imgMess : null,
+        };
+        await createMessagesByConversation(resData);
+        const countMessseen = await updateCountSeenConversation({
+          idConversation: newConversation._id,
+          number: 1,
+        });
+        await updateLastMessgae(resData);
+        const currentConversation: any = await handleGetUserByConversation(
+          newConversation,
+          data.idSend
+        );
+        currentConversation.lastMessage = data.mess
           ? data.mess
-          : `đã gửi ${data.imgMess?.length} ảnh`,
-        lastSend: data.idSend,
-        idConversation: data.idConversation,
-      });
+          : `Bạn đã gửi ${data.imgMess.length} ảnh`;
 
-      socket.to(id).emit("recieve-mess", {
+        if (id) {
+          socket.to(id).emit("recieve-lastmess", {
+            lastMessage: data.mess
+              ? data.mess
+              : `đã gửi ${data.imgMess?.length} ảnh`,
+            lastSend: data.idSend,
+            idConversation: newConversation._id,
+          });
+          socket.to(id).emit("recieve-mess", {
+            sender: data.idSend,
+            message: data.mess,
+            updatedAt: newConversation.updatedAt,
+            imgMess: data.imgMess,
+          });
+          if (countMessseen) {
+            socket.to(id).emit("recieve-count-seen", {
+              countMessseen: countMessseen,
+              idConversation: newConversation._id,
+            });
+          }
+        }
+        socket.emit("received-soft-contact-conversation", currentConversation);
+        socket.emit("recieve-lastmess", {
+          idConversation: newConversation._id,
+          lastMessage: data.mess
+            ? data.mess
+            : `đã gửi ${data.imgMess?.length} ảnh`,
+          lastSend: data.idSend,
+        });
+      }
+    } else {
+      const id = listRoom.get(data.idRecieve);
+      const resData = {
+        idConversation: data.idConversation,
         sender: data.idSend,
         message: data.mess,
-        updatedAt: data.updatedAt,
-        imgMess: data.imgMess,
+        imgMess: data.imgMess ? data.imgMess : null,
+      };
+      await createMessagesByConversation(resData);
+      const countMessseen = await updateCountSeenConversation({
+        idConversation: data.idConversation,
+        number: 1,
       });
+      await updateLastMessgae(resData);
 
-      if (countMessseen) {
-        socket.to(id).emit("recieve-count-seen", {
-          countMessseen: countMessseen,
-          idConversation: data.idConversation,
-        });
+      if (id) {
+        const conversationFriend = await getConversationByFriendID(
+          data.idSend,
+          data.idRecieve
+        );
+        socket
+          .to(id)
+          .emit("received-soft-contact-conversation", conversationFriend);
       }
     }
   });
 
+  //
   socket.on("crud-friend", (data: any) => {
     const idSend = listRoom.get(data.userId);
     const idRecieve = listRoom.get(data.friendId);
@@ -166,20 +214,24 @@ io.on("connection", async (socket: Socket) => {
   });
 
   socket.on("seen-mess", async (data) => {
-    const countMessseen = await updateCountSeenConversation({
-      number: -1,
-      idConversation: data.idConversation,
-      idSeend: data.idSeend,
-    });
+    try {
+      const countMessseen = await updateCountSeenConversation({
+        number: -1,
+        idConversation: data.idConversation,
+        idSeend: data.idSeend,
+      });
 
-    if (countMessseen) {
-      const idChatWith = listRoom.get(data.idChatWith);
-      if (idChatWith) {
-        socket.emit("recieve-count-seen", {
-          countMessseen: countMessseen,
-          idConversation: data.idConversation,
-        });
+      if (countMessseen) {
+        const idChatWith = listRoom.get(data.idChatWith);
+        if (idChatWith) {
+          socket.emit("recieve-count-seen", {
+            countMessseen: countMessseen,
+            idConversation: data.idConversation,
+          });
+        }
       }
+    } catch (err) {
+      console.error(err);
     }
   });
 
@@ -190,8 +242,15 @@ io.on("connection", async (socket: Socket) => {
     );
     socket.emit(
       "received-new-conversation",
-      await handleGetUserByConversation(resultConversation)
+      await handleGetUserByConversation(resultConversation, data.userId)
     );
+  });
+
+  socket.on("create-soft-conversation", async (data) => {
+    const user = await getUserById(data.friendId);
+    if (user) {
+      socket.emit("received-soft-conversation", user);
+    }
   });
 });
 
