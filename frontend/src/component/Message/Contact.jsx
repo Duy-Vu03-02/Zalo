@@ -1,4 +1,11 @@
-import React, { useEffect, useState, useContext, useRef, memo } from "react";
+import React, {
+  useEffect,
+  useState,
+  useContext,
+  useRef,
+  memo,
+  useLayoutEffect,
+} from "react";
 import { UserContext } from "../../Context/UserContext";
 import { ContactContext } from "../../Context/ContactConext";
 import "../../resource/style/Chat/contact.css";
@@ -84,9 +91,10 @@ function Contact({
     }
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (socket.current) {
       socket.current.on("recieve-lastmess", (data) => {
+        console.log("received-last: ", data);
         if (contact && contact.length > 0) {
           setContact((prevState) => {
             let itemReviece = {};
@@ -101,24 +109,30 @@ function Contact({
             });
             return [itemReviece, ...filter];
           });
+        } else {
+          console.log(contact);
+          console.log("check");
         }
       });
       socket.current.on("recieve-count-seen", handleRecieveCountMess);
-      socket.current.on("received-soft-conversation", (data) => {
+      socket.current.on("received-soft-mess", (data) => {
         data.idChatWith = data._id;
         handleChangeSoftContact(data);
       });
       socket.current.on("received-soft-contact-conversation", (data) => {
-        console.log(data);
         setContact((prevContact) => [data, ...prevContact]);
         handleChangeContact({ ...data, userId: userData._id });
         conversationAvticve.current = data._id;
       });
+      socket.current.on("received-soft-conversation", (data) => {
+        setContact((prevContact) => [data, ...prevContact]);
+      });
     }
     if (socket.current) {
       return () => {
-        socket.current.off("received-soft-contact-conversation");
         socket.current.off("received-soft-conversation");
+        socket.current.off("received-soft-contact-conversation");
+        socket.current.off("received-soft-mess");
         socket.current.off("recieve-lastmess");
         socket.current.off("recieve-count-seen", handleRecieveCountMess);
       };
@@ -126,6 +140,7 @@ function Contact({
   }, [socket.current]);
 
   const handleRecieveCountMess = (data) => {
+    console.log("count-mess-seen: ", data);
     if (contact && contact.length > 0) {
       setContact((prevState) => {
         const filter = prevState.map((item) => {
@@ -136,6 +151,9 @@ function Contact({
         });
         return filter;
       });
+    } else {
+      console.log(contact);
+      console.log("check");
     }
   };
 

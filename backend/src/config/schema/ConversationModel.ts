@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import { UserModel } from "./UserModel";
 
 const ConversationSchema = new Schema(
   {
@@ -23,3 +24,5 @@ export const ConversationModel = mongoose.model(
   "Conversation",
   ConversationSchema
 );
+
+export const getConversationById = (id: String) => UserModel.findById(id);

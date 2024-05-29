@@ -76,7 +76,7 @@ export const getAllIDConversationByUser = async (id: String) => {
       $and: [{ member: { $in: [id] } }, { type: TYPE_SINGLE }],
     }).select("_id");
   } catch (err) {
-    console.log(err);
+    console.error(err);
   }
 };
 

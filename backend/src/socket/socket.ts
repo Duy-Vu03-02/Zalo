@@ -21,6 +21,7 @@ import {
   getUserById,
 } from "../controllers/UserController";
 import { last } from "lodash";
+import { getConversationById } from "../config/schema/ConversationModel";
 const app = express();
 const server = require("http").createServer(app);
 
@@ -88,32 +89,44 @@ io.on("connection", async (socket: Socket) => {
           : `Bạn đã gửi ${data.imgMess.length} ảnh`;
 
         if (id) {
-          socket.to(id).emit("recieve-lastmess", {
-            lastMessage: data.mess
-              ? data.mess
-              : `đã gửi ${data.imgMess?.length} ảnh`,
-            lastSend: data.idSend,
-            idConversation: newConversation._id,
-          });
-          socket.to(id).emit("recieve-mess", {
-            sender: data.idSend,
-            message: data.mess,
-            updatedAt: newConversation.updatedAt,
-            imgMess: data.imgMess,
-          });
-          if (countMessseen) {
-            socket.to(id).emit("recieve-count-seen", {
-              countMessseen: countMessseen,
-              idConversation: newConversation._id,
+          const conversationFriend = await handleGetUserByConversation(
+            newConversation,
+            data.idRecieve
+          );
+          socket
+            .to(id)
+            .emit("received-soft-conversation", conversationFriend, () => {
+              socket.to(id).emit("recieve-lastmess", {
+                lastMessage: data.mess
+                  ? data.mess
+                  : `đã gửi ${data.imgMess?.length} ảnh`,
+                lastSend: data.idSend,
+                idConversation: newConversation._id,
+              });
+
+              socket.to(id).emit("recieve-mess", {
+                sender: data.idSend,
+                message: data.mess,
+                updatedAt: newConversation.updatedAt,
+                imgMess: data.imgMess,
+              });
+
+              if (countMessseen) {
+                socket.to(id).emit("recieve-count-seen", {
+                  countMessseen: countMessseen,
+                  idConversation: newConversation._id,
+                });
+              }
             });
-          }
         }
         socket.emit("received-soft-contact-conversation", currentConversation);
         socket.emit("recieve-lastmess", {
           idConversation: newConversation._id,
           lastMessage: data.mess
             ? data.mess
-            : `đã gửi ${data.imgMess?.length} ảnh`,
+            : data.imgMess && data.imgMess.length > 0
+            ? `đã gửi ${data.imgMess?.length} ảnh`
+            : null,
           lastSend: data.idSend,
         });
       }
@@ -133,13 +146,27 @@ io.on("connection", async (socket: Socket) => {
       await updateLastMessgae(resData);
 
       if (id) {
-        const conversationFriend = await getConversationByFriendID(
-          data.idSend,
-          data.idRecieve
-        );
-        socket
-          .to(id)
-          .emit("received-soft-contact-conversation", conversationFriend);
+        socket.to(id).emit("recieve-lastmess", {
+          lastMessage: data.mess
+            ? data.mess
+            : `đã gửi ${data.imgMess?.length} ảnh`,
+          lastSend: data.idSend,
+          idConversation: data.idConversation,
+        });
+
+        socket.to(id).emit("recieve-mess", {
+          sender: data.idSend,
+          message: data.mess,
+          updatedAt: data.updatedAt,
+          imgMess: data.imgMess,
+        });
+
+        if (countMessseen) {
+          socket.to(id).emit("recieve-count-seen", {
+            countMessseen: countMessseen,
+            idConversation: data.idConversation,
+          });
+        }
       }
     }
   });
@@ -249,7 +276,7 @@ io.on("connection", async (socket: Socket) => {
   socket.on("create-soft-conversation", async (data) => {
     const user = await getUserById(data.friendId);
     if (user) {
-      socket.emit("received-soft-conversation", user);
+      socket.emit("received-soft-mess", user);
     }
   });
 });
