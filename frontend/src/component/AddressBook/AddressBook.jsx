@@ -5,9 +5,15 @@ import MessageInfor from "../Message/MessageInfor";
 import ContainerMess from "../Message/ContainerMess";
 import axios from "axios";
 import MenuContact from "./MenuContact";
+import ContentMenuContact from "./ContentMenuContact";
 
 export default function AddressBook() {
   const [dataContact, setDataContact] = useState(null);
+  const [showContentMenuContact, setShowContentMenuContact] = useState({
+    state: false,
+    data: null,
+    title: null,
+  });
   const { socket } = useContext(UserContext);
   const handleChangeSoftContact = (value) => {
     setDataContact(value);
@@ -51,6 +57,12 @@ export default function AddressBook() {
       console.error(err);
     }
   };
+
+  const handleSetContentMenuContact = (value) => {
+    setShowContentMenuContact(value);
+    console.log(value);
+  };
+
   return (
     <>
       <div className="container-mess flex">
@@ -58,22 +70,24 @@ export default function AddressBook() {
           <MenuContact
             handleChangeContact={handleChangeContact}
             handleChangeSoftContact={handleChangeSoftContact}
+            handleSetContentMenuContact={handleSetContentMenuContact}
           />
         </div>
-        <div>
-          {dataContact !== null ? (
-            <ContainerMess contactData={dataContact} />
-          ) : (
-            ""
+
+        <div className="fetch-menu-contact">
+          {showContentMenuContact.state && (
+            <ContentMenuContact
+              data={showContentMenuContact?.data}
+              title={showContentMenuContact?.title}
+            />
           )}
         </div>
+
         <div>
-          {dataContact !== null ? (
-            <MessageInfor contactData={dataContact} />
-          ) : (
-            ""
-            // <WellCome />
-          )}
+          {dataContact !== null && <ContainerMess contactData={dataContact} />}
+        </div>
+        <div>
+          {dataContact !== null && <MessageInfor contactData={dataContact} />}
         </div>
       </div>
     </>

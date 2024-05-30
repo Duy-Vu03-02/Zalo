@@ -20,6 +20,7 @@ import {
   updateUserById,
 } from "../config/schema/UserModel";
 import { ConversationModel } from "../config/schema/ConversationModel";
+import { GroupModel } from "../config/schema/GroupModel";
 
 export const HUY_LOI_MOI_KET_BAN = "Hủy lời mời kết bạn";
 export const KET_BAN = "Kết bạn";
@@ -75,6 +76,66 @@ export const getAllFriend = async (req: Request, res: Response) => {
     } else {
       return res.sendStatus(204);
     }
+  } catch (err) {
+    console.error(err);
+    return res.sendStatus(400);
+  }
+};
+
+export const getAllGroup = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.body;
+    const user = await UserModel.findById(id).select("group");
+    // if (user) {
+    //   const listIdGroup = user.groupReceived;
+    //   if (listIdGroup) {
+    //     const groups = await GroupModel.findById({
+    //       _id: { $in: listIdGroup },
+    //     }).select("groupName avatarImage");
+    //     return res.status(200).json(groups);
+    //   }
+    // }
+    return res.sendStatus(204);
+  } catch (err) {
+    console.error(err);
+    return res.sendStatus(400);
+  }
+};
+export const getGroupReq = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.body;
+    const user = await UserModel.findById(id).select("groupReceived");
+    // if (user) {
+    //   const groupReq = user.groupReq;
+    //   if (groupReq?.length > 0) {
+    //     const groupsReq = groupReq.map(async (item: String) => {
+    //       const group = await GroupModel.findById(item);
+    //       return group;
+    //     });
+    //     return res.status(200).json(await groupsReq());
+    //   }
+    // }
+    return res.sendStatus(204);
+  } catch (err) {
+    console.error(err);
+    return res.sendStatus(400);
+  }
+};
+
+export const getFriendReq = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.body;
+    const user = await UserModel.findById(id).select("friendRecieve");
+    if (true) {
+      const friendReq = user.friendRecieve;
+      if (friendReq) {
+        const friendReqs = await UserModel.find({
+          _id: { $in: friendReq },
+        }).select("username avatar");
+        return res.status(200).json(friendReqs);
+      }
+    }
+    return res.sendStatus(204);
   } catch (err) {
     console.error(err);
     return res.sendStatus(400);

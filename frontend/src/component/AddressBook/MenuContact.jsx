@@ -4,7 +4,8 @@ import { ContactContext } from "../../Context/ContactConext";
 import "../../resource/style/Chat/contact.css";
 import { CiSearch } from "react-icons/ci";
 import { HiOutlineUsers } from "react-icons/hi2";
-import { HiOutlineUser } from "react-icons/hi2";
+import { HiOutlineUserPlus } from "react-icons/hi2";
+import { HiOutlineUserGroup } from "react-icons/hi2";
 import { MdExpandMore } from "react-icons/md";
 import { IoIosMore } from "react-icons/io";
 import { IoMdClose } from "react-icons/io";
@@ -14,15 +15,20 @@ import { RxDotFilled } from "react-icons/rx";
 import "../../resource/style/AddressBook/menuContact.css";
 import axios from "axios";
 
-function MenuContact({ handleChangeContact, handleChangeSoftContact }) {
+function MenuContact({
+  handleChangeContact,
+  handleChangeSoftContact,
+  handleSetContentMenuContact,
+}) {
+  const DanhSachBanBe = "Danh sách bạn bè";
+  const DanhSachNhom = "Danh sách nhóm";
+  const LoiMoiKetBan = "Lời mời kết bạn";
+  const LoiMoiVaoNhom = "Lời mời vào nhóm";
   const listMenu = [
-    { title: "Danh sách bạn bè", icon: <HiOutlineUsers /> },
-    {
-      title: "Danh sách nhóm",
-      icon: <HiOutlineUser />,
-    },
-    { title: "Lời mời kết bạn", icon: <HiOutlineUser /> },
-    { title: "Lời mời vào nhóm", icon: <HiOutlineUsers /> },
+    { title: DanhSachBanBe, icon: <HiOutlineUsers /> },
+    { title: DanhSachNhom, icon: <HiOutlineUserGroup /> },
+    { title: LoiMoiKetBan, icon: <HiOutlineUserPlus /> },
+    { title: LoiMoiVaoNhom, icon: <HiOutlineUserGroup /> },
   ];
   const [textSearch, setTextSearch] = useState("");
   const [isSearch, setIsSearch] = useState({
@@ -90,12 +96,10 @@ function MenuContact({ handleChangeContact, handleChangeSoftContact }) {
   useEffect(() => {
     if (socket.current) {
       socket.current.on("received-soft-contact-conversation", (data) => {
-        console.log("check1");
         setContact((prevContact) => [data, ...prevContact]);
         handleChangeContact({ ...data, userId: userData._id });
       });
       socket.current.on("received-soft-conversation", (data) => {
-        console.log("check2s");
         setContact((prevContact) => [data, ...prevContact]);
         setConversationList((prevContact) => [data, ...prevContact]);
       });
@@ -486,6 +490,50 @@ function MenuContact({ handleChangeContact, handleChangeSoftContact }) {
     }
   };
 
+  const handleFetchDataUser = async (title) => {
+    if (title === DanhSachBanBe) {
+      const url = "http://localhost:8080/user/getallfriend";
+      const response = await axios.post(url, { id: userData._id });
+      if (response.status === 200 || response.status === 204) {
+        handleSetContentMenuContact({
+          state: true,
+          data: response.data,
+          title: DanhSachBanBe,
+        });
+      }
+    } else if (title === DanhSachNhom) {
+      const url = "http://localhost:8080/user/getallgroup";
+      const response = await axios.post(url, { id: userData._id });
+      if (response.status === 200 || response.status === 204) {
+        handleSetContentMenuContact({
+          state: true,
+          data: response.data,
+          title: DanhSachNhom,
+        });
+      }
+    } else if (title === LoiMoiKetBan) {
+      const url = "http://localhost:8080/user/getfriendreq";
+      const response = await axios.post(url, { id: userData._id });
+      if (response.status === 200 || response.status === 204) {
+        handleSetContentMenuContact({
+          state: true,
+          data: response.data,
+          title: LoiMoiKetBan,
+        });
+      }
+    } else if (title === LoiMoiVaoNhom) {
+      const url = "http://localhost:8080/user/getgroupreq";
+      const response = await axios.post(url, { id: userData._id });
+      if (response.status === 200 || response.status === 204) {
+        handleSetContentMenuContact({
+          state: true,
+          data: response.data,
+          title: LoiMoiVaoNhom,
+        });
+      }
+    }
+  };
+
   return (
     <>
       <div className="contact-container-contact">
@@ -507,7 +555,7 @@ function MenuContact({ handleChangeContact, handleChangeSoftContact }) {
               </div>
             ) : (
               <div className="contact-group-add-user flex">
-                <HiOutlineUser
+                <HiOutlineUserPlus
                   className="icon-user-contact"
                   onClick={() => handleShowAddFriend(true)}
                 />
@@ -849,9 +897,13 @@ function MenuContact({ handleChangeContact, handleChangeSoftContact }) {
         <div className="menu-contact">
           <ul>
             {listMenu.map((item, index) => (
-              <li key={index} className="flex">
+              <li
+                key={index}
+                className="flex"
+                onClick={() => handleFetchDataUser(item.title)}
+              >
+                <div className="icon-contact">{item.icon}</div>
                 <p>{item.title}</p>
-                {item.icon}
               </li>
             ))}
           </ul>

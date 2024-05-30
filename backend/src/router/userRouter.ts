@@ -9,15 +9,21 @@ import {
   loginBySessiToken,
   register,
   updateAvatar,
+  getAllGroup,
+  getFriendReq,
+  getGroupReq,
 } from "../controllers/UserController";
 
 export default (router: express.Router) => {
+  router.post("/auth/register", register);
+  router.post("/auth/login", loginByAccount);
+  router.post("/auth/sessiontoken", loginBySessiToken);
+  router.post("/user/getallgroup", getAllGroup);
+  router.post("/user/getfriendreq", getFriendReq);
+  router.post("/user/getgroupreq", getGroupReq);
   router.post("/user/getallfriend", getAllFriend);
   router.post("/user/crudfriend", crudfriend);
   router.post("/user/getphone", userByPhone);
   router.post("/user/getfriendbyname", friendByName);
   router.post("/user/updateavatarbyid", updateAvatar);
-  router.post("/auth/register", register);
-  router.post("/auth/login", loginByAccount);
-  router.post("/auth/sessiontoken", loginBySessiToken);
 };

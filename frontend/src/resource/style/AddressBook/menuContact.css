@@ -1,3 +1,20 @@
-.menu-contact {
-  background-color: red;
+.menu-contact li {
+  height: 60px;
+  transition: background-color 0.3s;
+  /* justify-content: center; */
+  align-items: center;
+  padding-left: 20px;
+  cursor: pointer;
+}
+.menu-contact li:hover {
+  background-color: #e5efff;
+  transition: background-color 0.3s;
+}
+.menu-contact .icon-contact {
+  padding: 8px;
+  font-size: 20px;
+}
+.menu-contact li p {
+  font-weight: 500;
+  line-height: 61px;
 }
