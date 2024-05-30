@@ -118,7 +118,7 @@ io.on("connection", async (socket: Socket) => {
                     idConversation: newConversation._id,
                   });
                 }
-              }, 5000);
+              }, 500);
             });
         }
         socket.emit("received-soft-contact-conversation", currentConversation);

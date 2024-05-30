@@ -93,8 +93,22 @@ function Contact({
 
   useLayoutEffect(() => {
     if (socket.current) {
+      socket.current.on("received-soft-contact-conversation", (data) => {
+        setContact((prevContact) => [data, ...prevContact]);
+        handleChangeContact({ ...data, userId: userData._id });
+        conversationAvticve.current = data._id;
+        console.log("Gui soft conversation: " + contact);
+      });
+      socket.current.on("received-soft-conversation", (data) => {
+        setContact((prevContact) => [data, ...prevContact]);
+        setConversationList((prevContact) => [data, ...prevContact]);
+        console.log("Nhan soft conversation: ", contact);
+      });
+      socket.current.on("received-soft-mess", (data) => {
+        data.idChatWith = data._id;
+        handleChangeSoftContact(data);
+      });
       socket.current.on("recieve-lastmess", (data) => {
-        console.log("received-last: ", data);
         if (contact && contact.length > 0) {
           setContact((prevState) => {
             let itemReviece = {};
@@ -110,23 +124,23 @@ function Contact({
             return [itemReviece, ...filter];
           });
         } else {
-          console.log(contact);
-          console.log("check");
+          console.log("Nhan lastmess: ", contact);
         }
       });
-      socket.current.on("recieve-count-seen", handleRecieveCountMess);
-      socket.current.on("received-soft-mess", (data) => {
-        data.idChatWith = data._id;
-        handleChangeSoftContact(data);
-      });
-      socket.current.on("received-soft-contact-conversation", (data) => {
-        setContact((prevContact) => [data, ...prevContact]);
-        handleChangeContact({ ...data, userId: userData._id });
-        conversationAvticve.current = data._id;
-      });
-      socket.current.on("received-soft-conversation", (data) => {
-        setContact((prevContact) => [data, ...prevContact]);
-        setConversationList((prevContact) => [data, ...prevContact]);
+      socket.current.on("recieve-count-seen", (data) => {
+        if (contact && contact.length > 0) {
+          setContact((prevState) => {
+            const filter = prevState.map((item) => {
+              if (item.idConversation == data.idConversation) {
+                item.countMessseen = data.countMessseen;
+              }
+              return item;
+            });
+            return filter;
+          });
+        } else {
+          console.log("Nhan dem tn: ", contact);
+        }
       });
     }
     if (socket.current) {
@@ -135,28 +149,10 @@ function Contact({
         socket.current.off("received-soft-contact-conversation");
         socket.current.off("received-soft-mess");
         socket.current.off("recieve-lastmess");
-        socket.current.off("recieve-count-seen", handleRecieveCountMess);
+        socket.current.off("recieve-count-seen");
       };
     }
   }, [socket.current]);
-
-  const handleRecieveCountMess = (data) => {
-    console.log("count-mess-seen: ", data);
-    if (contact && contact.length > 0) {
-      setContact((prevState) => {
-        const filter = prevState.map((item) => {
-          if (item.idConversation == data.idConversation) {
-            item.countMessseen = data.countMessseen;
-          }
-          return item;
-        });
-        return filter;
-      });
-    } else {
-      console.log(contact);
-      console.log("check");
-    }
-  };
 
   useEffect(() => {
     if (socket.current) {
@@ -196,6 +192,53 @@ function Contact({
   useEffect(() => {
     if (contact !== null) {
       setConversationList(contact);
+      if (socket.current) {
+        socket.current.on("received-soft-mess", (data) => {
+          data.idChatWith = data._id;
+          handleChangeSoftContact(data);
+        });
+        socket.current.on("recieve-lastmess", (data) => {
+          if (contact && contact.length > 0) {
+            setContact((prevState) => {
+              let itemReviece = {};
+              const filter = prevState.filter((item) => {
+                if (item.idConversation == data.idConversation) {
+                  item.lastMessage = data.lastMessage;
+                  item.lastSend = data.lastSend;
+                  itemReviece = item;
+                } else {
+                  return item;
+                }
+              });
+              return [itemReviece, ...filter];
+            });
+          } else {
+            console.log("Nhan lastmess: ", contact);
+          }
+        });
+        socket.current.on("recieve-count-seen", (data) => {
+          if (contact && contact.length > 0) {
+            setContact((prevState) => {
+              const filter = prevState.map((item) => {
+                if (item.idConversation == data.idConversation) {
+                  item.countMessseen = data.countMessseen;
+                }
+                return item;
+              });
+              return filter;
+            });
+          } else {
+            console.log("Nhan dem tn: ", contact);
+          }
+        });
+      }
+    }
+    if (socket.current) {
+      return () => {
+        socket.current.off("received-soft-mess");
+        socket.current.off("recieve-lastmess");
+        socket.current.off("recieve-count-seen");
+      };
     }
   }, [contact]);
   // useEffect(() => {
@@ -261,12 +304,16 @@ function Contact({
   const handleChangeShowMessSeen = (value) => {
     setAllMessActive(value);
     if (!value) {
-      const filterMessSeen = conversationList.filter((item) => {
-        if (item.countMessseen > 0 && item.lastSend !== userData._id) {
-          return item;
-        }
-      });
-      setConversationListNotSeen(filterMessSeen);
+      if (conversationList?.length > 0) {
+        const filterMessSeen = conversationList.filter((item) => {
+          if (item.countMessseen > 0 && item.lastSend !== userData._id) {
+            return item;
+          }
+        });
+        setConversationListNotSeen(filterMessSeen);
+      } else {
+        setConversationListNotSeen(null);
+      }
     }
   };
 
