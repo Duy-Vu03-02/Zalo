@@ -1,4 +1,11 @@
-import React, { useEffect, useState, useContext, useRef, memo } from "react";
+import React, {
+  useEffect,
+  useState,
+  useContext,
+  useRef,
+  memo,
+  useLayoutEffect,
+} from "react";
 import { UserContext } from "../../Context/UserContext";
 import { ContactContext } from "../../Context/ContactConext";
 import "../../resource/style/Chat/contact.css";
@@ -15,7 +22,11 @@ import MenuContact from "../AddressBook/MenuContact";
 import axios from "axios";
 import { IconBase } from "react-icons/lib";
 
-function Contact({ handleChangeContact, showPageAddressBook }) {
+function Contact({
+  handleChangeContact,
+  showPageAddressBook,
+  handleChangeSoftContact,
+}) {
   const [textSearch, setTextSearch] = useState("");
   const [isSearch, setIsSearch] = useState({
     state: false,
@@ -80,49 +91,68 @@ function Contact({ handleChangeContact, showPageAddressBook }) {
     }
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (socket.current) {
-      socket.current.on("recieve-lastmess", (data) => {
-        setContact((prevState) => {
-          let itemReviece = {};
-          const filter = prevState.filter((item) => {
-            if (item.idConversation == data.idConversation) {
-              item.lastMessage = data.lastMessage;
-              item.lastSend = data.lastSend;
-              itemReviece = item;
-            } else {
-              return item;
-            }
-          });
-          return [itemReviece, ...filter];
-        });
+      socket.current.on("received-soft-contact-conversation", (data) => {
+        setContact((prevContact) => [data, ...prevContact]);
+        handleChangeContact({ ...data, userId: userData._id });
+        conversationAvticve.current = data._id;
+        console.log("Gui soft conversation: " + contact);
       });
-      socket.current.on("recieve-count-seen", handleRecieveCountMess);
-      socket.current.on("received-new-conversation", (newConversation) => {
-        setContact((prevContact) => [newConversation, ...prevContact]);
-        handleChangeContact(newConversation);
+      socket.current.on("received-soft-conversation", (data) => {
+        setContact((prevContact) => [data, ...prevContact]);
+        setConversationList((prevContact) => [data, ...prevContact]);
+        console.log("Nhan soft conversation: ", contact);
+      });
+      socket.current.on("received-soft-mess", (data) => {
+        data.idChatWith = data._id;
+        handleChangeSoftContact(data);
+      });
+      socket.current.on("recieve-lastmess", (data) => {
+        if (contact && contact.length > 0) {
+          setContact((prevState) => {
+            let itemReviece = {};
+            const filter = prevState.filter((item) => {
+              if (item.idConversation == data.idConversation) {
+                item.lastMessage = data.lastMessage;
+                item.lastSend = data.lastSend;
+                itemReviece = item;
+              } else {
+                return item;
+              }
+            });
+            return [itemReviece, ...filter];
+          });
+        } else {
+          console.log("Nhan lastmess: ", contact);
+        }
+      });
+      socket.current.on("recieve-count-seen", (data) => {
+        if (contact && contact.length > 0) {
+          setContact((prevState) => {
+            const filter = prevState.map((item) => {
+              if (item.idConversation == data.idConversation) {
+                item.countMessseen = data.countMessseen;
+              }
+              return item;
+            });
+            return filter;
+          });
+        } else {
+          console.log("Nhan dem tn: ", contact);
+        }
       });
     }
     if (socket.current) {
       return () => {
-        socket.current.off("received-new-conversation");
+        socket.current.off("received-soft-conversation");
+        socket.current.off("received-soft-contact-conversation");
+        socket.current.off("received-soft-mess");
         socket.current.off("recieve-lastmess");
-        socket.current.off("recieve-count-seen", handleRecieveCountMess);
+        socket.current.off("recieve-count-seen");
       };
     }
   }, [socket.current]);
-
-  const handleRecieveCountMess = (data) => {
-    setContact((prevState) => {
-      const filter = prevState.map((item) => {
-        if (item.idConversation == data.idConversation) {
-          item.countMessseen = data.countMessseen;
-        }
-        return item;
-      });
-      return filter;
-    });
-  };
 
   useEffect(() => {
     if (socket.current) {
@@ -162,9 +192,53 @@ function Contact({ handleChangeContact, showPageAddressBook }) {
   useEffect(() => {
     if (contact !== null) {
       setConversationList(contact);
-      if (!allMessActive) {
-        // handleChangeShowMessSeen();
+      if (socket.current) {
+        socket.current.on("received-soft-mess", (data) => {
+          data.idChatWith = data._id;
+          handleChangeSoftContact(data);
+        });
+        socket.current.on("recieve-lastmess", (data) => {
+          if (contact && contact.length > 0) {
+            setContact((prevState) => {
+              let itemReviece = {};
+              const filter = prevState.filter((item) => {
+                if (item.idConversation == data.idConversation) {
+                  item.lastMessage = data.lastMessage;
+                  item.lastSend = data.lastSend;
+                  itemReviece = item;
+                } else {
+                  return item;
+                }
+              });
+              return [itemReviece, ...filter];
+            });
+          } else {
+            console.log("Nhan lastmess: ", contact);
+          }
+        });
+        socket.current.on("recieve-count-seen", (data) => {
+          if (contact && contact.length > 0) {
+            setContact((prevState) => {
+              const filter = prevState.map((item) => {
+                if (item.idConversation == data.idConversation) {
+                  item.countMessseen = data.countMessseen;
+                }
+                return item;
+              });
+              return filter;
+            });
+          } else {
+            console.log("Nhan dem tn: ", contact);
+          }
+        });
       }
+    }
+    if (socket.current) {
+      return () => {
+        socket.current.off("received-soft-mess");
+        socket.current.off("recieve-lastmess");
+        socket.current.off("recieve-count-seen");
+      };
     }
   }, [contact]);
   // useEffect(() => {
@@ -230,16 +304,16 @@ function Contact({ handleChangeContact, showPageAddressBook }) {
   const handleChangeShowMessSeen = (value) => {
     setAllMessActive(value);
     if (!value) {
-      if (conversationList && conversationList.length > 0) {
+      if (conversationList?.length > 0) {
         const filterMessSeen = conversationList.filter((item) => {
           if (item.countMessseen > 0 && item.lastSend !== userData._id) {
             return item;
           }
         });
         setConversationListNotSeen(filterMessSeen);
+      } else {
+        setConversationListNotSeen(null);
       }
-    } else {
-      setConversationListNotSeen(null);
     }
   };
 
@@ -880,7 +954,7 @@ function Contact({ handleChangeContact, showPageAddressBook }) {
                       conversationList.map((data, index) => (
                         <li
                           className={
-                            data.idConversation === conversationAvticve.current
+                            data?.idConversation === conversationAvticve.current
                               ? "conversation-active "
                               : ""
                           }
@@ -895,9 +969,9 @@ function Contact({ handleChangeContact, showPageAddressBook }) {
                               <div className="contact-avatar-friend">
                                 <img
                                   src={
-                                    data.type === "single"
-                                      ? data.avatar
-                                      : data.avatarGroup
+                                    data?.type === "single"
+                                      ? data?.avatar
+                                      : data?.avatarGroup
                                   }
                                   alt=""
                                 />

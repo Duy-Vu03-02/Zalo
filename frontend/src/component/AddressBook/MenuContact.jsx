@@ -180,7 +180,8 @@ function MenuContact({ handleChangeContact }) {
       }
       searchTimeout.current = setTimeout(async () => {
         const data = {
-          username: value,
+          friendName: value,
+          userId: userData._id,
         };
         const response = await axios.post(
           "http://localhost:8080/user/getfriendbyname",

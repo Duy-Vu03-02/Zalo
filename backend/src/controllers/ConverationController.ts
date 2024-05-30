@@ -9,7 +9,11 @@ import { Model } from "mongoose";
 export const TYPE_SINGLE = "single";
 export const TYPE_GROUP = "group";
 
-export const createConversation = async (userId: any, friendId: any) => {
+export const createConversation = async (
+  userId: any,
+  friendId: any
+  // softConversation: Boolean = true
+) => {
   try {
     const check = await ConversationModel.findOne({
       member: { $all: [userId, friendId] },
@@ -20,12 +24,29 @@ export const createConversation = async (userId: any, friendId: any) => {
         lastMessage: "",
         member: [userId, friendId],
         countMesssenn: 0,
+        lastSend: userId,
       });
       await newConversation.save();
       return newConversation;
     } else {
-      return;
+      return check;
     }
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const setSoftConversation = async (
+  idConversation: String,
+  state: Boolean
+) => {
+  try {
+    const conversation = await ConversationModel.findByIdAndUpdate(
+      idConversation,
+      { softConversation: state },
+      { new: true }
+    );
+    return conversation;
   } catch (err) {
     console.error(err);
   }
@@ -55,7 +76,7 @@ export const getAllIDConversationByUser = async (id: String) => {
       $and: [{ member: { $in: [id] } }, { type: TYPE_SINGLE }],
     }).select("_id");
   } catch (err) {
-    console.log(err);
+    console.error(err);
   }
 };
 
@@ -147,7 +168,7 @@ const handleConvertGroupConversation = async (data: any[]) => {
   return Promise.all(list);
 };
 
-export const handleGetUserByConversation = async (item: any) => {
+export const handleGetUserByConversation = async (item: any, id: String) => {
   const resData: any = {
     type: item.type,
     idConversation: item.id,
@@ -161,7 +182,7 @@ export const handleGetUserByConversation = async (item: any) => {
     lastActive: "",
   };
   for (let x of item.member) {
-    if (x != item.member[0]) {
+    if (x !== id) {
       const user = await getUsersById(x).select("avatar lastActive");
       if (user) {
         resData.username = user.username;
@@ -177,7 +198,7 @@ export const handleGetUserByConversation = async (item: any) => {
 const handleGetUserConversation = async (sortConversation: any, id: String) => {
   let listMember: any[] = [];
   for (let item of sortConversation) {
-    listMember.push(await handleGetUserByConversation(item));
+    listMember.push(await handleGetUserByConversation(item, id));
   }
   return Promise.all(listMember);
 };
@@ -206,7 +227,7 @@ export const updateCountSeenConversation = async (data: any) => {
     });
     return conversation.countMessseen;
   } catch (err) {
-    console.error(err);
+    // console.error(err);
   }
 };
 

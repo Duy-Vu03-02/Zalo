@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import { UserModel } from "./UserModel";
 
 const ConversationSchema = new Schema(
   {
@@ -9,7 +10,8 @@ const ConversationSchema = new Schema(
     groupName: { type: String, required: false },
     avatarGroup: { type: String, required: false },
     lastActive: { type: Date, required: false },
-    countMessseen: { type: String, required: false },
+    countMessseen: { type: String, required: false, default: "0" },
+    softConversation: { type: Boolean, required: false, default: false },
   },
   {
     timestamps: true,
@@ -22,3 +24,5 @@ export const ConversationModel = mongoose.model(
   "Conversation",
   ConversationSchema
 );
+
+export const getConversationById = (id: String) => UserModel.findById(id);

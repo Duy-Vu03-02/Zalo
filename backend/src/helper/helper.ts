@@ -58,7 +58,7 @@ export const imageCompression = async (
         const base64Image = buffer.toString("base64");
         return `data:image/png;base64,${base64Image}`;
       } catch (err) {
-        console.error(err);
+        // console.error(err);
         return item;
       }
     })

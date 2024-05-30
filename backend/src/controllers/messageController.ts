@@ -42,14 +42,14 @@ export const createMessagesByConversation = async (data: any) => {
         imgMess: imgMess ? await imageCompression(imgMess) : undefined,
       });
 
-      const conversation = await ConversationModel.findById(idConversation);
-      if (conversation) {
-        // Khoong update count vi socket se update
-        // conversation.countMessseen = parseInt(
-        // conversation.countMessseen
-        // ).toString();
-        await conversation.save();
-      }
+      // const conversation = await ConversationModel.findById(idConversation);
+      // if (conversation) {
+      //   // Khoong update count vi socket se update
+      //   // conversation.countMessseen = parseInt(
+      //   // conversation.countMessseen
+      //   // ).toString();
+      //   await conversation.save();
+      // }
     } else {
     }
   } catch (err) {

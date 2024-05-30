@@ -10,6 +10,11 @@ import { UserContext } from "../../Context/UserContext";
 export default function Message({ showPageAddressBook }) {
   const [dataContact, setDataContact] = useState(null);
   const { socket } = useContext(UserContext);
+
+  const handleChangeSoftContact = (value) => {
+    setDataContact(value);
+  };
+
   const handleChangeContact = async (value) => {
     try {
       if (value.idConversation === null || value.idConversation === undefined) {
@@ -36,11 +41,12 @@ export default function Message({ showPageAddressBook }) {
             userId: value.userId,
             friendId: value._id,
           };
-          console.log(data);
-          socket.current.emit("create-new-conversation", data);
+          // socket.current.emit("create-new-conversation", data);
+          socket.current.emit("create-soft-conversation", {
+            friendId: data.friendId,
+          });
         }
       } else {
-        console.log("check");
         setDataContact(value);
       }
     } catch (err) {
@@ -52,6 +58,7 @@ export default function Message({ showPageAddressBook }) {
       <div className="container-mess flex">
         <div>
           <Contact
+            handleChangeSoftContact={handleChangeSoftContact}
             handleChangeContact={handleChangeContact}
             showPageAddressBook={showPageAddressBook}
           />

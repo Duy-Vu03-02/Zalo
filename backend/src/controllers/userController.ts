@@ -3,7 +3,7 @@ import mongoose, { Schema } from "mongoose";
 import { authentication, comparePass } from "../helper/helper";
 import multer from "multer";
 import path from "path";
-import { get } from "lodash";
+import { fromPairs, get } from "lodash";
 import { createConversation } from "./ConverationController";
 import { MessagesModel } from "../config/schema/MessageModel";
 import {
@@ -237,6 +237,20 @@ export const crudfriend = async (req: Request, res: Response) => {
   }
 };
 
+export const getUserById = async (friendId: any) => {
+  try {
+    const friend: any = await getUsersById(friendId).select(
+      "username avatar lastActive "
+    );
+    friend.lastActive = await calculatorLastActive(friend.lastActive);
+    if (friend) {
+      return friend;
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 export const friendByName = async (req: Request, res: Response) => {
   try {
     const { friendName, userId } = req.body;
@@ -320,7 +334,6 @@ export const loginByAccount = async (req: Request, res: Response) => {
 export const register = async (req: Request, res: Response) => {
   try {
     const { phone, password, name, avatar } = req.body;
-    console.log();
     if (!phone || !password || !name || !avatar) {
       return res.sendStatus(403);
     } else {
