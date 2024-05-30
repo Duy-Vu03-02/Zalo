@@ -11,9 +11,10 @@ import { IoMdClose } from "react-icons/io";
 import { IoTriangle } from "react-icons/io5";
 import { BsFillCameraFill } from "react-icons/bs";
 import { RxDotFilled } from "react-icons/rx";
+import "../../resource/style/AddressBook/menuContact.css";
 import axios from "axios";
 
-function MenuContact({ handleChangeContact }) {
+function MenuContact({ handleChangeContact, handleChangeSoftContact }) {
   const listMenu = [
     { title: "Danh sách bạn bè", icon: <HiOutlineUsers /> },
     {
@@ -88,47 +89,59 @@ function MenuContact({ handleChangeContact }) {
 
   useEffect(() => {
     if (socket.current) {
+      socket.current.on("received-soft-contact-conversation", (data) => {
+        console.log("check1");
+        setContact((prevContact) => [data, ...prevContact]);
+        handleChangeContact({ ...data, userId: userData._id });
+      });
+      socket.current.on("received-soft-conversation", (data) => {
+        console.log("check2s");
+        setContact((prevContact) => [data, ...prevContact]);
+        setConversationList((prevContact) => [data, ...prevContact]);
+      });
+      socket.current.on("received-soft-mess", (data) => {
+        data.idChatWith = data._id;
+        handleChangeSoftContact(data);
+      });
       socket.current.on("recieve-lastmess", (data) => {
-        setContact((prevState) => {
-          let itemReviece = {};
-          const filter = prevState.filter((item) => {
-            if (item.idConversation == data.idConversation) {
-              item.lastMessage = data.lastMessage;
-              item.lastSend = data.lastSend;
-              itemReviece = item;
-            } else {
-              return item;
-            }
+        if (contact && contact.length > 0) {
+          setContact((prevState) => {
+            let itemReviece = {};
+            const filter = prevState.filter((item) => {
+              if (item.idConversation == data.idConversation) {
+                item.lastMessage = data.lastMessage;
+                item.lastSend = data.lastSend;
+                itemReviece = item;
+              } else {
+                return item;
+              }
+            });
+            return [itemReviece, ...filter];
           });
-          return [itemReviece, ...filter];
-        });
+        }
       });
       socket.current.on("recieve-count-seen", (data) => {
-        setContact((prevState) => {
-          const filter = prevState.map((item) => {
-            if (item.idConversation == data.idConversation) {
-              item.countMessseen = data.countMessseen;
-            }
-            return item;
+        if (contact && contact.length > 0) {
+          setContact((prevState) => {
+            const filter = prevState.map((item) => {
+              if (item.idConversation == data.idConversation) {
+                item.countMessseen = data.countMessseen;
+              }
+              return item;
+            });
+            return filter;
           });
-          return filter;
-        });
+        }
       });
-      // socket friend onl-offfline
-
-      // socket.current.on("state-friend-active", (data) => {
-      // if (data.state) {
-      //   setContact((prevState) => {
-      //     const filter = prevState.map((item) => {
-      //       if (item.idChatWith == data.idFriendActive) {
-      //         item.lastActive = data.text;
-      //       }
-      //       return item;
-      //     });
-      //     return filter;
-      //   });
-      // }
-      // });
+    }
+    if (socket.current) {
+      return () => {
+        socket.current.off("received-soft-conversation");
+        socket.current.off("received-soft-contact-conversation");
+        socket.current.off("received-soft-mess");
+        socket.current.off("recieve-lastmess");
+        socket.current.off("recieve-count-seen");
+      };
     }
   }, [socket.current]);
 
@@ -170,6 +183,48 @@ function MenuContact({ handleChangeContact }) {
   useEffect(() => {
     if (contact !== null) {
       setConversationList(contact);
+      if (socket.current) {
+        socket.current.on("received-soft-mess", (data) => {
+          data.idChatWith = data._id;
+        });
+        socket.current.on("recieve-lastmess", (data) => {
+          if (contact && contact.length > 0) {
+            setContact((prevState) => {
+              let itemReviece = {};
+              const filter = prevState.filter((item) => {
+                if (item.idConversation == data.idConversation) {
+                  item.lastMessage = data.lastMessage;
+                  item.lastSend = data.lastSend;
+                  itemReviece = item;
+                } else {
+                  return item;
+                }
+              });
+              return [itemReviece, ...filter];
+            });
+          }
+        });
+        socket.current.on("recieve-count-seen", (data) => {
+          if (contact && contact.length > 0) {
+            setContact((prevState) => {
+              const filter = prevState.map((item) => {
+                if (item.idConversation == data.idConversation) {
+                  item.countMessseen = data.countMessseen;
+                }
+                return item;
+              });
+              return filter;
+            });
+          }
+        });
+      }
+    }
+    if (socket.current) {
+      return () => {
+        socket.current.off("received-soft-mess");
+        socket.current.off("recieve-lastmess");
+        socket.current.off("recieve-count-seen");
+      };
     }
   }, [contact]);
 
@@ -217,10 +272,6 @@ function MenuContact({ handleChangeContact }) {
     let data = e.target.value;
     setTextSearch(data);
     handleSearchDb(data);
-  };
-
-  const handleChangeShowMess = () => {
-    allMessActive ? setAllMessActive(false) : setAllMessActive(true);
   };
 
   const handleChangeIsSearch = (value) => {
@@ -391,6 +442,7 @@ function MenuContact({ handleChangeContact }) {
       };
     });
   };
+
   const handleFindUserByPhone = async () => {
     if (dataUserPhone.username !== "") {
       const url = "http://localhost:8080/user/getphone";
@@ -419,6 +471,7 @@ function MenuContact({ handleChangeContact }) {
       }
     }
   };
+
   const handleCRUDFriend = async (friendId, state) => {
     const data = {
       userId: userData._id,
@@ -793,6 +846,16 @@ function MenuContact({ handleChangeContact }) {
         ) : (
           ""
         )}
+        <div className="menu-contact">
+          <ul>
+            {listMenu.map((item, index) => (
+              <li key={index} className="flex">
+                <p>{item.title}</p>
+                {item.icon}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </>
   );

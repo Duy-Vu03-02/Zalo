@@ -20,7 +20,7 @@ import {
   ACTIVE,
   getUserById,
 } from "../controllers/UserController";
-import { last } from "lodash";
+
 import { getConversationById } from "../config/schema/ConversationModel";
 const app = express();
 const server = require("http").createServer(app);

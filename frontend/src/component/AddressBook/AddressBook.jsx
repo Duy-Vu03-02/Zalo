@@ -9,6 +9,10 @@ import MenuContact from "./MenuContact";
 export default function AddressBook() {
   const [dataContact, setDataContact] = useState(null);
   const { socket } = useContext(UserContext);
+  const handleChangeSoftContact = (value) => {
+    setDataContact(value);
+  };
+
   const handleChangeContact = async (value) => {
     try {
       if (value.idConversation === null || value.idConversation === undefined) {
@@ -35,8 +39,10 @@ export default function AddressBook() {
             userId: value.userId,
             friendId: value._id,
           };
-          console.log(data);
-          socket.current.emit("create-new-conversation", data);
+          // socket.current.emit("create-new-conversation", data);
+          socket.current.emit("create-soft-conversation", {
+            friendId: data.friendId,
+          });
         }
       } else {
         setDataContact(value);
@@ -49,7 +55,10 @@ export default function AddressBook() {
     <>
       <div className="container-mess flex">
         <div>
-          <MenuContact handleChangeContact={handleChangeContact} />
+          <MenuContact
+            handleChangeContact={handleChangeContact}
+            handleChangeSoftContact={handleChangeSoftContact}
+          />
         </div>
         <div>
           {dataContact !== null ? (
