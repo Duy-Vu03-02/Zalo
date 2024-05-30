@@ -126,6 +126,7 @@ function Contact({
       });
       socket.current.on("received-soft-conversation", (data) => {
         setContact((prevContact) => [data, ...prevContact]);
+        setConversationList((prevContact) => [data, ...prevContact]);
       });
     }
     if (socket.current) {
