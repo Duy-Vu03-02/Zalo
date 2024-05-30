@@ -1,9 +1,9 @@
 import express from "express";
 
-import user from "./userRouter";
-import message from "./messageRouter";
-import group from "./groupRouter";
-import conversationRouter from "./conversationRouter";
+import user from "./UserRouter";
+import message from "./MessageRouter";
+import group from "./GroupRouter";
+import conversationRouter from "./ConversationRouter";
 
 const router = express.Router();
 
