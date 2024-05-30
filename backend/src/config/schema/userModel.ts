@@ -44,12 +44,13 @@ export const getFriendRecieve = (friendRecieve: string) =>
 export const getUserByPhone = (phone: string) => UserModel.findOne({ phone });
 
 export const getFriendByName = (username: string, userId: String) => {
-  return UserModel.find({
-    $and: [
-      { username: { $regex: new RegExp(username, "i") } },
-      { friend: { $in: [userId] } },
-    ],
-  });
+  // return UserModel.find({
+  //   $and: [
+  //     { username: { $regex: new RegExp(username, "i") } },
+  //     { friend: { $in: [userId] } },
+  //   ],
+  // });
+  return UserModel.find({ username: { $regex: new RegExp(username, "i") } });
 };
 
 export const getUserBySessionToken = (sessionToken: string) =>
