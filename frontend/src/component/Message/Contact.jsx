@@ -230,12 +230,16 @@ function Contact({ handleChangeContact, showPageAddressBook }) {
   const handleChangeShowMessSeen = (value) => {
     setAllMessActive(value);
     if (!value) {
-      const filterMessSeen = conversationList.filter((item) => {
-        if (item.countMessseen > 0 && item.lastSend !== userData._id) {
-          return item;
-        }
-      });
-      setConversationListNotSeen(filterMessSeen);
+      if (conversationList && conversationList.length > 0) {
+        const filterMessSeen = conversationList.filter((item) => {
+          if (item.countMessseen > 0 && item.lastSend !== userData._id) {
+            return item;
+          }
+        });
+        setConversationListNotSeen(filterMessSeen);
+      }
+    } else {
+      setConversationListNotSeen(null);
     }
   };
 
