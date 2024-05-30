@@ -91,18 +91,16 @@ function Contact({
     }
   }, []);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (socket.current) {
       socket.current.on("received-soft-contact-conversation", (data) => {
         setContact((prevContact) => [data, ...prevContact]);
         handleChangeContact({ ...data, userId: userData._id });
         conversationAvticve.current = data._id;
-        console.log("Gui soft conversation: " + contact);
       });
       socket.current.on("received-soft-conversation", (data) => {
         setContact((prevContact) => [data, ...prevContact]);
         setConversationList((prevContact) => [data, ...prevContact]);
-        console.log("Nhan soft conversation: ", contact);
       });
       socket.current.on("received-soft-mess", (data) => {
         data.idChatWith = data._id;
@@ -123,8 +121,6 @@ function Contact({
             });
             return [itemReviece, ...filter];
           });
-        } else {
-          console.log("Nhan lastmess: ", contact);
         }
       });
       socket.current.on("recieve-count-seen", (data) => {
@@ -138,8 +134,6 @@ function Contact({
             });
             return filter;
           });
-        } else {
-          console.log("Nhan dem tn: ", contact);
         }
       });
     }
@@ -212,8 +206,6 @@ function Contact({
               });
               return [itemReviece, ...filter];
             });
-          } else {
-            console.log("Nhan lastmess: ", contact);
           }
         });
         socket.current.on("recieve-count-seen", (data) => {
@@ -227,8 +219,6 @@ function Contact({
               });
               return filter;
             });
-          } else {
-            console.log("Nhan dem tn: ", contact);
           }
         });
       }
@@ -241,19 +231,6 @@ function Contact({
       };
     }
   }, [contact]);
-  // useEffect(() => {
-  //   if (contact !== null) {
-  //     setConversationListNotSeen((prevState) => {
-  //       const filter = contact.map((item) => {
-  //         console.log(item);
-  //         // if (item.countMessseen > 0) {
-  //         //   return item;
-  //         // }
-  //       });
-  //       return filter;
-  //     });
-  //   }
-  // }, [contact]);
 
   const handleSearchDb = (value) => {
     if (value !== "") {

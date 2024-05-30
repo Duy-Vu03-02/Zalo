@@ -96,29 +96,27 @@ io.on("connection", async (socket: Socket) => {
           socket
             .to(id)
             .emit("received-soft-conversation", conversationFriend, () => {
-              setTimeout(() => {
-                socket.to(id).emit("recieve-lastmess", {
-                  lastMessage: data.mess
-                    ? data.mess
-                    : `đã gửi ${data.imgMess?.length} ảnh`,
-                  lastSend: data.idSend,
+              socket.to(id).emit("recieve-lastmess", {
+                lastMessage: data.mess
+                  ? data.mess
+                  : `đã gửi ${data.imgMess?.length} ảnh`,
+                lastSend: data.idSend,
+                idConversation: newConversation._id,
+              });
+
+              socket.to(id).emit("recieve-mess", {
+                sender: data.idSend,
+                message: data.mess,
+                updatedAt: newConversation.updatedAt,
+                imgMess: data.imgMess,
+              });
+
+              if (countMessseen) {
+                socket.to(id).emit("recieve-count-seen", {
+                  countMessseen: countMessseen,
                   idConversation: newConversation._id,
                 });
-
-                socket.to(id).emit("recieve-mess", {
-                  sender: data.idSend,
-                  message: data.mess,
-                  updatedAt: newConversation.updatedAt,
-                  imgMess: data.imgMess,
-                });
-
-                if (countMessseen) {
-                  socket.to(id).emit("recieve-count-seen", {
-                    countMessseen: countMessseen,
-                    idConversation: newConversation._id,
-                  });
-                }
-              }, 500);
+              }
             });
         }
         socket.emit("received-soft-contact-conversation", currentConversation);
