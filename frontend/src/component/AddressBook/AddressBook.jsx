@@ -15,7 +15,7 @@ export default function AddressBook() {
     title: null,
     count: null,
   });
-  const { socket } = useContext(UserContext);
+  const { socket, userData } = useContext(UserContext);
   const handleChangeSoftContact = (value) => {
     setDataContact(value);
   };
@@ -26,9 +26,10 @@ export default function AddressBook() {
         const url =
           "http://localhost:8080/conversation/getconversationbyfriendid";
         const response = await axios.post(url, {
-          userId: value.userId,
+          userId: userData._id,
           friendId: value._id,
         });
+        console.log(response);
         if (response.status === 200) {
           delete value.userId;
           delete value._id;
@@ -38,6 +39,7 @@ export default function AddressBook() {
             ...resData,
             ...value,
           };
+          console.log(resData.data);
           setDataContact(format);
           return;
         }
@@ -64,7 +66,7 @@ export default function AddressBook() {
   };
 
   const handleShowSoftConversation = (conversation) => {
-    setDataContact(conversation);
+    handleChangeContact(conversation);
     setShowContentMenuContact({
       state: false,
       data: null,

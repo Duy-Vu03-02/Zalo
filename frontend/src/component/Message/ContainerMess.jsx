@@ -195,6 +195,8 @@ function ContainerMess({ contactData }) {
         "http://127.0.0.1:8080/message/getallmessage",
         { idConversation: contactData.idConversation }
       );
+      // console.log(contactData);
+      // console.log(response);
       if (response.status === 200) {
         setMessages(response.data);
       }

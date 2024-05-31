@@ -39,7 +39,6 @@ export const createMessagesByConversation = async (data: any) => {
         sender,
         message,
         seen: false,
-        // imgMess: imgMess ? imageCompression(imgMess) : undefined,
         imgMess: imgMess ? imgMess : undefined,
       });
 
