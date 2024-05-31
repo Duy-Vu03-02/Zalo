@@ -51,8 +51,8 @@ export const createMessagesByConversation = async (data: any) => {
       //   // ).toString();
       //   await conversation.save();
       // }
-    } else {
     }
+    return;
   } catch (err) {
     console.error(err);
   }
