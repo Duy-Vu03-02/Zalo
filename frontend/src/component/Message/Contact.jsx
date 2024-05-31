@@ -196,7 +196,7 @@ function Contact({
             setContact((prevState) => {
               let itemReviece = {};
               const filter = prevState.filter((item) => {
-                if (item.idConversation == data.idConversation) {
+                if (item?.idConversation == data?.idConversation) {
                   item.lastMessage = data.lastMessage;
                   item.lastSend = data.lastSend;
                   itemReviece = item;

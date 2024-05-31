@@ -2,7 +2,6 @@ import React from "react";
 import "../../resource/style/AddressBook/contentMenuContact.css";
 
 export default function ({ data, title, count, handleShowSoftConversation }) {
-  console.log(data);
   return (
     <>
       <div className="header-content-menu-contact flex">
@@ -20,7 +19,12 @@ export default function ({ data, title, count, handleShowSoftConversation }) {
                 <li
                   key={index}
                   className="flex"
-                  onClick={() => handleShowSoftConversation(item)}
+                  onClick={() =>
+                    handleShowSoftConversation({
+                      ...item,
+                      idChatWidth: item._id,
+                    })
+                  }
                 >
                   <div className="item-fetch flex">
                     <img src={item.avatar} alt={`avatar by ${item.username}`} />
