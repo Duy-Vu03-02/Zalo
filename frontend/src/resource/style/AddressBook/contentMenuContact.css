@@ -14,15 +14,16 @@
   margin-left: 20px;
 }
 .list-fetch-contact {
-  background-color: #e1e4ea;
+  background-color: #f4f4f7;
   height: calc(100vh - 60px);
 }
 .list-fetch-contact .content-fetch-contact {
   height: calc(100vh - 70px);
   background-color: white;
   border-radius: 5px;
-  margin-top: 10px;
-  margin-left: 10px;
+  width: calc(100vw - 455px);
+  margin-left: 20px;
+  overflow-y: auto;
 }
 .list-fetch-contact .total-fetch {
   padding: 20px 0 20px 20px;
@@ -30,7 +31,7 @@
   font-weight: 500;
 }
 .list-fetch-contact li {
-  height: 55px;
+  height: 60px;
   transition: background-color 0.3s;
   cursor: pointer;
 }
@@ -46,4 +47,13 @@
 }
 .list-fetch-contact li p {
   margin: auto 0;
+}
+.content-fetch-contact input {
+  margin: 20px;
+  height: 20px;
+  width: 250px;
+  outline-offset: 3px;
+  outline: 1px solid rgb(202, 199, 200);
+  border-radius: 3px;
+  padding-left: 5px;
 }

@@ -39,7 +39,7 @@ export const createMessagesByConversation = async (data: any) => {
         sender,
         message,
         seen: false,
-        imgMess: imgMess ? imgMess : undefined,
+        imgMess: imgMess ? imageCompression(imgMess) : undefined,
       });
 
       // const conversation = await ConversationModel.findById(idConversation);

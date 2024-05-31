@@ -499,6 +499,7 @@ function MenuContact({
           state: true,
           data: response.data,
           title: DanhSachBanBe,
+          count: `Bạn bè (${response.data?.length})`,
         });
       }
     } else if (title === DanhSachNhom) {
@@ -509,6 +510,7 @@ function MenuContact({
           state: true,
           data: response.data,
           title: DanhSachNhom,
+          count: `Nhóm (${response.data?.length})`,
         });
       }
     } else if (title === LoiMoiKetBan) {
@@ -519,6 +521,7 @@ function MenuContact({
           state: true,
           data: response.data,
           title: LoiMoiKetBan,
+          count: `Lời mời kết bạn (${response.data?.length})`,
         });
       }
     } else if (title === LoiMoiVaoNhom) {
@@ -529,6 +532,7 @@ function MenuContact({
           state: true,
           data: response.data,
           title: LoiMoiVaoNhom,
+          count: `Lời mời vào nhóm (${response.data?.length})`,
         });
       }
     }

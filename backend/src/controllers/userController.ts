@@ -69,10 +69,16 @@ export const getAllFriend = async (req: Request, res: Response) => {
     const user = await getUsersById(id).select("friend");
     const listFrinend = user.friend;
     if (listFrinend.length > 0) {
-      const friends = await UserModel.find({
+      const friends: any = await UserModel.find({
         _id: { $in: listFrinend },
       }).select("avatar updatedAt");
-      return res.status(200).json(friends);
+      const newfriends = await Promise.all(
+        friends.map(async (item: any) => {
+          item.lastActive = await calculatorLastActive(item.lastActive);
+          return item;
+        })
+      );
+      return res.status(200).json(newfriends);
     } else {
       return res.sendStatus(204);
     }

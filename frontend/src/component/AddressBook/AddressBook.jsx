@@ -13,6 +13,7 @@ export default function AddressBook() {
     state: false,
     data: null,
     title: null,
+    count: null,
   });
   const { socket } = useContext(UserContext);
   const handleChangeSoftContact = (value) => {
@@ -60,7 +61,16 @@ export default function AddressBook() {
 
   const handleSetContentMenuContact = (value) => {
     setShowContentMenuContact(value);
-    console.log(value);
+  };
+
+  const handleShowSoftConversation = (conversation) => {
+    setDataContact(conversation);
+    setShowContentMenuContact({
+      state: false,
+      data: null,
+      title: null,
+      count: null,
+    });
   };
 
   return (
@@ -79,6 +89,8 @@ export default function AddressBook() {
             <ContentMenuContact
               data={showContentMenuContact?.data}
               title={showContentMenuContact?.title}
+              count={showContentMenuContact?.count}
+              handleShowSoftConversation={handleShowSoftConversation}
             />
           )}
         </div>
