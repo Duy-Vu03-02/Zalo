@@ -852,7 +852,7 @@ function MenuContact({
             <ul className="wrap-recent-search">
               {isSearch.recent && (
                 <div>
-                  <p style={{ margin: "10px 0 0 20px", fontWeight: "500" }}>
+                  <p style={{ margin: "10px 0 10px 20px", fontWeight: "500" }}>
                     Tìm gần đây
                   </p>
                   <div className="wrap-result-search">
@@ -898,20 +898,22 @@ function MenuContact({
         ) : (
           ""
         )}
-        <div className="menu-contact">
-          <ul>
-            {listMenu.map((item, index) => (
-              <li
-                key={index}
-                className="flex"
-                onClick={() => handleFetchDataUser(item.title)}
-              >
-                <div className="icon-contact">{item.icon}</div>
-                <p>{item.title}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
+        {!isSearch?.state && (
+          <div className="menu-contact">
+            <ul>
+              {listMenu.map((item, index) => (
+                <li
+                  key={index}
+                  className="flex"
+                  onClick={() => handleFetchDataUser(item.title)}
+                >
+                  <div className="icon-contact">{item.icon}</div>
+                  <p>{item.title}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </>
   );

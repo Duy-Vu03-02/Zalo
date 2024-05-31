@@ -878,7 +878,7 @@ function Contact({
             <ul className="wrap-recent-search">
               {isSearch.recent && (
                 <div>
-                  <p style={{ margin: "10px 0 0 20px", fontWeight: "500" }}>
+                  <p style={{ margin: "10px 0 10px 20px", fontWeight: "500" }}>
                     Tìm gần đây
                   </p>
                   <div className="wrap-result-search">
