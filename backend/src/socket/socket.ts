@@ -84,10 +84,11 @@ io.on("connection", async (socket: Socket) => {
           newConversation,
           data.idSend
         );
-        currentConversation.lastMessage = data.mess
-          ? data.mess
-          : `Bạn đã gửi ${data.imgMess.length} ảnh`;
-
+        if (currentConversation?.lastMessage) {
+          currentConversation.lastMessage = data.mess
+            ? data.mess
+            : `Bạn đã gửi ${data.imgMess.length} ảnh`;
+        }
         if (id) {
           const conversationFriend = await handleGetUserByConversation(
             newConversation,
