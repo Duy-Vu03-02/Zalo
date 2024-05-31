@@ -898,20 +898,22 @@ function MenuContact({
         ) : (
           ""
         )}
-        <div className="menu-contact">
-          <ul>
-            {listMenu.map((item, index) => (
-              <li
-                key={index}
-                className="flex"
-                onClick={() => handleFetchDataUser(item.title)}
-              >
-                <div className="icon-contact">{item.icon}</div>
-                <p>{item.title}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
+        {!isSearch.state && (
+          <div className="menu-contact">
+            <ul>
+              {listMenu.map((item, index) => (
+                <li
+                  key={index}
+                  className="flex"
+                  onClick={() => handleFetchDataUser(item.title)}
+                >
+                  <div className="icon-contact">{item.icon}</div>
+                  <p>{item.title}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </>
   );
