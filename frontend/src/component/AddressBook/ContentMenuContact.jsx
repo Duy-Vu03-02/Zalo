@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import "../../resource/style/AddressBook/contentMenuContact.css";
 import { LoiMoiKetBan, LoiMoiVaoNhom } from "./MenuContact";
 import { UserContext } from "../../Context/UserContext";
+import { TbMessageDots } from "react-icons/tb";
 import axios from "axios";
 
 export default function ({ data, title, count, handleShowSoftConversation }) {
@@ -23,7 +24,25 @@ export default function ({ data, title, count, handleShowSoftConversation }) {
     };
     fetch();
   }, [title]);
-  console.log(data.length);
+
+  const handleCancelReqFriend = async (friend) => {
+    const data = {
+      userId: userData._id,
+      friendId: friend._id,
+      state: "Thu hồi lời mời",
+    };
+    const url = "http://localhost:8080/user/crudfriend";
+    const response = await axios.post(url, data);
+    if (response.status === 200) {
+      setFriendReq((prevFriendReq) => {
+        const newFriendReq = prevFriendReq.filter(
+          (item) => item._id !== friend._id
+        );
+        return newFriendReq;
+      });
+    }
+  };
+
   return (
     <>
       <div className="waper-content-menu-contact">
@@ -87,12 +106,30 @@ export default function ({ data, title, count, handleShowSoftConversation }) {
             <ul className="flex">
               {friendReq.map((item, index) => (
                 <li key={index}>
-                  <div className="item-fetch flex">
-                    <img src={item.avatar} alt="" />
-                    <p>{item.username}</p>
+                  <div
+                    className="flex"
+                    style={{ justifyContent: "space-between" }}
+                  >
+                    <div className="item-fetch flex">
+                      <img src={item.avatar} alt="" />
+                      <p>{item.username}</p>
+                    </div>
+                    <div
+                      className="btn-soft-mess"
+                      onClick={() =>
+                        handleShowSoftConversation({
+                          ...item,
+                          idChatWidth: item._id,
+                        })
+                      }
+                    >
+                      <TbMessageDots />
+                    </div>
                   </div>
                   <div>
-                    <button>Thu hồi lời mời</button>
+                    <button onClick={() => handleCancelReqFriend(item)}>
+                      Thu hồi lời mời
+                    </button>
                   </div>
                 </li>
               ))}

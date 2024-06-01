@@ -89,8 +89,8 @@
   margin: 20px 0;
 }
 .friend-req ul {
-  overflow-y: auto;
   overflow-y: hidden;
+  overflow-x: auto;
   width: calc(100vw - 455px);
   margin-left: 20px;
 }
@@ -113,9 +113,10 @@
 .friend-req li {
   background-color: white;
   height: 110px;
-  width: 250px;
+  width: 252px;
   border-radius: 5px;
   margin-right: 20px;
+  padding-bottom: 5px;
 }
 .friend-req .item-fetch img {
   margin: 10px;
@@ -126,12 +127,26 @@
 .friend-req button {
   border-radius: 3px;
   cursor: pointer;
-  width: 220px;
+  width: 222px;
   height: 30px;
   display: block;
-  margin: 0 auto;
+  margin: 0 15px;
   background-color: #eaedf0;
 }
 .friend-req button:hover {
   background-color: #dfe2e7;
+}
+.friend-req .btn-soft-mess {
+  margin: 20px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+}
+.friend-req .btn-soft-mess:hover {
+  background-color: #dfe2e7;
+  cursor: pointer;
 }
