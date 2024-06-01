@@ -15,6 +15,9 @@ import { RxDotFilled } from "react-icons/rx";
 import "../../resource/style/AddressBook/menuContact.css";
 import axios from "axios";
 
+export const LoiMoiKetBan = "Lời mời kết bạn";
+export const LoiMoiVaoNhom = "Lời mời vào nhóm";
+
 function MenuContact({
   handleChangeContact,
   handleChangeSoftContact,
@@ -22,8 +25,6 @@ function MenuContact({
 }) {
   const DanhSachBanBe = "Danh sách bạn bè";
   const DanhSachNhom = "Danh sách nhóm";
-  const LoiMoiKetBan = "Lời mời kết bạn";
-  const LoiMoiVaoNhom = "Lời mời vào nhóm";
   const listMenu = [
     { title: DanhSachBanBe, icon: <HiOutlineUsers /> },
     { title: DanhSachNhom, icon: <HiOutlineUserGroup /> },
@@ -514,7 +515,7 @@ function MenuContact({
         });
       }
     } else if (title === LoiMoiKetBan) {
-      const url = "http://localhost:8080/user/getfriendreq";
+      const url = "http://localhost:8080/user/getfriendres";
       const response = await axios.post(url, { id: userData._id });
       if (response.status === 200 || response.status === 204) {
         handleSetContentMenuContact({

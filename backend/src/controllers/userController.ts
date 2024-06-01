@@ -22,7 +22,7 @@ import {
 import { ConversationModel } from "../config/schema/ConversationModel";
 import { GroupModel } from "../config/schema/GroupModel";
 
-export const HUY_LOI_MOI_KET_BAN = "Hủy lời mời kết bạn";
+export const HUY_LOI_MOI_KET_BAN = "Thu hồi lời mời";
 export const KET_BAN = "Kết bạn";
 export const DONG_Y = "Đồng ý";
 export const BAN_BE = "Bạn bè";
@@ -128,17 +128,52 @@ export const getGroupReq = async (req: Request, res: Response) => {
   }
 };
 
-export const getFriendReq = async (req: Request, res: Response) => {
+export const getFriendRes = async (req: Request, res: Response) => {
   try {
     const { id } = req.body;
     const user = await UserModel.findById(id).select("friendRecieve");
     if (true) {
-      const friendReq = user.friendRecieve;
-      if (friendReq) {
+      const friendRes = user.friendRecieve;
+      if (friendRes) {
+        const friendRess = await UserModel.find({
+          _id: { $in: friendRes },
+        }).select("username avatar");
+        const newfriends = await Promise.all(
+          friendRess.map(async (item: any) => {
+            item.lastActive = await calculatorLastActive(item.lastActive);
+            return item;
+          })
+        );
+        return res.status(200).json(newfriends);
+      }
+    }
+    return res.sendStatus(204);
+  } catch (err) {
+    console.error(err);
+    return res.sendStatus(400);
+  }
+};
+
+export const getFriendReq = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.body;
+    const user = await UserModel.findById(id).select("friendSend");
+
+    if (user) {
+      const friendReq = user.friendSend;
+      if (friendReq?.length > 0) {
         const friendReqs = await UserModel.find({
           _id: { $in: friendReq },
         }).select("username avatar");
-        return res.status(200).json(friendReqs);
+
+        const newFriendReq = await Promise.all(
+          friendReqs.map(async (item: any) => {
+            item.lastActive = await calculatorLastActive(item.lastActive);
+            const { lastActive, avatar, _id, username } = item;
+            return { lastActive, avatar, _id, username };
+          })
+        );
+        return res.status(200).json(newFriendReq);
       }
     }
     return res.sendStatus(204);

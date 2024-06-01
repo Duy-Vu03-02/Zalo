@@ -12,6 +12,7 @@ import {
   getAllGroup,
   getFriendReq,
   getGroupReq,
+  getFriendRes,
 } from "../controllers/UserController";
 
 export default (router: express.Router) => {
@@ -20,6 +21,7 @@ export default (router: express.Router) => {
   router.post("/auth/sessiontoken", loginBySessiToken);
   router.post("/user/getallgroup", getAllGroup);
   router.post("/user/getfriendreq", getFriendReq);
+  router.post("/user/getfriendres", getFriendRes);
   router.post("/user/getgroupreq", getGroupReq);
   router.post("/user/getallfriend", getAllFriend);
   router.post("/user/crudfriend", crudfriend);

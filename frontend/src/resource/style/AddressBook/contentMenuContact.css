@@ -1,8 +1,13 @@
+.waper-content-menu-contact {
+  background-color: #f4f4f7;
+  height: 100vh;
+}
 .header-content-menu-contact {
-  /* background-color: aqua; */
+  background-color: aqua;
   height: 60px;
   border-bottom: 1px solid rgb(202, 199, 200);
   width: calc(100vw - 350px);
+  background-color: white;
 }
 .header-content-menu-contact h3 {
   margin: 0;
@@ -15,18 +20,38 @@
 }
 .list-fetch-contact {
   background-color: #f4f4f7;
-  height: calc(100vh - 60px);
 }
 .list-fetch-contact .content-fetch-contact {
-  height: calc(100vh - 70px);
+  height: calc(100vh - 350px);
   background-color: white;
   border-radius: 5px;
   width: calc(100vw - 455px);
   margin-left: 20px;
+  overflow: hidden;
+  padding-bottom: 15px;
+}
+.content-fetch-contact ul {
+  height: calc(100vh - 410px);
   overflow-y: auto;
 }
+.content-fetch-contact ul::-webkit-scrollbar {
+  width: 0px;
+}
+
+.content-fetch-contact ul::-webkit-scrollbar-track {
+  background: white;
+}
+
+.content-fetch-contact ul::-webkit-scrollbar-thumb {
+  background: white;
+  border-radius: 6px;
+}
+
+.content-fetch-contact ul::-webkit-scrollbar-thumb:hover {
+  background: white;
+}
 .list-fetch-contact .total-fetch {
-  padding: 20px 0 20px 20px;
+  padding: 15px 0 20px 25px;
   font-size: 14px;
   font-weight: 500;
 }
@@ -39,12 +64,14 @@
   background-color: #e5efff;
   transition: background-color 0.3s;
 }
+.friend-req .item-fetch img,
 .list-fetch-contact li img {
   width: 45px;
   height: 45px;
   border-radius: 50%;
   margin: auto 10px auto 20px;
 }
+.friend-req .item-fetch p,
 .list-fetch-contact li p {
   margin: auto 0;
 }
@@ -56,4 +83,55 @@
   outline: 1px solid rgb(202, 199, 200);
   border-radius: 3px;
   padding-left: 5px;
+}
+
+.friend-req {
+  margin: 20px 0;
+}
+.friend-req ul {
+  overflow-y: auto;
+  overflow-y: hidden;
+  width: calc(100vw - 455px);
+  margin-left: 20px;
+}
+.friend-req ul::-webkit-scrollbar {
+  width: 0px;
+}
+
+.friend-req ul::-webkit-scrollbar-track {
+  /* background: white; */
+}
+
+.friend-req ul::-webkit-scrollbar-thumb {
+  /* background: white; */
+  border-radius: 6px;
+}
+
+.friend-req ul::-webkit-scrollbar-thumb:hover {
+  /* background: white; */
+}
+.friend-req li {
+  background-color: white;
+  height: 110px;
+  width: 250px;
+  border-radius: 5px;
+  margin-right: 20px;
+}
+.friend-req .item-fetch img {
+  margin: 10px;
+}
+.friend-req .item-fetch {
+  padding: 5px;
+}
+.friend-req button {
+  border-radius: 3px;
+  cursor: pointer;
+  width: 220px;
+  height: 30px;
+  display: block;
+  margin: 0 auto;
+  background-color: #eaedf0;
+}
+.friend-req button:hover {
+  background-color: #dfe2e7;
 }
