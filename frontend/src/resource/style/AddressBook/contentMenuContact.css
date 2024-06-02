@@ -51,7 +51,7 @@
   background: white;
 }
 .list-fetch-contact .total-fetch {
-  padding: 15px 0 20px 25px;
+  padding: 15px 0 15px 25px;
   font-size: 14px;
   font-weight: 500;
 }
@@ -85,9 +85,6 @@
   padding-left: 5px;
 }
 
-.friend-req {
-  margin: 20px 0;
-}
 .friend-req ul {
   overflow-y: hidden;
   overflow-x: auto;

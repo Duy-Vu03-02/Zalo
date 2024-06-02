@@ -101,39 +101,46 @@ export default function ({ data, title, count, handleShowSoftConversation }) {
             }
           </div>
         </div>
-        {friendReq?.length > 0 && (
-          <div className="friend-req">
-            <ul className="flex">
-              {friendReq.map((item, index) => (
-                <li key={index}>
-                  <div
-                    className="flex"
-                    style={{ justifyContent: "space-between" }}
-                  >
-                    <div className="item-fetch flex">
-                      <img src={item.avatar} alt="" />
-                      <p>{item.username}</p>
-                    </div>
+        {friendReq?.length > 0 && title === LoiMoiKetBan && (
+          <div>
+            <div className="list-fetch-contact">
+              <div className="total-fetch">
+                Lời mời đã gửi ({friendReq?.length})
+              </div>
+            </div>
+            <div className="friend-req">
+              <ul className="flex">
+                {friendReq.map((item, index) => (
+                  <li key={index}>
                     <div
-                      className="btn-soft-mess"
-                      onClick={() =>
-                        handleShowSoftConversation({
-                          ...item,
-                          idChatWidth: item._id,
-                        })
-                      }
+                      className="flex"
+                      style={{ justifyContent: "space-between" }}
                     >
-                      <TbMessageDots />
+                      <div className="item-fetch flex">
+                        <img src={item.avatar} alt="" />
+                        <p>{item.username}</p>
+                      </div>
+                      <div
+                        className="btn-soft-mess"
+                        onClick={() =>
+                          handleShowSoftConversation({
+                            ...item,
+                            idChatWidth: item._id,
+                          })
+                        }
+                      >
+                        <TbMessageDots />
+                      </div>
                     </div>
-                  </div>
-                  <div>
-                    <button onClick={() => handleCancelReqFriend(item)}>
-                      Thu hồi lời mời
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </ul>
+                    <div>
+                      <button onClick={() => handleCancelReqFriend(item)}>
+                        Thu hồi lời mời
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         )}
       </div>
