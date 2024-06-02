@@ -39,6 +39,12 @@ export default function AddressBook() {
             ...value,
           };
           setDataContact(format);
+          setShowContentMenuContact({
+            state: false,
+            data: null,
+            title: null,
+            count: null,
+          });
           return;
         }
         if (response.status === 204) {
@@ -53,6 +59,12 @@ export default function AddressBook() {
         }
       } else {
         setDataContact(value);
+        setShowContentMenuContact({
+          state: false,
+          data: null,
+          title: null,
+          count: null,
+        });
       }
     } catch (err) {
       console.error(err);

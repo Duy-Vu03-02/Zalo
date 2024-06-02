@@ -59,9 +59,9 @@ function Chat({ handleLogout }) {
   }, [boxRef, setIsShoeStartup]);
 
   const handleChangeMenuActive = (index) => {
-    if (index !== 5) {
+    if (index == 0 || index == 1) {
       setMenuactive(index);
-    } else {
+    } else if (index == 5) {
       handleShowSetting(true);
     }
   };

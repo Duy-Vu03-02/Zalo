@@ -40,6 +40,7 @@ export default function ({
   const [listData, setListData] = useState(new Map([]));
 
   useEffect(() => {
+    setListData(new Map([]));
     if (dataContentContac && dataContentContac.length > 0) {
       if (title === DanhSachBanBe) {
         setListData(() => {
@@ -98,53 +99,63 @@ export default function ({
         if (data.mess === KET_BAN) {
           let temp = listData.get(currentContact);
 
-          const newListData = listData.set(currentContact, {
-            ...temp,
-            ...contant,
-            KetBan: true,
-          });
-          setListData(new Map(newListData));
+          if (temp) {
+            const newListData = listData.set(currentContact, {
+              ...temp,
+              ...contant,
+              KetBan: true,
+            });
+            setListData(new Map(newListData));
+          }
         }
         if (data.mess === HUY_LOI_MOI_KET_BAN) {
           let temp = listData.get(currentContact);
 
-          const newListData = listData.set(currentContact, {
-            ...temp,
-            ...contant,
-            ThuHoiLoiMoi: true,
-          });
-          setListData(new Map(newListData));
+          if (temp) {
+            const newListData = listData.set(currentContact, {
+              ...temp,
+              ...contant,
+              ThuHoiLoiMoi: true,
+            });
+            setListData(new Map(newListData));
+          }
         }
         if (data.mess === DONG_Y) {
           let temp = listData.get(currentContact);
 
-          const newListData = listData.set(currentContact, {
-            ...temp,
-            ...contant,
-            DongY: true,
-          });
-          setListData(new Map(newListData));
+          if (temp) {
+            const newListData = listData.set(currentContact, {
+              ...temp,
+              ...contant,
+              DongY: true,
+            });
+            setListData(new Map(newListData));
+          }
         }
         if (data.mess === BO_QUA) {
           let temp = listData.get(currentContact);
 
-          const newListData = listData.set(currentContact, {
-            ...temp,
-            ...contant,
-            BoQua: true,
-          });
-          setListData(new Map(newListData));
+          if (temp) {
+            const newListData = listData.set(currentContact, {
+              ...temp,
+              ...contant,
+              BoQua: true,
+            });
+            setListData(new Map(newListData));
+          }
         }
         if (data.mess === BAN_BE) {
           let temp = listData.get(currentContact);
 
-          const newListData = listData.set(currentContact, {
-            ...temp,
-            ...contant,
-            BanBe: true,
-            XoaBanBe: true,
-          });
-          setListData(new Map(newListData));
+          if (temp) {
+            const newListData = listData.set(currentContact, {
+              ...temp,
+              ...contant,
+              BanBe: true,
+              XoaBanBe: true,
+            });
+            setListData(new Map(newListData));
+          }
         }
       });
     }
