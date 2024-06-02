@@ -17,14 +17,14 @@ import axios from "axios";
 
 export const LoiMoiKetBan = "Lời mời kết bạn";
 export const LoiMoiVaoNhom = "Lời mời vào nhóm";
+export const DanhSachBanBe = "Danh sách bạn bè";
+export const DanhSachNhom = "Danh sách nhóm";
 
 function MenuContact({
   handleChangeContact,
   handleChangeSoftContact,
   handleSetContentMenuContact,
 }) {
-  const DanhSachBanBe = "Danh sách bạn bè";
-  const DanhSachNhom = "Danh sách nhóm";
   const listMenu = [
     { title: DanhSachBanBe, icon: <HiOutlineUsers /> },
     { title: DanhSachNhom, icon: <HiOutlineUserGroup /> },

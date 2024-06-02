@@ -58,7 +58,6 @@
 .list-fetch-contact li {
   height: 60px;
   transition: background-color 0.3s;
-  cursor: pointer;
 }
 .list-fetch-contact li:hover {
   background-color: #e5efff;
@@ -70,6 +69,9 @@
   height: 45px;
   border-radius: 50%;
   margin: auto 10px auto 20px;
+}
+.list-fetch-contact .item-fetch {
+  cursor: pointer;
 }
 .friend-req .item-fetch p,
 .list-fetch-contact li p {
@@ -146,4 +148,21 @@
 .friend-req .btn-soft-mess:hover {
   background-color: #dfe2e7;
   cursor: pointer;
+}
+.btn-state-contact {
+  margin: auto 20px;
+  display: block;
+}
+.btn-state-contact button {
+  padding: 8px 15px;
+  background-color: #357de8;
+  color: white;
+  border: none;
+  font-weight: 600;
+  border-radius: 3px;
+  cursor: pointer;
+  margin-left: 20px;
+}
+.content-fetch-contact ul li:hover .btn-state-contact {
+  display: block !important;
 }

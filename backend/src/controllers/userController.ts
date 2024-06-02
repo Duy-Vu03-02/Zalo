@@ -26,7 +26,7 @@ export const HUY_LOI_MOI_KET_BAN = "Thu hồi lời mời";
 export const KET_BAN = "Kết bạn";
 export const DONG_Y = "Đồng ý";
 export const BAN_BE = "Bạn bè";
-export const XOA_BAN_BE = "Xóa kết bạn";
+export const XOA_BAN_BE = "Xóa bạn bè";
 export const BO_QUA = "Bỏ qua";
 export const ACTIVE = "Active";
 

@@ -29,7 +29,6 @@ export default function AddressBook() {
           userId: userData._id,
           friendId: value._id,
         });
-        console.log(response);
         if (response.status === 200) {
           delete value.userId;
           delete value._id;
@@ -39,7 +38,6 @@ export default function AddressBook() {
             ...resData,
             ...value,
           };
-          console.log(resData.data);
           setDataContact(format);
           return;
         }
@@ -89,7 +87,7 @@ export default function AddressBook() {
         <div className="fetch-menu-contact">
           {showContentMenuContact.state && (
             <ContentMenuContact
-              data={showContentMenuContact?.data}
+              dataContentContac={showContentMenuContact?.data}
               title={showContentMenuContact?.title}
               count={showContentMenuContact?.count}
               handleShowSoftConversation={handleShowSoftConversation}

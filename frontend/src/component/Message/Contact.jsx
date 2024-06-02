@@ -168,6 +168,12 @@ function Contact({
         }
       });
     }
+
+    return () => {
+      if (socket.current) {
+        socket.current.off("recieve-crud-fr");
+      }
+    };
   }, [dataUserPhone]);
 
   useEffect(() => {
