@@ -18,6 +18,12 @@ export default function AddressBook() {
   const { socket, userData } = useContext(UserContext);
   const handleChangeSoftContact = (value) => {
     setDataContact(value);
+    setShowContentMenuContact({
+      state: false,
+      data: null,
+      title: null,
+      count: null,
+    });
   };
 
   const handleChangeContact = async (value) => {
@@ -90,8 +96,11 @@ export default function AddressBook() {
       <div className="container-mess flex">
         <div>
           <MenuContact
+            // Mo conversation
             handleChangeContact={handleChangeContact}
+            // Mo conversation da co tn
             handleChangeSoftContact={handleChangeSoftContact}
+            // Mo content cua menu contact AddressBook
             handleSetContentMenuContact={handleSetContentMenuContact}
           />
         </div>
