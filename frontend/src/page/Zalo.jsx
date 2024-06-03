@@ -31,18 +31,19 @@ export default function Zalo() {
       const token = localStorage.getItem("token");
       if (token !== null) {
         const data = {
-          sessiontoken: JSON.parse(token),
+          token: JSON.parse(token),
         };
         const response = await axios.post(
-          "http://127.0.0.1:8080/auth/sessiontoken",
+          "http://127.0.0.1:8080/auth/token",
           data
         );
+        console.log(response);
         if (response.status === 200) {
           setUserData(response.data);
           setChat(true);
           localStorage.setItem(
             "token",
-            JSON.stringify(response.data.authentication.sessionToken)
+            JSON.stringify(response.data.authentication.token)
           );
           setIsLoadding(false);
         } else {

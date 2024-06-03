@@ -108,10 +108,6 @@ function LoginAccount({ handleChangeStateChat }) {
       .then((response) => {
         if (response.status === 200) {
           setUserData(response.data);
-          localStorage.setItem(
-            "token",
-            JSON.stringify(response.data.authentication.sessionToken)
-          );
           handleChangeStateChat();
           setStateLogin("");
         }

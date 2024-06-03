@@ -1,9 +1,14 @@
 import express, { Request, Response } from "express";
 import mongoose, { Schema } from "mongoose";
-import { authentication, comparePass } from "../helper/helper";
+import {
+  authentication,
+  comparePass,
+  descryptJWT,
+  genderJWT,
+} from "../helper/helper";
 import multer from "multer";
 import path from "path";
-import { fromPairs, get } from "lodash";
+import { fromPairs, get, max } from "lodash";
 import { createConversation } from "./ConverationController";
 import { MessagesModel } from "../config/schema/MessageModel";
 import {
@@ -14,7 +19,7 @@ import {
   getFriendSend,
   getFriendByName,
   getUserByPhone,
-  getUserBySessionToken,
+  getUserByToken,
   getUsersById,
   deleUserById,
   updateUserById,
@@ -374,22 +379,10 @@ export const friendByName = async (req: Request, res: Response) => {
   }
 };
 
-export const loginBySessiToken = async (req: Request, res: Response) => {
+export const loginByToken = async (req: Request, res: Response) => {
   try {
-    const { sessiontoken } = req.body;
-    const user = await getUserBySessionToken(sessiontoken).select(
-      "authentication.sessionToken avatar phone"
-    );
-    if (!user) {
-      return res.status(205).json("Không tồn tại user");
-    } else {
-      if (user.authentication.sessionToken === sessiontoken) {
-        const newSissionToken = await authentication(user._id.toString());
-        user.authentication.sessionToken = newSissionToken;
-        await user.save();
-        return res.status(200).json(user).end();
-      }
-    }
+    const token = req.headers.cookie || null;
+    console.log(token);
   } catch (err) {
     console.error(err);
     return res.sendStatus(400);
@@ -403,7 +396,7 @@ export const loginByAccount = async (req: Request, res: Response) => {
       return res.sendStatus(400);
     } else {
       const user = await getUserByPhone(phone).select(
-        "phone authentication.password authentication.sessionToken avatar"
+        "phone authentication.password avatar authentication.token"
       );
       if (!user) {
         return res.sendStatus(404);
@@ -416,14 +409,25 @@ export const loginByAccount = async (req: Request, res: Response) => {
           return res.sendStatus(404);
         }
         if (checkPass) {
-          const newSessionToken = await authentication(user._id.toString());
-          user.authentication.sessionToken = newSessionToken;
+          const bodyJwt = {
+            _id: user._id,
+            username: user.username,
+            avatar: user.avatar,
+            phone: user.phone,
+          };
+
+          // Tao newToken
+          const newToken = genderJWT(bodyJwt);
+          user.authentication.token = newToken;
+
+          user.authentication.sessionToken = newToken;
           await user.save();
-          user.authentication.password;
-          const response_data = user.toObject();
-          response_data.authentication.password = undefined;
-          delete response_data.authentication.password;
-          return res.status(200).json(response_data).end();
+          res.cookie("token", newToken, {
+            maxAge: 60 * 60 * 1000,
+            httpOnly: true,
+            secure: false,
+          });
+          return res.status(200).json(bodyJwt).end();
         }
       }
     }

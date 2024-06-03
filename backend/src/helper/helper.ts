@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import crypto from "crypto";
+import crypto, { sign } from "crypto";
 import sharp from "sharp";
 import { head, slice } from "lodash";
 // import * as dotenv from "dotenv";
@@ -25,7 +25,7 @@ export const comparePass = async (passCheck: string, passDB: string) => {
   }
 };
 
-export const genderJWT = (body: String) => {
+export const genderJWT = (body: any) => {
   const jwtSecretkey = process.env.JWT_SECURITY;
   const header = {
     alg: "HS256",
@@ -38,7 +38,24 @@ export const genderJWT = (body: String) => {
 
   const hmac = crypto.createHmac("sha256", jwtSecretkey);
   const signature = hmac.update(token).digest("base64url");
-  return signature;
+  return `${token}.${signature}`;
+};
+
+export const descryptJWT = (token: String) => {
+  const jwtSecretkey = process.env.JWT_SECURITY;
+  const [headerBase64, payloadBase64, signature] = token.split(".");
+  const header = atob(headerBase64);
+  const payload = atob(payloadBase64);
+
+  const hmac = crypto.createHmac("sha256", jwtSecretkey);
+  const newSignature = hmac
+    .update(`${headerBase64}.${payloadBase64}`)
+    .digest("base64url");
+
+  if (signature === newSignature) {
+    return JSON.parse(payload);
+  }
+  return false;
 };
 
 export const imageCompression = async (

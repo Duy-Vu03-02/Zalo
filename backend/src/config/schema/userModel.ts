@@ -13,6 +13,8 @@ const UserSchema = new Schema(
       password: { type: String, required: false, min: 6, select: false },
       saltRound: { type: Number, required: false, select: false },
       sessionToken: { type: String, required: false, min: 3, select: false },
+      token: { type: String, required: false, select: false },
+      refetchToken: { type: String, required: false, select: false },
     },
     avatar: { type: String, required: true, select: false },
     sex: { type: String, required: false, min: 3, select: false },
@@ -53,7 +55,7 @@ export const getFriendByName = (username: string, userId: String) => {
   return UserModel.find({ username: { $regex: new RegExp(username, "i") } });
 };
 
-export const getUserBySessionToken = (sessionToken: string) =>
+export const getUserByToken = (sessionToken: string) =>
   UserModel.findOne({ "authentication.sessionToken": sessionToken });
 
 export const createUser = async (userData: Record<string, any>) => {
