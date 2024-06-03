@@ -381,7 +381,7 @@ export const friendByName = async (req: Request, res: Response) => {
 
 export const loginByToken = async (req: Request, res: Response) => {
   try {
-    const token = req.headers.cookie || null;
+    const token = req.cookies.token || null;
     console.log(token);
   } catch (err) {
     console.error(err);
@@ -422,9 +422,10 @@ export const loginByAccount = async (req: Request, res: Response) => {
 
           user.authentication.sessionToken = newToken;
           await user.save();
+
           res.cookie("token", newToken, {
-            maxAge: 60 * 60 * 1000,
             httpOnly: true,
+            maxAge: 60 * 60 * 60,
             secure: false,
           });
           return res.status(200).json(bodyJwt).end();

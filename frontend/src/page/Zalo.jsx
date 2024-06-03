@@ -28,30 +28,19 @@ export default function Zalo() {
 
   useEffect(() => {
     const fetch = async () => {
-      const token = localStorage.getItem("token");
-      if (token !== null) {
-        const data = {
-          token: JSON.parse(token),
-        };
-        const response = await axios.post(
-          "http://127.0.0.1:8080/auth/token",
-          data
-        );
-        console.log(response);
-        if (response.status === 200) {
-          setUserData(response.data);
-          setChat(true);
-          localStorage.setItem(
-            "token",
-            JSON.stringify(response.data.authentication.token)
-          );
-          setIsLoadding(false);
-        } else {
-          setChat(false);
-          setIsLoadding(false);
-        }
+      const response = await axios.post(
+        "http://127.0.0.1:8080/auth/token",
+        {},
+        { withCredentials: true }
+      );
+      console.log(response);
+      if (response.status === 200) {
+        setUserData(response.data);
+        setChat(true);
+        return;
       }
-      setIsLoadding(false);
+      setChat(false);
+      setIsLoadding(true);
     };
     fetch();
   }, []);

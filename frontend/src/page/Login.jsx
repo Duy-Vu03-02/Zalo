@@ -103,20 +103,19 @@ function LoginAccount({ handleChangeStateChat }) {
   };
 
   const handleLoginAccount = async () => {
-    await axios
-      .post("http://127.0.0.1:8080/auth/login", value)
-      .then((response) => {
-        if (response.status === 200) {
-          setUserData(response.data);
-          handleChangeStateChat();
-          setStateLogin("");
-        }
-      })
-      .catch((err) => {
-        setStateLogin("Tài khoản hoặc mật khẩu không đúng");
-        // setStateLogin(err);
-        console.error(err);
-      });
+    try {
+      const url = "http://localhost:8080/auth/login";
+      const response = await axios.post(url, value, { withCredentials: true });
+
+      if (response.status === 200) {
+        setUserData(response.data);
+        handleChangeStateChat();
+        setStateLogin("");
+      }
+    } catch (err) {
+      setStateLogin("Tài khoản hoặc mật khẩu không đúng");
+      // setStateLogin(err);
+    }
   };
 
   const handleButtonLogin = (e) => {

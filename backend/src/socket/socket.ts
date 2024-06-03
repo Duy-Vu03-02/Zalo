@@ -28,9 +28,8 @@ const server = require("http").createServer(app);
 const socket = require("socket.io");
 const io = socket(server, {
   cors: {
-    Credential: true,
-    // origin: "http://localhost:3000",
-    origin: "*",
+    credentials: true,
+    origin: "http://localhost:3000",
   },
 });
 
