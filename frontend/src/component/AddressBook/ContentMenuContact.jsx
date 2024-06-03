@@ -38,6 +38,10 @@ export default function ({
   };
 
   const [listData, setListData] = useState(new Map([]));
+  const [resultSearch, setResultSearch] = useState({
+    state: false,
+    data: new Map([]),
+  });
 
   useEffect(() => {
     setListData(new Map([]));
@@ -191,6 +195,34 @@ export default function ({
     }
   };
 
+  const handleSeachContact = (e) => {
+    const stringName = e.target.value;
+    if (
+      stringName !== "" &&
+      stringName !== undefined &&
+      stringName.length > 0
+    ) {
+      if (stringName.trim() !== "") {
+        const stringPure = stringName.trim().toLowerCase();
+        const newMap = new Map();
+        Array.from(listData).map(([key, item]) => {
+          if (item.username.trim().toLowerCase().startsWith(stringPure)) {
+            newMap.set(key, item);
+          }
+        });
+        setResultSearch({
+          state: true,
+          data: newMap.size > 0 ? newMap : new Map([]),
+        });
+      }
+    } else {
+      setResultSearch({
+        state: false,
+        data: new Map([]),
+      });
+    }
+  };
+
   return (
     <>
       {listData && (
@@ -203,7 +235,11 @@ export default function ({
             <div className="content-fetch-contact">
               {listData?.size > 0 && (
                 <div>
-                  <input type="text" placeholder="Tìm kiếm" />
+                  <input
+                    type="text"
+                    placeholder="Tìm kiếm"
+                    onChange={handleSeachContact}
+                  />
                 </div>
               )}
               {
@@ -215,7 +251,9 @@ export default function ({
                   }}
                 >
                   {listData.size > 0 ? (
-                    Array.from(listData).map(([key, item], index) => (
+                    Array.from(
+                      resultSearch.state ? resultSearch.data : listData
+                    ).map(([key, item], index) => (
                       <li
                         key={index}
                         style={{ justifyContent: "space-between" }}
