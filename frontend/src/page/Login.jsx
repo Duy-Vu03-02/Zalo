@@ -6,6 +6,7 @@ import "../resource/style/Login/login.css";
 import qr from "../resource/img/Login/qr.png";
 import { IoIosPhonePortrait } from "react-icons/io";
 import { CiLock } from "react-icons/ci";
+import Loadding from "./Loadding";
 
 export default function Login({ handleChangeStateChat }) {
   const [activeQr, setActiveQr] = useState(true);
@@ -106,6 +107,12 @@ function LoginAccount({ handleChangeStateChat }) {
     try {
       const url = "http://localhost:8080/auth/login";
       const response = await axios.post(url, value, { withCredentials: true });
+
+      if (response.status === 200) {
+        setUserData(response.data);
+        handleChangeStateChat();
+        setStateLogin("");
+      }
 
       if (response.status === 200) {
         setUserData(response.data);

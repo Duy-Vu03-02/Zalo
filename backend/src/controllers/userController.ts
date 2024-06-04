@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import mongoose, { Schema } from "mongoose";
 import {
   authentication,
@@ -382,7 +382,22 @@ export const friendByName = async (req: Request, res: Response) => {
 export const loginByToken = async (req: Request, res: Response) => {
   try {
     const token = req.cookies.token || null;
-    console.log(token);
+
+    if (token) {
+      const user = await UserModel.findOne({
+        "authentication.token": token,
+      }).select("avatar username authentication.token phone");
+
+      if (user) {
+        const newUser = user.toObject();
+        delete newUser.authentication;
+        return res.status(200).json({
+          ...newUser,
+        });
+      }
+    }
+
+    return res.sendStatus(204);
   } catch (err) {
     console.error(err);
     return res.sendStatus(400);
@@ -417,17 +432,17 @@ export const loginByAccount = async (req: Request, res: Response) => {
           };
 
           // Tao newToken
-          const newToken = genderJWT(bodyJwt);
+          const newToken = genderJWT({ ...bodyJwt, avatar: undefined });
           user.authentication.token = newToken;
-
-          user.authentication.sessionToken = newToken;
           await user.save();
 
           res.cookie("token", newToken, {
             httpOnly: true,
             maxAge: 60 * 60 * 60,
-            secure: false,
+            secure: true,
+            sameSite: "strict",
           });
+
           return res.status(200).json(bodyJwt).end();
         }
       }
@@ -436,6 +451,15 @@ export const loginByAccount = async (req: Request, res: Response) => {
     console.error(err);
     return res.sendStatus(400);
   }
+};
+
+export const logout = async (req: Request, res: Response) => {
+  res.cookie("token", "", {
+    httpOnly: true,
+    maxAge: 0,
+    expires: new Date(0),
+  });
+  return res.sendStatus(200);
 };
 
 export const register = async (req: Request, res: Response) => {
