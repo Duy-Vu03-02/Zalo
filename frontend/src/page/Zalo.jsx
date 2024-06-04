@@ -26,38 +26,23 @@ export default function Zalo() {
     setChat(true);
   };
 
-  // useEffect(() => {
-  //   const fetch = async () => {
-  //     const response = await axios.post(
-  //       "http://127.0.0.1:8080/auth/token",
-  //       {},
-  //       { withCredentials: true }
-  //     );
-  //     console.log(response);
-  //     if (response.status === 200) {
-  //       setUserData(response.data);
-  //       setChat(true);
-  //       return;
-  //     }
-  //     setChat(false);
-  //     setIsLoadding(true);
-  //   };
-  //   fetch();
-  // }, []);
-
   useEffect(() => {
     const fetchLoginToken = async () => {
-      const url = "http://localhost:8080/auth/token";
-      const response = await axios.post(url, {}, { withCredentials: true });
+      try {
+        const url = "http://localhost:8080/auth/token";
+        const response = await axios.post(url, {}, { withCredentials: true });
 
-      if (response.status === 200) {
-        console.log(response);
-        setUserData(response.data);
-        setChat(true);
-      } else {
-        setChat(false);
+        if (response.status === 200) {
+          console.log(response);
+          setUserData(response.data);
+          setChat(true);
+        } else {
+          setChat(false);
+        }
+        setIsLoadding(false);
+      } catch (err) {
+        setIsLoadding(false);
       }
-      setIsLoadding(false);
     };
     fetchLoginToken();
   }, []);

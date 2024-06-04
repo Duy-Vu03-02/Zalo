@@ -1,9 +1,10 @@
 import bcrypt from "bcrypt";
 import crypto, { sign } from "crypto";
 import sharp from "sharp";
-import { head, slice } from "lodash";
-// import * as dotenv from "dotenv";
-// dotenv.config();
+import { head, slice, String } from "lodash";
+import * as dotenv from "dotenv";
+dotenv.config();
+import jwt from "jsonwebtoken";
 
 export const authentication = async (password: string) => {
   const saltRounds = 10;
@@ -25,37 +26,72 @@ export const comparePass = async (passCheck: string, passDB: string) => {
   }
 };
 
-export const genderJWT = (body: any) => {
-  const jwtSecretkey = process.env.JWT_SECURITY;
-  const header = {
-    alg: "HS256",
-    typ: "JWT",
-  };
-  const payload = body;
-  const headerBase64 = btoa(JSON.stringify(header));
-  const payloadBase64 = btoa(JSON.stringify(payload));
-  const token = `${headerBase64}.${payloadBase64}`;
-
-  const hmac = crypto.createHmac("sha256", jwtSecretkey);
-  const signature = hmac.update(token).digest("base64url");
-  return `${token}.${signature}`;
+export const genderToken = (payload: any) => {
+  try {
+    if (payload) {
+      const accessSecret = process.env.ACCESS_JWT_SECRET;
+      const token = jwt.sign(payload, accessSecret, {
+        expiresIn: "1h",
+      });
+      return token;
+    }
+    return false;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
 };
 
-export const descryptJWT = (token: String) => {
-  const jwtSecretkey = process.env.JWT_SECURITY;
-  const [headerBase64, payloadBase64, signature] = token.split(".");
-  const header = atob(headerBase64);
-  const payload = atob(payloadBase64);
-
-  const hmac = crypto.createHmac("sha256", jwtSecretkey);
-  const newSignature = hmac
-    .update(`${headerBase64}.${payloadBase64}`)
-    .digest("base64url");
-
-  if (signature === newSignature) {
-    return JSON.parse(payload);
+export const verifyToken = async (token: string) => {
+  try {
+    const accessSecret = process.env.ACCESS_JWT_SECRET;
+    if (token !== null) {
+      const result = await jwt.verify(token, accessSecret);
+      if (result) {
+        return true;
+      }
+    }
+    return false;
+  } catch (err) {
+    if (err.name === "TokenExpiredError") {
+      throw new Error(err.name);
+    }
+    console.error(err);
+    return false;
   }
-  return false;
+};
+
+export const genderRefetchToken = (payload: any) => {
+  try {
+    if (payload) {
+      const reftechSecret = process.env.REFETCH_JWT_SECRET;
+      const refetchToken = jwt.sign(payload, reftechSecret, {
+        expiresIn: "30d",
+      });
+
+      return refetchToken;
+    }
+    return false;
+  } catch (err) {
+    // console.error(err);
+    return false;
+  }
+};
+
+export const verifyRefetchToken = async (token: string) => {
+  try {
+    if (token) {
+      const reftechSecret = process.env.REFETCH_JWT_SECRET;
+      const result = await jwt.verify(token, reftechSecret);
+      if (result) {
+        return true;
+      }
+    }
+    return false;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
 };
 
 export const imageCompression = async (

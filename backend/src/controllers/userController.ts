@@ -3,8 +3,10 @@ import mongoose, { Schema } from "mongoose";
 import {
   authentication,
   comparePass,
-  descryptJWT,
-  genderJWT,
+  genderRefetchToken,
+  genderToken,
+  verifyRefetchToken,
+  verifyToken,
 } from "../helper/helper";
 import multer from "multer";
 import path from "path";
@@ -26,6 +28,7 @@ import {
 } from "../config/schema/UserModel";
 import { ConversationModel } from "../config/schema/ConversationModel";
 import { GroupModel } from "../config/schema/GroupModel";
+import { error } from "console";
 
 export const HUY_LOI_MOI_KET_BAN = "Thu hồi lời mời";
 export const KET_BAN = "Kết bạn";
@@ -383,23 +386,47 @@ export const loginByToken = async (req: Request, res: Response) => {
   try {
     const token = req.cookies.token || null;
 
-    if (token) {
-      const user = await UserModel.findOne({
-        "authentication.token": token,
-      }).select("avatar username authentication.token phone");
+    if (token && token.trim() !== "") {
+      const verify = await verifyToken(token);
 
-      if (user) {
-        const newUser = user.toObject();
-        delete newUser.authentication;
-        return res.status(200).json({
-          ...newUser,
-        });
+      if (verify === true) {
+        const payloadBase64 = token.split(".")[1];
+        const payload = atob(payloadBase64);
+        const { _id, phone } = await JSON.parse(payload);
+        if (_id && phone) {
+          const user = await UserModel.findById(_id).select("phone avatar");
+          if (user && user.phone === phone) {
+            return res.status(200).json(user);
+          }
+        }
       }
     }
 
-    return res.sendStatus(204);
+    return res.sendStatus(403);
   } catch (err) {
-    console.error(err);
+    if (err.message === "TokenExpiredError") {
+      console.log("refetch token");
+      const refetchToken = req.cookies["refetch-token"];
+      if (refetchToken && (await verifyRefetchToken(refetchToken))) {
+        const payloadbase64 = refetchToken.split(".")[1];
+        const payload = await JSON.parse(atob(payloadbase64));
+        const user = await UserModel.findById(payload._id).select(
+          "avatar phone"
+        );
+        if (user && user.phone === payload.phone) {
+          const newUser = user.toObject();
+          const newToken = genderToken({ ...newUser, avatar: undefined });
+          res.cookie("token", newToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: true,
+            maxAge: 1000 * 60 * 60 * 24 * 30,
+          });
+          return res.status(200).json(user);
+        }
+      }
+    }
+
     return res.sendStatus(400);
   }
 };
@@ -432,15 +459,28 @@ export const loginByAccount = async (req: Request, res: Response) => {
           };
 
           // Tao newToken
-          const newToken = genderJWT({ ...bodyJwt, avatar: undefined });
-          user.authentication.token = newToken;
+          const newToken = genderToken({ ...bodyJwt, avatar: undefined });
+          const newRefetchToken = genderRefetchToken({
+            ...bodyJwt,
+            avatar: undefined,
+          });
+
+          if (newRefetchToken) {
+            user.authentication.refetchToken = newRefetchToken;
+          }
           await user.save();
 
           res.cookie("token", newToken, {
             httpOnly: true,
-            maxAge: 60 * 60 * 60,
             secure: true,
             sameSite: "strict",
+            maxAge: 1000 * 60 * 60 * 24 * 30,
+          });
+          res.cookie("refetch-token", newRefetchToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: true,
+            maxAge: 1000 * 60 * 60 * 24 * 30,
           });
 
           return res.status(200).json(bodyJwt).end();
@@ -455,6 +495,11 @@ export const loginByAccount = async (req: Request, res: Response) => {
 
 export const logout = async (req: Request, res: Response) => {
   res.cookie("token", "", {
+    httpOnly: true,
+    maxAge: 0,
+    expires: new Date(0),
+  });
+  res.cookie("refetch-token", "", {
     httpOnly: true,
     maxAge: 0,
     expires: new Date(0),
