@@ -14,6 +14,7 @@ import {
   getGroupReq,
   getFriendRes,
   logout,
+  getFriendById,
 } from "../controllers/UserController";
 
 export default (router: express.Router) => {
@@ -30,4 +31,5 @@ export default (router: express.Router) => {
   router.post("/user/getphone", userByPhone);
   router.post("/user/getfriendbyname", friendByName);
   router.post("/user/updateavatarbyid", updateAvatar);
+  router.post("/user/getfriendbyid", getFriendById);
 };

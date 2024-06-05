@@ -6,6 +6,7 @@ import ContainerMess from "../Message/ContainerMess";
 import axios from "axios";
 import MenuContact from "./MenuContact";
 import ContentMenuContact from "./ContentMenuContact";
+import { useEffect } from "react";
 
 export default function AddressBook() {
   const [dataContact, setDataContact] = useState(null);
@@ -25,6 +26,14 @@ export default function AddressBook() {
       count: null,
     });
   };
+
+  useEffect(() => {
+    if (socket.current) {
+      socket.current.on("received-soft-mess", (data) => {
+        console.log(data);
+      });
+    }
+  }, [socket.current]);
 
   const handleChangeContact = async (value) => {
     try {
@@ -58,10 +67,12 @@ export default function AddressBook() {
             userId: value.userId,
             friendId: value._id,
           };
-          // socket.current.emit("create-new-conversation", data);
-          socket.current.emit("create-soft-conversation", {
-            friendId: data.friendId,
-          });
+
+          const url = "http://localhost:8080/user/getfriendbyid";
+          const response = await axios.post(url, { friendId: data.friendId });
+          if (response.status === 200) {
+            setDataContact({ ...response.data, idChatWith: response.data._id });
+          }
         }
       } else {
         setDataContact(value);

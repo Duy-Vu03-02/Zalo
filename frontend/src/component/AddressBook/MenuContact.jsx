@@ -185,53 +185,53 @@ function MenuContact({
     }
   }, [textSearch]);
 
-  useEffect(() => {
-    if (contact !== null) {
-      setConversationList(contact);
-      if (socket.current) {
-        socket.current.on("received-soft-mess", (data) => {
-          data.idChatWith = data._id;
-        });
-        socket.current.on("recieve-lastmess", (data) => {
-          if (contact && contact.length > 0) {
-            setContact((prevState) => {
-              let itemReviece = {};
-              const filter = prevState.filter((item) => {
-                if (item.idConversation == data.idConversation) {
-                  item.lastMessage = data.lastMessage;
-                  item.lastSend = data.lastSend;
-                  itemReviece = item;
-                } else {
-                  return item;
-                }
-              });
-              return [itemReviece, ...filter];
-            });
-          }
-        });
-        socket.current.on("recieve-count-seen", (data) => {
-          if (contact && contact.length > 0) {
-            setContact((prevState) => {
-              const filter = prevState.map((item) => {
-                if (item.idConversation == data.idConversation) {
-                  item.countMessseen = data.countMessseen;
-                }
-                return item;
-              });
-              return filter;
-            });
-          }
-        });
-      }
-    }
-    if (socket.current) {
-      return () => {
-        socket.current.off("received-soft-mess");
-        socket.current.off("recieve-lastmess");
-        socket.current.off("recieve-count-seen");
-      };
-    }
-  }, [contact]);
+  // useEffect(() => {
+  //   if (contact !== null) {
+  //     setConversationList(contact);
+  //     if (socket.current) {
+  //       socket.current.on("received-soft-mess", (data) => {
+  //         data.idChatWith = data._id;
+  //       });
+  //       socket.current.on("recieve-lastmess", (data) => {
+  //         if (contact && contact.length > 0) {
+  //           setContact((prevState) => {
+  //             let itemReviece = {};
+  //             const filter = prevState.filter((item) => {
+  //               if (item.idConversation == data.idConversation) {
+  //                 item.lastMessage = data.lastMessage;
+  //                 item.lastSend = data.lastSend;
+  //                 itemReviece = item;
+  //               } else {
+  //                 return item;
+  //               }
+  //             });
+  //             return [itemReviece, ...filter];
+  //           });
+  //         }
+  //       });
+  //       socket.current.on("recieve-count-seen", (data) => {
+  //         if (contact && contact.length > 0) {
+  //           setContact((prevState) => {
+  //             const filter = prevState.map((item) => {
+  //               if (item.idConversation == data.idConversation) {
+  //                 item.countMessseen = data.countMessseen;
+  //               }
+  //               return item;
+  //             });
+  //             return filter;
+  //           });
+  //         }
+  //       });
+  //     }
+  //   }
+  //   if (socket.current) {
+  //     return () => {
+  //       socket.current.off("received-soft-mess");
+  //       socket.current.off("recieve-lastmess");
+  //       socket.current.off("recieve-count-seen");
+  //     };
+  //   }
+  // }, [contact]);
 
   const handleSearchDb = (value) => {
     if (value !== "") {

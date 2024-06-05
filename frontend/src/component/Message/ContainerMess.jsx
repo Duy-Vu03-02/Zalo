@@ -21,6 +21,7 @@ import { RxDotFilled } from "react-icons/rx";
 import axios from "axios";
 
 function ContainerMess({ contactData }) {
+  console.log(contactData);
   const scrollRef = useRef(null);
   const [messages, setMessages] = useState({
     sender: null,
@@ -165,7 +166,7 @@ function ContainerMess({ contactData }) {
       });
 
       // set last mess of contact
-      if (contactData?.idConversation) {
+      if (contactData && contactData?.idConversation) {
         setContact((prevState) => {
           let itemReviece = {};
           const filter = prevState.filter((item) => {

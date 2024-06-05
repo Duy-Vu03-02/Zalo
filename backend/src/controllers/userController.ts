@@ -352,10 +352,26 @@ export const getUserById = async (friendId: any) => {
     const friend: any = await getUsersById(friendId).select(
       "username avatar lastActive "
     );
-    friend.lastActive = await calculatorLastActive(friend.lastActive);
     if (friend) {
+      friend.lastActive = await calculatorLastActive(friend.lastActive);
       return friend;
     }
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const getFriendById = async (req: Request, res: Response) => {
+  try {
+    const { friendId } = req.body;
+    const friend = await UserModel.findById(friendId).select(
+      "avatar lastActive"
+    );
+    if (friend) {
+      friend.lastActive = await calculatorLastActive(friend.lastActive);
+      return res.status(200).json(friend);
+    }
+    return res.sendStatus(204);
   } catch (err) {
     console.error(err);
   }

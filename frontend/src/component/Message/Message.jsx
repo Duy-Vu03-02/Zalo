@@ -41,7 +41,7 @@ export default function Message({ showPageAddressBook }) {
             userId: value.userId,
             friendId: value._id,
           };
-          // socket.current.emit("create-new-conversation", data);
+
           socket.current.emit("create-soft-conversation", {
             friendId: data.friendId,
           });

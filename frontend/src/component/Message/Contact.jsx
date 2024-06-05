@@ -141,7 +141,7 @@ function Contact({
       return () => {
         socket.current.off("received-soft-conversation");
         socket.current.off("received-soft-contact-conversation");
-        socket.current.off("received-soft-mess");
+        // socket.current.off("received-soft-mess");
         socket.current.off("recieve-lastmess");
         socket.current.off("recieve-count-seen");
       };
@@ -193,8 +193,9 @@ function Contact({
     if (contact !== null) {
       setConversationList(contact);
       if (socket.current) {
-        socket.current.on("received-soft-mess", (data) => {
+        socket.current.on("received-soft-user", (data) => {
           data.idChatWith = data._id;
+          console.log(data);
           handleChangeSoftContact(data);
         });
         socket.current.on("recieve-lastmess", (data) => {
