@@ -280,6 +280,10 @@ export default function ({
                         >
                           {item.BanBe && (
                             <button
+                              style={{
+                                backgroundColor: "rgb(220 224 227)",
+                                color: "black",
+                              }}
                               onClick={(e) => handleCrudFriend(item, e, key)}
                             >
                               {XOA_BAN_BE}

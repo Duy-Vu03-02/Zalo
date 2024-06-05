@@ -13,17 +13,17 @@ export const ContactProvider = ({ children }) => {
     fetchConversation();
   }, [userData]);
 
-  // useEffect(() => {
-  //   const fetch = async () => {
-  //     if (fetchContact.current) {
-  //       clearTimeout(fetchContact.current);
-  //     }
-  //     fetchContact.current = setTimeout(() => {
-  //       fetchConversation();
-  //     }, 30000);
-  //   };
-  //   fetch();
-  // },[]);
+  useEffect(() => {
+    const fetch = async () => {
+      if (fetchContact.current) {
+        clearTimeout(fetchContact.current);
+      }
+      fetchContact.current = setTimeout(() => {
+        fetchConversation();
+      }, 30000);
+    };
+    fetch();
+  }, []);
 
   const fetchConversation = async () => {
     if (userData) {

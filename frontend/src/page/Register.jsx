@@ -14,11 +14,9 @@ function Register() {
   };
 
   const handleSubmitRegister = async () => {
-    console.log(value);
     await axios
       .post("http://127.0.0.1:8080/auth/register", value)
       .then((response) => {
-        console.log(response);
         alert("Thanh cong");
       })
       .catch((err) => {

@@ -33,7 +33,6 @@ export default function Zalo() {
         const response = await axios.post(url, {}, { withCredentials: true });
 
         if (response.status === 200) {
-          console.log(response);
           setUserData(response.data);
           setChat(true);
         } else {

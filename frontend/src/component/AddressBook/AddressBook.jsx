@@ -27,14 +27,6 @@ export default function AddressBook() {
     });
   };
 
-  useEffect(() => {
-    if (socket.current) {
-      socket.current.on("received-soft-mess", (data) => {
-        console.log(data);
-      });
-    }
-  }, [socket.current]);
-
   const handleChangeContact = async (value) => {
     try {
       if (value.idConversation === null || value.idConversation === undefined) {
