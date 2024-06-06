@@ -609,6 +609,10 @@ function MenuContact({
                           Kết quả{" "}
                           {dataUserPhone.show !== null ? "" : "gần nhất"}
                         </p>
+                        {dataUserPhone.state &&
+                          dataUserPhone.state.length > 20 && (
+                            <p>{dataUserPhone.state}</p>
+                          )}
                       </div>
                       {dataUserPhone.data !== null && (
                         <div className="wrap-result-phone flex">

@@ -65,44 +65,44 @@ function ContainerMess({ contactData }) {
     "#b4426e",
   ];
 
-  useEffect(() => {
-    function handleClickOutsideMenu(event) {
-      const option = {
-        tableIcon: iconRef.current.contains(event.target),
-        tablePicture: iconPictureRef.current.contains(event.target),
-        tableColor: iconBackgroundRef.current.contains(event.target),
-      };
-      // if (
-      //   (iconBackgroundRef && !option.tableColor) ||
-      //   (iconRef && !option.tableIconRef) ||
-      //   (iconPicture && !option.tablePicture)
-      // ) {
-      //   // setMenuControl({
-      //   //   tableColor: false,
-      //   //   tableIcon: false,
-      //   //   tablePicture: false,
-      //   // });
-      //   // handleChangeMenuControl(event);
-      //   console.log(event);
-      // }
-      // if (!option.tableIcon && !option.tablePicture && !option.tableColor) {
-      //   // setMenuControl(option);
-      //   return;
-      // }
-      // if (menuControl.tableIcon && !option.tableIcon) {
-      //   setMenuControl({
-      //     tableIcon: false,
-      //     tablePicture: "",
-      //     tableColor: ,
-      //   });
-      // }
-    }
+  // useEffect(() => {
+  //   function handleClickOutsideMenu(event) {
+  //     const option = {
+  //       tableIcon: iconRef.current.contains(event.target),
+  //       tablePicture: iconPictureRef.current.contains(event.target),
+  //       tableColor: iconBackgroundRef.current.contains(event.target),
+  //     };
+  // if (
+  //   (iconBackgroundRef && !option.tableColor) ||
+  //   (iconRef && !option.tableIconRef) ||
+  //   (iconPicture && !option.tablePicture)
+  // ) {
+  //   // setMenuControl({
+  //   //   tableColor: false,
+  //   //   tableIcon: false,
+  //   //   tablePicture: false,
+  //   // });
+  //   // handleChangeMenuControl(event);
+  //   console.log(event);
+  // }
+  // if (!option.tableIcon && !option.tablePicture && !option.tableColor) {
+  //   // setMenuControl(option);
+  //   return;
+  // }
+  // if (menuControl.tableIcon && !option.tableIcon) {
+  //   setMenuControl({
+  //     tableIcon: false,
+  //     tablePicture: "",
+  //     tableColor: ,
+  //   });
+  // }
+  //   }
 
-    document.addEventListener("mousedown", handleClickOutsideMenu);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutsideMenu);
-    };
-  }, [menuControl]);
+  //   document.addEventListener("mousedown", handleClickOutsideMenu);
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClickOutsideMenu);
+  //   };
+  // }, [menuControl]);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView();
@@ -128,8 +128,8 @@ function ContainerMess({ contactData }) {
     setMessages((prevMessage) => [...prevMessage, data]);
   };
 
-  const handleSendMess = async (e) => {
-    const message = inputMessage.current.textContent;
+  const handleSendMess = async (e, flag = false) => {
+    const message = flag ? "👍" : inputMessage.current.textContent;
     if (
       (message.trim() !== "" && message.trim() !== null) ||
       (listMessImg && listMessImg.length > 0)
@@ -268,8 +268,16 @@ function ContainerMess({ contactData }) {
   };
 
   const handleGetIcon = (value) => {
-    inputMessage.current.textContent += value;
-    inputMessage.current.focus();
+    const input = inputMessage.current;
+    input.innerHTML += value;
+
+    input.focus();
+    const range = document.createRange();
+    range.selectNodeContents(input);
+    range.collapse(false);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
   };
 
   return (
@@ -459,7 +467,10 @@ function ContainerMess({ contactData }) {
                   }}
                   onClick={handleSendMess}
                 />
-                <AiOutlineLike className="icon-header" />
+                <AiOutlineLike
+                  className="icon-header"
+                  onClick={(e) => handleSendMess(e, true)}
+                />
               </div>
             </div>
           </form>
