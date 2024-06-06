@@ -19,6 +19,7 @@ import { RiEmojiStickerLine } from "react-icons/ri";
 import { AiOutlineSend } from "react-icons/ai";
 import { RxDotFilled } from "react-icons/rx";
 import axios from "axios";
+import { getMessageByConversation } from "../../util/api/index.jsx";
 
 function ContainerMess({ contactData }) {
   const scrollRef = useRef(null);
@@ -125,7 +126,9 @@ function ContainerMess({ contactData }) {
   }, [contactData]);
 
   const handleRecieveMessage = (data) => {
-    setMessages((prevMessage) => [...prevMessage, data]);
+    if (data.idConversation === contactData.idConversation) {
+      setMessages((prevMessage) => [...prevMessage, data]);
+    }
   };
 
   const handleSendMess = async (e, flag = false) => {
@@ -187,15 +190,9 @@ function ContainerMess({ contactData }) {
 
   useEffect(() => {
     const fetch = async () => {
-      const data = {
-        userId: userData._id,
-        friendId: contactData._id,
-      };
-      const response = await axios.post(
-        "http://127.0.0.1:8080/message/getallmessage",
-        { idConversation: contactData.idConversation }
-      );
-
+      const response = await getMessageByConversation({
+        idConversation: contactData.idConversation,
+      });
       if (response.status === 200) {
         setMessages(response.data);
       }

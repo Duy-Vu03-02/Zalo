@@ -6,6 +6,7 @@ import WellCome from "./WellCome";
 import ContainerMess from "./ContainerMess";
 import axios from "axios";
 import { UserContext } from "../../Context/UserContext";
+import { getConversationByIdFriend } from "../../util/api";
 
 export default function Message({ showPageAddressBook }) {
   const [dataContact, setDataContact] = useState(null);
@@ -18,9 +19,7 @@ export default function Message({ showPageAddressBook }) {
   const handleChangeContact = async (value) => {
     try {
       if (value.idConversation === null || value.idConversation === undefined) {
-        const url =
-          "http://localhost:8080/conversation/getconversationbyfriendid";
-        const response = await axios.post(url, {
+        const response = await getConversationByIdFriend({
           userId: value.userId,
           friendId: value._id,
         });

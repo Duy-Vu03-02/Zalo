@@ -3,7 +3,7 @@ import { UserContext } from "../Context/UserContext";
 import Login from "./Login";
 import Chat from "./Chat";
 import Loadding from "./Loadding";
-import axios from "axios";
+import { userLogout, userLoginByToken } from "../util/api";
 
 export default function Zalo() {
   const [chat, setChat] = useState(false);
@@ -29,9 +29,7 @@ export default function Zalo() {
   useEffect(() => {
     const fetchLoginToken = async () => {
       try {
-        const url = "http://localhost:8080/auth/token";
-        const response = await axios.post(url, {}, { withCredentials: true });
-
+        const response = await userLoginByToken();
         if (response.status === 200) {
           setUserData(response.data);
           setChat(true);
@@ -47,9 +45,7 @@ export default function Zalo() {
   }, []);
 
   const handleLogout = async () => {
-    const url = "http://localhost:8080/auth/logout";
-    const response = await axios.post(url, {}, { withCredentials: true });
-
+    const response = await userLogout();
     if (response.status === 200) {
       localStorage.clear();
       setChat(false);

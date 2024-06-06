@@ -9,6 +9,7 @@ import {
 import { UserContext } from "../../Context/UserContext";
 import { TbMessageDots } from "react-icons/tb";
 import axios from "axios";
+import { crudFriend, getFriendReq } from "../../util/api";
 
 export const HUY_LOI_MOI_KET_BAN = "Thu hồi lời mời";
 export const KET_BAN = "Kết bạn";
@@ -85,8 +86,7 @@ export default function ({
     const fetch = async () => {
       // Neu la loi moi ket ban thi call ca friend req
       if (title === LoiMoiKetBan) {
-        const url = "http://localhost:8080/user/getfriendreq";
-        const response = await axios.post(url, { id: userData._id });
+        const response = await getFriendReq({ id: userData._id });
         if (response.status === 200) {
           if (response.data.length > 0) {
             setFriendReq(response.data);
@@ -178,8 +178,7 @@ export default function ({
       friendId: friend._id,
       state: e.target.textContent,
     };
-    const url = "http://localhost:8080/user/crudfriend";
-    const response = await axios.post(url, data);
+    const response = await crudFriend(data);
     if (response.status === 200) {
       if (data.state === HUY_LOI_MOI_KET_BAN && title === LoiMoiKetBan) {
         setFriendReq((prevFriendReq) => {

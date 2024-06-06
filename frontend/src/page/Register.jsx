@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { userLogin, userRegister } from "../util/api";
 
 function Register() {
   const [value, setValue] = useState({
@@ -14,14 +15,10 @@ function Register() {
   };
 
   const handleSubmitRegister = async () => {
-    await axios
-      .post("http://127.0.0.1:8080/auth/register", value)
-      .then((response) => {
-        alert("Thanh cong");
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    const response = await userRegister({ ...value });
+    if (response.status === 200) {
+      alert("Thanh cong");
+    }
     setValue({
       phone: "",
       name: "",

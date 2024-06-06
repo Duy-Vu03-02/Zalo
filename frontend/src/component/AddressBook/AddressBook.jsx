@@ -7,6 +7,7 @@ import axios from "axios";
 import MenuContact from "./MenuContact";
 import ContentMenuContact from "./ContentMenuContact";
 import { useEffect } from "react";
+import { getConversationByIdFriend, getFriendById } from "../../util/api";
 
 export default function AddressBook() {
   const [dataContact, setDataContact] = useState(null);
@@ -30,9 +31,7 @@ export default function AddressBook() {
   const handleChangeContact = async (value) => {
     try {
       if (value.idConversation === null || value.idConversation === undefined) {
-        const url =
-          "http://localhost:8080/conversation/getconversationbyfriendid";
-        const response = await axios.post(url, {
+        const response = await getConversationByIdFriend({
           userId: userData._id,
           friendId: value._id,
         });
@@ -60,8 +59,9 @@ export default function AddressBook() {
             friendId: value._id,
           };
 
-          const url = "http://localhost:8080/user/getfriendbyid";
-          const response = await axios.post(url, { friendId: data.friendId });
+          const response = await getFriendById({
+            friendId: data.friendId,
+          });
           if (response.status === 200) {
             setDataContact({ ...response.data, idChatWith: response.data._id });
           }

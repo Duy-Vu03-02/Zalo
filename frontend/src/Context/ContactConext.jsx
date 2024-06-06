@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState, useContext, useRef } from "react";
 import { UserContext } from "./UserContext";
 import axios from "axios";
+import { getAllConversation } from "../util/api";
 
 export const ContactContext = createContext(null);
 
@@ -27,10 +28,7 @@ export const ContactProvider = ({ children }) => {
 
   const fetchConversation = async () => {
     if (userData) {
-      const response = await axios.post(
-        "http://localhost:8080/conversation/getallconversationbyuser",
-        { id: userData._id }
-      );
+      const response = await getAllConversation({ id: userData._id });
       setContact(response.data);
 
       // if (response.data && response.data.length > 0) {

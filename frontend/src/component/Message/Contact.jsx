@@ -21,6 +21,12 @@ import { RxDotFilled } from "react-icons/rx";
 import MenuContact from "../AddressBook/MenuContact";
 import axios from "axios";
 import { IconBase } from "react-icons/lib";
+import {
+  createGroup,
+  crudFriend,
+  getFriendByName,
+  getUserByPhone,
+} from "../../util/api";
 
 function Contact({
   handleChangeContact,
@@ -244,14 +250,10 @@ function Contact({
         clearTimeout(searchTimeout.current);
       }
       searchTimeout.current = setTimeout(async () => {
-        const data = {
+        const response = await getFriendByName({
           friendName: value,
           userId: userData._id,
-        };
-        const response = await axios.post(
-          "http://localhost:8080/user/getfriendbyname",
-          data
-        );
+        });
         if (response.status === 200) {
           setDataSearch((prevState) => {
             return {
@@ -390,13 +392,12 @@ function Contact({
 
   const handleCreateGroup = async () => {
     handleShowAddGroup(false);
-    const url = "http://localhost:8080/group/creategroup";
-    const data = {
+
+    const response = await createGroup({
       groupName: dataCreateGr.username,
       listMember: [...dataCreateGr.listMember, userData._id],
       avatarGroup: dataCreateGr.avatar,
-    };
-    const response = await axios.post(url, data);
+    });
     if (response.status === 200) {
       setContact((prevState) => {
         return [
@@ -470,8 +471,7 @@ function Contact({
   };
   const handleFindUserByPhone = async () => {
     if (dataUserPhone.username !== "") {
-      const url = "http://localhost:8080/user/getphone";
-      const response = await axios.post(url, {
+      const response = await getUserByPhone({
         phone: dataUserPhone.username,
         id: userData._id,
       });
@@ -497,16 +497,18 @@ function Contact({
     }
   };
   const handleCRUDFriend = async (friendId, state) => {
-    const data = {
+    const response = await crudFriend({
       userId: userData._id,
       friendId: friendId,
       state: state,
-    };
-    const url = "http://localhost:8080/user/crudfriend";
-    const response = await axios.post(url, data);
+    });
 
     if (response.status === 200) {
-      socket.current.emit("crud-friend", data);
+      socket.current.emit("crud-friend", {
+        userId: userData._id,
+        friendId: friendId,
+        state: state,
+      });
     }
   };
   const handleChangeConversationActive = (data) => {

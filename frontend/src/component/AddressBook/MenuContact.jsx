@@ -14,6 +14,16 @@ import { BsFillCameraFill } from "react-icons/bs";
 import { RxDotFilled } from "react-icons/rx";
 import "../../resource/style/AddressBook/menuContact.css";
 import axios from "axios";
+import {
+  getFriendByName,
+  createGroup,
+  getAllGroup,
+  getFriendRes,
+  getGroupReq,
+  getUserByPhone,
+  crudFriend,
+  getAllFriend,
+} from "../../util/api/index.jsx";
 
 export const LoiMoiKetBan = "Lời mời kết bạn";
 export const LoiMoiVaoNhom = "Lời mời vào nhóm";
@@ -239,14 +249,10 @@ function MenuContact({
         clearTimeout(searchTimeout.current);
       }
       searchTimeout.current = setTimeout(async () => {
-        const data = {
+        const response = await getFriendByName({
           friendName: value,
           userId: userData._id,
-        };
-        const response = await axios.post(
-          "http://localhost:8080/user/getfriendbyname",
-          data
-        );
+        });
         if (response.status === 200) {
           setDataSearch((prevState) => {
             return {
@@ -369,13 +375,11 @@ function MenuContact({
 
   const handleCreateGroup = async () => {
     handleShowAddGroup(false);
-    const url = "http://localhost:8080/group/creategroup";
-    const data = {
+    const response = await createGroup({
       groupName: dataCreateGr.username,
       listMember: [...dataCreateGr.listMember, userData._id],
       avatarGroup: dataCreateGr.avatar,
-    };
-    const response = await axios.post(url, data);
+    });
     if (response.status === 200) {
       setContact((prevState) => {
         return [
@@ -450,8 +454,7 @@ function MenuContact({
 
   const handleFindUserByPhone = async () => {
     if (dataUserPhone.username !== "") {
-      const url = "http://localhost:8080/user/getphone";
-      const response = await axios.post(url, {
+      const response = await getUserByPhone({
         phone: dataUserPhone.username,
         id: userData._id,
       });
@@ -483,8 +486,7 @@ function MenuContact({
       friendId: friendId,
       state: state,
     };
-    const url = "http://localhost:8080/user/crudfriend";
-    const response = await axios.post(url, data);
+    const response = await crudFriend(data);
 
     if (response.status === 200) {
       socket.current.emit("crud-friend", data);
@@ -493,8 +495,7 @@ function MenuContact({
 
   const handleFetchDataUser = async (title) => {
     if (title === DanhSachBanBe) {
-      const url = "http://localhost:8080/user/getallfriend";
-      const response = await axios.post(url, { id: userData._id });
+      const response = await getAllFriend({ id: userData._id });
       if (response.status === 200 || response.status === 204) {
         handleSetContentMenuContact({
           state: true,
@@ -504,8 +505,7 @@ function MenuContact({
         });
       }
     } else if (title === DanhSachNhom) {
-      const url = "http://localhost:8080/user/getallgroup";
-      const response = await axios.post(url, { id: userData._id });
+      const response = await getAllGroup({ id: userData._id });
       if (response.status === 200 || response.status === 204) {
         handleSetContentMenuContact({
           state: true,
@@ -515,8 +515,7 @@ function MenuContact({
         });
       }
     } else if (title === LoiMoiKetBan) {
-      const url = "http://localhost:8080/user/getfriendres";
-      const response = await axios.post(url, { id: userData._id });
+      const response = await getFriendRes({ id: userData._id });
       if (response.status === 200 || response.status === 204) {
         handleSetContentMenuContact({
           state: true,
@@ -526,8 +525,7 @@ function MenuContact({
         });
       }
     } else if (title === LoiMoiVaoNhom) {
-      const url = "http://localhost:8080/user/getgroupreq";
-      const response = await axios.post(url, { id: userData._id });
+      const response = await getGroupReq({ id: userData._id });
       if (response.status === 200 || response.status === 204) {
         handleSetContentMenuContact({
           state: true,

@@ -108,6 +108,7 @@ io.on("connection", async (socket: Socket) => {
                 sender: data.idSend,
                 message: data.mess,
                 updatedAt: newConversation.updatedAt,
+                idConversation: newConversation._id,
                 imgMess: data.imgMess,
               });
 
@@ -159,6 +160,7 @@ io.on("connection", async (socket: Socket) => {
           message: data.mess,
           updatedAt: data.updatedAt,
           imgMess: data.imgMess,
+          idConversation: data.idConversation,
         });
 
         if (countMessseen) {

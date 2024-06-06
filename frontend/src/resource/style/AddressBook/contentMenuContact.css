@@ -69,6 +69,7 @@
   height: 45px;
   border-radius: 50%;
   margin: auto 10px auto 20px;
+  box-shadow: 0px 0px 15px #adb3ba;
 }
 .list-fetch-contact .item-fetch {
   cursor: pointer;
@@ -112,7 +113,7 @@
 .friend-req li {
   background-color: white;
   height: 110px;
-  width: 252px;
+  width: 282px;
   border-radius: 5px;
   margin-right: 20px;
   padding-bottom: 5px;
@@ -126,7 +127,7 @@
 .friend-req button {
   border-radius: 3px;
   cursor: pointer;
-  width: 222px;
+  width: 252px;
   height: 30px;
   display: block;
   margin: 0 15px;
