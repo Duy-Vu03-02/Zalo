@@ -4,6 +4,7 @@ import {
   getOfCreateConversation,
   createConversation,
   getConversationByFriendID,
+  delConversationById,
 } from "../controllers/ConverationController";
 
 export default (router: express.Router) => {
@@ -17,4 +18,5 @@ export default (router: express.Router) => {
   );
   router.post("/conversation/getofcreateconversation", getOfCreateConversation);
   router.post("/conversation/createconversation", createConversation);
+  router.post("/conversation/delconversation", delConversationById);
 };

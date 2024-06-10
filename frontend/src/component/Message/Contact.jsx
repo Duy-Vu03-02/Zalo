@@ -12,7 +12,7 @@ import "../../resource/style/Chat/contact.css";
 import { CiSearch } from "react-icons/ci";
 import { HiOutlineUserPlus } from "react-icons/hi2";
 import { HiOutlineUserGroup } from "react-icons/hi2";
-import { MdExpandMore } from "react-icons/md";
+import { MdExpandMore, MdMore } from "react-icons/md";
 import { IoIosMore } from "react-icons/io";
 import { IoMdClose } from "react-icons/io";
 import { IoTriangle } from "react-icons/io5";
@@ -23,6 +23,7 @@ import { IconBase } from "react-icons/lib";
 import {
   createGroup,
   crudFriend,
+  delConversationById,
   getFriendByName,
   getUserByPhone,
 } from "../../util/api";
@@ -33,6 +34,10 @@ function Contact({
   handleChangeSoftContact,
 }) {
   const [textSearch, setTextSearch] = useState("");
+  const [showDelConversation, setShowDelConversation] = useState({
+    icon: false,
+    box: false,
+  });
   const [isSearch, setIsSearch] = useState({
     state: false,
     recent: true,
@@ -514,6 +519,19 @@ function Contact({
     conversationAvticve.current = data.idConversation;
   };
 
+  const handleDelConversation = async (id) => {
+    setShowDelConversation({ icon: false, box: false });
+    const response = await delConversationById({ idConversation: id });
+    if (response.status === 200) {
+      setContact((prevContact) => {
+        const newContact = prevContact.filter(
+          (item) => item.idConversation !== id
+        );
+        return newContact;
+      });
+    }
+  };
+
   const handleChange = () => {};
   return (
     <>
@@ -937,6 +955,16 @@ function Contact({
                     {conversationList &&
                       conversationList.map((data, index) => (
                         <li
+                          onMouseEnter={() =>
+                            setShowDelConversation((prevSate) => {
+                              return { ...prevSate, icon: true };
+                            })
+                          }
+                          onMouseLeave={() =>
+                            setShowDelConversation((prevSate) => {
+                              return { box: false, icon: false };
+                            })
+                          }
                           className={
                             data?.idConversation === conversationAvticve.current
                               ? "conversation-active "
@@ -986,18 +1014,44 @@ function Contact({
                               </div>
                             </div>
                             <div className="contact-last-onl flex">
-                              <p>
-                                {data.lastActive === "Active" ? (
-                                  <RxDotFilled
-                                    style={{
-                                      fontSize: "20px",
-                                      color: "#30a04b",
-                                    }}
-                                  />
-                                ) : (
-                                  data.lastActive
-                                )}
-                              </p>
+                              {!showDelConversation.icon ? (
+                                <p>
+                                  {data.lastActive === "Active" ? (
+                                    <RxDotFilled
+                                      style={{
+                                        fontSize: "20px",
+                                        color: "#30a04b",
+                                      }}
+                                    />
+                                  ) : (
+                                    data.lastActive
+                                  )}
+                                </p>
+                              ) : (
+                                <div
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setShowDelConversation((prevSate) => {
+                                      return { ...prevSate, box: true };
+                                    });
+                                  }}
+                                >
+                                  <IoIosMore className="icon-more-conversation" />
+                                  {showDelConversation.box && (
+                                    <div className="box-del-conversation">
+                                      <p
+                                        onClick={() =>
+                                          handleDelConversation(
+                                            data.idConversation
+                                          )
+                                        }
+                                      >
+                                        Xóa hội thoại
+                                      </p>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
                               {parseInt(data.countMessseen) > 0 &&
                                 data.lastSend !== userData._id && (
                                   <div className="wrap-count-seen">

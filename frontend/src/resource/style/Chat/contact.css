@@ -208,6 +208,7 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: end;
+  position: relative;
 }
 .contact-last-onl .wrap-count-seen {
   background-color: #db2222;
@@ -487,4 +488,29 @@
 }
 .checkbox-add .active {
   background-color: #357de8 !important;
+}
+.icon-more-conversation {
+  width: 15px;
+  height: 15px;
+  padding: 3px;
+  border-radius: 2px;
+  position: absolute;
+  right: 10px;
+  background-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 10px #c2c4c7;
+  color: #357de8;
+}
+.box-del-conversation {
+  background-color: white;
+  position: absolute;
+  right: 10px;
+  width: 90px;
+  text-align: center;
+  line-height: 25px;
+  top: 40%;
+}
+.box-del-conversation:hover {
+  border-radius: 1px;
+  background-color: #e5efff;
+  box-shadow: 0 0 10px #c2c4c7;
 }

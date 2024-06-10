@@ -108,6 +108,22 @@ export const getConversationByFriendID = async (
   }
 };
 
+export const delConversationById = async (req: Request, res: Response) => {
+  try {
+    const { idConversation } = req.body;
+    const conversation = await ConversationModel.findByIdAndDelete(
+      idConversation
+    );
+    if (conversation) {
+      return res.sendStatus(200);
+    }
+    return res.sendStatus(204);
+  } catch (err) {
+    console.error(err);
+    return res.sendStatus(404);
+  }
+};
+
 export const getAllConversationByUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.body;

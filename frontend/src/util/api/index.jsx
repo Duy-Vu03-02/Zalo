@@ -130,6 +130,12 @@ export const getConversationByIdFriend = async ({ userId, friendId }) => {
   return response;
 };
 
+export const delConversationById = async ({ idConversation }) => {
+  const url = "https://192.168.41.26/conversation/delconversation";
+  const response = await axios.post(url, { idConversation: idConversation });
+  return response;
+};
+
 // Message
 export const getMessageByConversation = async ({ idConversation }) => {
   const url = "https://192.168.41.26/message/getallmessage";

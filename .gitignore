@@ -1,3 +1,4 @@
 # CA - https
 .cert/
+.env/
 node_modules/
