@@ -1118,7 +1118,10 @@ function Contact({
                               </p>
                               {parseInt(data.countMessseen) > 0 &&
                                 data.lastSend !== userData._id && (
-                                  <div className="wrap-count-seen">
+                                  <div
+                                    className="wrap-count-seen"
+                                    style={{ display: "block !important" }}
+                                  >
                                     <p className="count-seen">
                                       {parseInt(data.countMessseen)}
                                     </p>

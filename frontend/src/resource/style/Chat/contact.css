@@ -227,11 +227,13 @@
   position: relative;
 }
 .contact-last-onl .wrap-count-seen {
+  display: flex !important;
   background-color: #db2222;
   height: 18px;
   width: 18px;
   border-radius: 50%;
   padding: 0;
+  justify-content: center;
 }
 .contact-last-onl .count-seen {
   font-size: 12px;
