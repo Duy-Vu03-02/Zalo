@@ -32,7 +32,4 @@ export default (router: express.Router) => {
   router.post("/user/getfriendbyname", friendByName);
   router.post("/user/updateavatarbyid", updateAvatar);
   router.post("/user/getfriendbyid", getFriendById);
-  router.get("/test", (req: Request, res: Response) => {
-    return res.status(200).json({ ede: "eded" });
-  });
 };

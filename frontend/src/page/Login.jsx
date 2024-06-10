@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useContext } from "react";
-import axios from "axios";
 import { UserContext } from "../Context/UserContext";
 import { useNavigate } from "react-router-dom";
 import "../resource/style/Login/login.css";
@@ -122,7 +121,7 @@ function LoginAccount({ handleChangeStateChat }) {
         setStateLogin("");
       }
     } catch (err) {
-      setStateLogin(err.message);
+      setStateLogin("Tài khoản hoặc mật khẩu không đúng");
       // setStateLogin(err);
     }
   };

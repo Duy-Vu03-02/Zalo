@@ -1,6 +1,5 @@
 import { createContext, useEffect, useState, useContext, useRef } from "react";
 import { UserContext } from "./UserContext";
-import axios from "axios";
 import { getAllConversation } from "../util/api";
 
 export const ContactContext = createContext(null);

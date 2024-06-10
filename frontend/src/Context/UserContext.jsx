@@ -12,7 +12,7 @@ export const UserProvider = ({ children }) => {
 
   useEffect(() => {
     if (userData !== null) {
-      socket.current = io("https://localhost:8080");
+      socket.current = io("https://192.168.41.26");
       socket.current.emit("add-user", { id: userData._id });
     }
   }, [userData]);

@@ -19,7 +19,6 @@ import { IoTriangle } from "react-icons/io5";
 import { BsFillCameraFill } from "react-icons/bs";
 import { RxDotFilled } from "react-icons/rx";
 import MenuContact from "../AddressBook/MenuContact";
-import axios from "axios";
 import { IconBase } from "react-icons/lib";
 import {
   createGroup,

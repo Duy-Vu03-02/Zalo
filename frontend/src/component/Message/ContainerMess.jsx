@@ -19,7 +19,6 @@ import { RiEmojiStickerLine } from "react-icons/ri";
 import { AiOutlineSend } from "react-icons/ai";
 import { RxDotFilled } from "react-icons/rx";
 import { IoCallOutline } from "react-icons/io5";
-import axios from "axios";
 import { getMessageByConversation } from "../../util/api/index.jsx";
 
 function ContainerMess({ contactData }) {

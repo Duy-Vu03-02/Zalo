@@ -37,7 +37,7 @@ const socket = require("socket.io");
 const io = socket(server, {
   cors: {
     credentials: true,
-    origin: ["https://localhost:3000", "https://192.168.41.26:3000"],
+    origin: "*",
   },
 });
 

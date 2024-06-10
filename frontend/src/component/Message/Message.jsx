@@ -4,9 +4,8 @@ import MessageInfor from "./MessageInfor";
 import Contact from "./Contact";
 import WellCome from "./WellCome";
 import ContainerMess from "./ContainerMess";
-import axios from "axios";
 import { UserContext } from "../../Context/UserContext";
-import { getConversationByIdFriend } from "../../util/api";
+import { getConversationByIdFriend, getFriendById } from "../../util/api";
 
 export default function Message({ showPageAddressBook }) {
   const [dataContact, setDataContact] = useState(null);
@@ -41,9 +40,12 @@ export default function Message({ showPageAddressBook }) {
             friendId: value._id,
           };
 
-          socket.current.emit("create-soft-conversation", {
+          const response = await getFriendById({
             friendId: data.friendId,
           });
+          if (response.status === 200) {
+            setDataContact({ ...response.data, idChatWith: response.data._id });
+          }
         }
       } else {
         setDataContact(value);
