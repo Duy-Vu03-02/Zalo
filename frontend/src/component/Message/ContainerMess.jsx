@@ -36,7 +36,8 @@ function ContainerMess({ contactData }) {
     tablePicture: false,
   });
   const { userData, socket } = useContext(UserContext);
-  const { setContact } = useContext(ContactContext);
+  const { setContact, currentConversation, setCurrentConversation } =
+    useContext(ContactContext);
   const { theme, handleChangeTheme } = useContext(ThemeContext);
   const [activeIconSend, setActiveIconSend] = useState(false);
   const inputMessage = useRef(null);
@@ -110,6 +111,7 @@ function ContainerMess({ contactData }) {
   }, [messages]);
 
   useEffect(() => {
+    setCurrentConversation(contactData);
     if (socket.current) {
       socket.current.on("recieve-mess", handleRecieveMessage);
       socket.current.emit("seen-mess", {

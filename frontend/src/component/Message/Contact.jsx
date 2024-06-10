@@ -32,12 +32,9 @@ function Contact({
   handleChangeContact,
   showPageAddressBook,
   handleChangeSoftContact,
+  disableContainer,
 }) {
   const [textSearch, setTextSearch] = useState("");
-  const [showDelConversation, setShowDelConversation] = useState({
-    icon: false,
-    box: false,
-  });
   const [isSearch, setIsSearch] = useState({
     state: false,
     recent: true,
@@ -84,7 +81,13 @@ function Contact({
     "https://res.zaloapp.com/pc/avt_group/11_school.jpg",
     "https://res.zaloapp.com/pc/avt_group/12_school.jpg",
   ];
-  const { contact, setContact, fetchConversation } = useContext(ContactContext);
+  const {
+    contact,
+    setContact,
+    fetchConversation,
+    currentConversation,
+    setCurrentConversation,
+  } = useContext(ContactContext);
   const { userData, socket } = useContext(UserContext);
   const searchTimeout = useRef(null);
   const conversationAvticve = useRef(null);
@@ -520,7 +523,10 @@ function Contact({
   };
 
   const handleDelConversation = async (id) => {
-    setShowDelConversation({ icon: false, box: false });
+    if (id === currentConversation.idConversation) {
+      disableContainer();
+    }
+
     const response = await delConversationById({ idConversation: id });
     if (response.status === 200) {
       setContact((prevContact) => {
@@ -955,16 +961,6 @@ function Contact({
                     {conversationList &&
                       conversationList.map((data, index) => (
                         <li
-                          onMouseEnter={() =>
-                            setShowDelConversation((prevSate) => {
-                              return { ...prevSate, icon: true };
-                            })
-                          }
-                          onMouseLeave={() =>
-                            setShowDelConversation((prevSate) => {
-                              return { box: false, icon: false };
-                            })
-                          }
                           className={
                             data?.idConversation === conversationAvticve.current
                               ? "conversation-active "
@@ -1014,47 +1010,44 @@ function Contact({
                               </div>
                             </div>
                             <div className="contact-last-onl flex">
-                              {!showDelConversation.icon ? (
-                                <p>
-                                  {data.lastActive === "Active" ? (
-                                    <RxDotFilled
-                                      style={{
-                                        fontSize: "20px",
-                                        color: "#30a04b",
-                                      }}
-                                    />
-                                  ) : (
-                                    data.lastActive
-                                  )}
-                                </p>
-                              ) : (
+                              <p>
+                                {data.lastActive === "Active" ? (
+                                  <RxDotFilled
+                                    style={{
+                                      fontSize: "20px",
+                                      color: "#30a04b",
+                                    }}
+                                  />
+                                ) : (
+                                  data.lastActive
+                                )}
+                              </p>
+
+                              <div
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                }}
+                                style={{
+                                  display: "none",
+                                }}
+                              >
+                                <IoIosMore className="icon-more-conversation" />
                                 <div
+                                  className="box-del-conversation"
+                                  key={index}
                                   onClick={(e) => {
-                                    e.stopPropagation();
-                                    setShowDelConversation((prevSate) => {
-                                      return { ...prevSate, box: true };
-                                    });
+                                    handleDelConversation(data.idConversation);
                                   }}
                                 >
-                                  <IoIosMore className="icon-more-conversation" />
-                                  {showDelConversation.box && (
-                                    <div className="box-del-conversation">
-                                      <p
-                                        onClick={() =>
-                                          handleDelConversation(
-                                            data.idConversation
-                                          )
-                                        }
-                                      >
-                                        Xóa hội thoại
-                                      </p>
-                                    </div>
-                                  )}
+                                  <p>Xóa hội thoại</p>
                                 </div>
-                              )}
+                              </div>
                               {parseInt(data.countMessseen) > 0 &&
                                 data.lastSend !== userData._id && (
-                                  <div className="wrap-count-seen">
+                                  <div
+                                    className="wrap-count-seen"
+                                    style={{ display: "block !important" }}
+                                  >
                                     <p className="count-seen">
                                       {parseInt(data.countMessseen)}
                                     </p>

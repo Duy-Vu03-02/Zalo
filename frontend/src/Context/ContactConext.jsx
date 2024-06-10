@@ -7,6 +7,8 @@ export const ContactContext = createContext(null);
 export const ContactProvider = ({ children }) => {
   const fetchContact = useRef(null);
   const [contact, setContact] = useState([]);
+  const [currentConversation, setCurrentConversation] = useState("");
+
   const { userData, socket } = useContext(UserContext);
 
   useEffect(() => {
@@ -43,7 +45,15 @@ export const ContactProvider = ({ children }) => {
   };
 
   return (
-    <ContactContext.Provider value={{ contact, setContact, fetchConversation }}>
+    <ContactContext.Provider
+      value={{
+        contact,
+        setContact,
+        fetchConversation,
+        currentConversation,
+        setCurrentConversation,
+      }}
+    >
       {children}
     </ContactContext.Provider>
   );

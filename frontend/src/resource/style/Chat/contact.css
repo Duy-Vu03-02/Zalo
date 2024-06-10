@@ -172,6 +172,22 @@
   cursor: pointer;
   transition: background-color 0.3s;
 }
+.contact-listConversation li:hover .contact-last-onl > p {
+  display: none;
+}
+.contact-listConversation li:hover .contact-last-onl > div {
+  display: flex !important;
+}
+.contact-listConversation li .box-del-conversation {
+  display: none;
+}
+.contact-listConversation
+  li
+  .contact-last-onl
+  > div:hover
+  .box-del-conversation {
+  display: flex !important;
+}
 .conversation-active {
   background-color: #e5efff !important;
 }
@@ -495,7 +511,7 @@
   padding: 3px;
   border-radius: 2px;
   position: absolute;
-  right: 10px;
+  right: 5px;
   background-color: rgba(255, 255, 255, 0.1);
   box-shadow: 0 0 10px #c2c4c7;
   color: #357de8;
@@ -503,11 +519,11 @@
 .box-del-conversation {
   background-color: white;
   position: absolute;
-  right: 10px;
+  right: 5px;
   width: 90px;
   text-align: center;
   line-height: 25px;
-  top: 40%;
+  top: 39%;
 }
 .box-del-conversation:hover {
   border-radius: 1px;

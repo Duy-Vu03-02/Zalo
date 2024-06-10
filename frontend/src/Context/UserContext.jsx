@@ -18,7 +18,13 @@ export const UserProvider = ({ children }) => {
   }, [userData]);
 
   return (
-    <UserContext.Provider value={{ userData, socket, setUserData }}>
+    <UserContext.Provider
+      value={{
+        userData,
+        socket,
+        setUserData,
+      }}
+    >
       {children}
     </UserContext.Provider>
   );

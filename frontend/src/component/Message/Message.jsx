@@ -54,6 +54,11 @@ export default function Message({ showPageAddressBook }) {
       console.error(err);
     }
   };
+
+  const handleDisableContainer = () => {
+    console.log("ceh");
+    setDataContact(null);
+  };
   return (
     <>
       <div className="container-mess flex">
@@ -62,6 +67,7 @@ export default function Message({ showPageAddressBook }) {
             handleChangeSoftContact={handleChangeSoftContact}
             handleChangeContact={handleChangeContact}
             showPageAddressBook={showPageAddressBook}
+            disableContainer={handleDisableContainer}
           />
         </div>
         <div>
