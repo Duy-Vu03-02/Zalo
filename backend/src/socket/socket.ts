@@ -1,4 +1,6 @@
 import express from "express";
+import fs from "fs";
+import path from "path";
 import { Socket } from "socket.io";
 import { getUsersById } from "../config/schema/UserModel";
 import {
@@ -23,13 +25,19 @@ import {
 
 import { getConversationById } from "../config/schema/ConversationModel";
 const app = express();
-const server = require("http").createServer(app);
+const server = require("https").createServer(
+  {
+    cert: fs.readFileSync(path.resolve(__dirname, "../../../.cert/cert.pem")),
+    key: fs.readFileSync(path.resolve(__dirname, "../../../.cert/key.pem")),
+  },
+  app
+);
 
 const socket = require("socket.io");
 const io = socket(server, {
   cors: {
     credentials: true,
-    origin: "http://localhost:3000",
+    origin: ["https://localhost:3000", "https://192.168.41.26:3000"],
   },
 });
 

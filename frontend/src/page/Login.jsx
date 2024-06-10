@@ -122,7 +122,7 @@ function LoginAccount({ handleChangeStateChat }) {
         setStateLogin("");
       }
     } catch (err) {
-      setStateLogin("Tài khoản hoặc mật khẩu không đúng");
+      setStateLogin(err.message);
       // setStateLogin(err);
     }
   };

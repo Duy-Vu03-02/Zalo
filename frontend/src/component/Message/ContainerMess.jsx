@@ -18,6 +18,7 @@ import { RiCalendarTodoFill, RiChatCheckFill } from "react-icons/ri";
 import { RiEmojiStickerLine } from "react-icons/ri";
 import { AiOutlineSend } from "react-icons/ai";
 import { RxDotFilled } from "react-icons/rx";
+import { IoCallOutline } from "react-icons/io5";
 import axios from "axios";
 import { getMessageByConversation } from "../../util/api/index.jsx";
 
@@ -308,6 +309,7 @@ function ContainerMess({ contactData }) {
           <div className="group-choice flex">
             <HiOutlineUserGroup className="icon-header" />
             <CiSearch className="icon-header" />
+            <IoCallOutline className="icon-header" />
             <IoVideocamOutline className="icon-header" />
           </div>
         </div>

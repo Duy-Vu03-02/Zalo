@@ -34,12 +34,6 @@ function Chat({ handleLogout }) {
   const [showSetting, setShowSetting] = useState(false);
   const boxRef = useRef(null);
   const boxAvatar = useRef(null);
-  // useEffect(() => {
-  //   if (userData !== null) {
-  //     socket.current = io("http://localhost:8080");
-  //     socket.current.emit("add-user", { id: userData._id });
-  //   }
-  // }, []);
 
   useEffect(() => {
     function handleClickOutside(event) {

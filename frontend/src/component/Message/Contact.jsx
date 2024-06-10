@@ -99,14 +99,14 @@ function Contact({
 
   useEffect(() => {
     if (socket.current) {
+      socket.current.on("received-soft-conversation", (data) => {
+        setContact((prevContact) => [data, ...prevContact]);
+        setConversationList((prevContact) => [data, ...prevContact]);
+      });
       socket.current.on("received-soft-contact-conversation", (data) => {
         setContact((prevContact) => [data, ...prevContact]);
         handleChangeContact({ ...data, userId: userData._id });
         conversationAvticve.current = data._id;
-      });
-      socket.current.on("received-soft-conversation", (data) => {
-        setContact((prevContact) => [data, ...prevContact]);
-        setConversationList((prevContact) => [data, ...prevContact]);
       });
       socket.current.on("received-soft-mess", (data) => {
         data.idChatWith = data._id;
