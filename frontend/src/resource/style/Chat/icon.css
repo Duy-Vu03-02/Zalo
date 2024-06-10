@@ -1,0 +1,63 @@
+.wrap-seticon {
+  width: 275px;
+  height: 250px;
+  bottom: 55px;
+  left: 10px;
+  background-color: white;
+  border-radius: 20px;
+  /* padding: 5px; */
+  overflow-y: hidden;
+  overflow-x: none;
+  outline: 10px solid white;
+}
+.wrap-seticon::-webkit-scrollbar {
+  width: 5px; /* Chiều rộng của thanh cuộn */
+}
+
+.wrap-seticon::-webkit-scrollbar-track {
+  background: transparent; /* Màu nền của phần track */
+}
+
+.wrap-seticon::-webkit-scrollbar-thumb {
+  background-color: #888; /* Màu của thanh cuộn */
+  border-radius: 10px; /* Bo góc của thanh cuộn */
+}
+.wraper-list-icon {
+  width: 275px;
+  height: 250px;
+  overflow-y: auto;
+  overflow-x: none;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  /* align-content: center; */
+}
+.wraper-list-icon::-webkit-scrollbar {
+  width: 5px; /* Chiều rộng của thanh cuộn */
+}
+
+.wraper-list-icon::-webkit-scrollbar-track {
+  background: transparent; /* Màu nền của phần track */
+}
+
+.wraper-list-icon::-webkit-scrollbar-thumb {
+  background-color: #888; /* Màu của thanh cuộn */
+  border-radius: 10px; /* Bo góc của thanh cuộn */
+}
+.wraper-list-icon li {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  cursor: pointer;
+  font-size: 25px;
+  width: 25px;
+  height: 25px;
+  margin: 3px;
+  padding: 3px;
+  border-radius: 3px;
+}
+.wraper-list-icon li:hover {
+  background-color: antiquewhite;
+}

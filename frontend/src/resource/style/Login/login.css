@@ -1,0 +1,243 @@
+.login-container {
+  background-color: #f4f8fb;
+  margin: 0;
+  display: block;
+  height: 100vh;
+  width: 100vw;
+}
+.login-title-container {
+  margin-bottom: 20px;
+}
+.login-title-container h2 {
+  display: block;
+  font-size: 55px;
+  font-weight: 700;
+  margin: 0;
+  padding: 5px 0;
+  color: #0190f3;
+}
+
+.login-title-container p {
+  font-size: 18px;
+  line-height: 30px;
+}
+
+.login-form-login {
+  background-color: white;
+  border-radius: 10px;
+  width: 400px;
+  margin: auto;
+  box-shadow: 0px 0px 5px rgba(137, 137, 137, 0.5),
+    0px 0 5px rgba(146, 143, 143, 0.5), 0px 5px 0px rgba(224, 224, 224, 0.5);
+}
+.login-header-login-wrap {
+  position: relative;
+  border-bottom: 1px solid rgb(202, 199, 200);
+}
+.login-hr-header-login {
+  position: absolute;
+  background-color: rgb(171, 170, 170);
+  opacity: 0.5;
+  top: 5px;
+  left: 200px;
+  width: 2px;
+  height: 20px;
+  border: none;
+  outline: none;
+}
+.login-hr-bottom-header {
+  position: absolute;
+  border: none;
+  outline: none;
+  height: 3px;
+  width: 63px;
+  background-color: #0190f3;
+  top: 38px;
+  left: 68px;
+  transition: width 0.3s, left 0.3s;
+}
+.login-hr-bottom-header-active {
+  width: 110px;
+  left: 246px;
+  transition: width 0.3s, left 0.3s;
+}
+.login-header-login-wrap {
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  background-color: #fafafa;
+}
+.login-header-login .login-header-login-active {
+  opacity: 1;
+  transition: opacity 0.3s;
+}
+.login-header-login p {
+  opacity: 0.5;
+  cursor: pointer;
+  line-height: 50px;
+  font-size: 11px;
+  font-weight: 700;
+  width: 200px;
+  text-align: center;
+  text-transform: uppercase;
+  transition: opacity 0.3s;
+}
+.login-login-qr,
+.login-login-account {
+  width: 400px;
+  height: 360px;
+}
+.login-wrap-qr {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.login-img-qr {
+  outline: 1px solid black;
+  outline-offset: 15px;
+  border-radius: 5px;
+  margin-top: 35px;
+}
+.login-img-qr img {
+  margin: auto;
+  display: block;
+  width: 200px;
+  height: 200px;
+  margin-bottom: 10px;
+}
+.login-img-qr p {
+  font-size: 16px;
+  font-weight: 500;
+  text-align: center;
+  line-height: 25px;
+}
+.login-blue {
+  color: #0190f3;
+}
+.login-introduce-footer p {
+  font-size: 13px;
+  font-weight: 700;
+  opacity: 0.5;
+  margin-top: 25px;
+  text-align: center;
+}
+.login-form-login-account {
+  padding-top: 30px;
+  position: relative;
+}
+.login-form-login-account .state-login {
+  position: absolute;
+  color: red;
+  font-size: 13px;
+  left: 50%;
+  top: 145px;
+  right: 50%;
+  width: 217px;
+  transform: translate(-50%, -50%);
+}
+.login-form-login-account .icon-login {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  margin: 0 10px;
+  line-height: 20px;
+}
+.login-form-login-wrap div {
+  margin: 0px 30px 30px 30px;
+  border-bottom: 1px solid rgb(209, 209, 209);
+}
+.login-form-login-wrap input {
+  width: 250px;
+  border: none;
+  outline: none;
+  line-height: 30px;
+  font-size: 15px;
+}
+.login-form-login input:focus {
+  border: none;
+  outline: none;
+}
+.login-container-btn {
+  transition: opacity 0.3s;
+  margin-top: 40px;
+}
+.login-container-btn div {
+  margin: 30px 0;
+}
+.login-container-btn button {
+  width: 350px;
+  display: block;
+  margin: auto;
+  text-align: center;
+  height: 40px;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-size: 15px;
+}
+.login-btn-login button {
+  display: block;
+  background-color: #0190f3;
+  color: white;
+}
+.login-btn-login button:hover {
+  background-color: #0482dc;
+  outline: none;
+  border: none;
+}
+.login-btn-login-phone button {
+  background-color: white;
+  border: 1px solid rgb(209, 209, 209);
+}
+.login-btn-login-phone button:hover {
+  outline: none;
+  border: 1px solid #0190f3;
+}
+
+.login-btn-login-phone {
+  position: relative;
+}
+.login-introduce-login {
+  opacity: 0;
+  visibility: hidden;
+}
+.login-introduce-login-active {
+  opacity: 0.8;
+  visibility: visible;
+  transition: opacity 0.5s;
+}
+.login-introduce-login p {
+  color: white;
+  font-size: 14px;
+  position: absolute;
+  top: 40px;
+  left: 80px;
+  background-color: #0190f3;
+  z-index: 11;
+  text-align: center;
+  padding: 3px 10px;
+  border-radius: 5px;
+}
+.login-introduce-login svg {
+  position: absolute;
+  top: 30px;
+  left: 150px;
+  z-index: 10;
+}
+.login-forgot-pass {
+  margin-top: 30px;
+}
+.login-forgot-pass p {
+  border-top: 1px solid rgb(209, 209, 209);
+  font-size: 14px;
+  padding: 15px;
+  text-align: center;
+}
+.login-disable {
+  pointer-events: none;
+  cursor: default;
+  opacity: 0.5;
+  transition: opacity 0.3s;
+}
