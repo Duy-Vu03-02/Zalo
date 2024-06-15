@@ -1,0 +1,12 @@
+.video-call {
+  position: relative;
+}
+.video-call .your-video {
+  position: absolute;
+  right: -20px;
+  top: 30px;
+}
+.video-call .your-video video {
+  width: 300px;
+  height: 150px;
+}

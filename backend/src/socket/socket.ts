@@ -292,16 +292,6 @@ io.on("connection", async (socket: Socket) => {
   });
 
   /// socket - video call
-  socket.on("call-user", (data) => {
-    const caller = listRoom.get(data.userCaller);
-    const receiver = listRoom.get(data.userReceiver);
-
-    if (caller && receiver) {
-      io.to(receiver).emit("user-call", {
-        signal: data.signal,
-      });
-    }
-  });
 });
 
 const handleStoreDate = async (value: any, id: any) => {

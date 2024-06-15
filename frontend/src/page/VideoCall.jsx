@@ -6,22 +6,23 @@ import React, {
   useState,
 } from "react";
 import Peer from "simple-peer";
-import { UserContext } from "../Context/UserContext";
-import { getFriendById } from "../util/api";
+import { callUser, getFriendById } from "../util/api";
+import io from "socket.io-client";
+import Loadding from "./Loadding";
+import "../resource/style/VideoCall/videocall.css";
 
 export default function VideoCall() {
-  const { userData, socket } = useContext(UserContext);
-  const url = window.location.href;
-  const base = decodeURIComponent(url.split("?")[1]).split("&");
-  const caller = base[0];
-  const receiver = base[1];
   const [friendData, setFriendData] = useState(null);
+  const [meData, setMeData] = useState("");
+  const [flag, setFlag] = useState("");
   const [stream, setStream] = useState("");
   const callerRef = useRef(null);
   const receiverRef = useRef(null);
   const connectionRef = useRef(null);
+  const socket = useRef(null);
+  socket.current = io("https://192.168.41.26");
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     navigator.mediaDevices
       .getUserMedia({ audio: true, video: true })
       .then((stream) => {
@@ -30,35 +31,17 @@ export default function VideoCall() {
       });
 
     const fetch = async () => {
-      const response = await getFriendById({
-        friendId: receiver.replace("receiver=", ""),
-      });
+      const baseUrl = window.location.href;
+      const friendId = baseUrl.split("id=")[1];
+      const response = await callUser({ receiver: friendId });
+      const f = baseUrl.slice(
+        baseUrl.indexOf("flag") + 5,
+        baseUrl.indexOf("flag") + 6
+      );
+      setFlag(f);
       if (response.status === 200) {
-        setFriendData(response.data);
-        if (socket.current && caller === userData._id) {
-          const peer = new Peer({
-            initiator: true,
-            trickle: false,
-            stream,
-          });
-
-          peer.on("signal", (data) => {
-            socket.current.emit("call-user", {
-              userCaller: caller,
-              userReceiver: receiver,
-              signal: data,
-            });
-          });
-
-          peer.on("stream", (stream) => {
-            receiverRef.current.srcObject = stream;
-          });
-
-          socket.on("call-accepted", (data) => {
-            peer.signal(data.signal);
-          });
-          connectionRef.current = peer;
-        }
+        setMeData(response.data.me);
+        setFriendData(response.data.friend);
       }
     };
 
@@ -71,18 +54,24 @@ export default function VideoCall() {
   }, []);
 
   const handleAcceptCall = () => {};
-  console.log(userData);
-  console.log(socket);
+
   return (
     <>
-      <div>
-        <video playsInline muted ref={callerRef} autoPlay />
-        {userData && caller !== userData._id && (
-          <div>
-            <button onClick={handleAcceptCall}>Chaasp nhaan</button>
+      {friendData && meData && flag ? (
+        <div className="video-call">
+          <div className="background-video"></div>
+          <div className="your-video">
+            <video playsInline muted ref={callerRef} autoPlay />
+            {!flag && (
+              <div>
+                <button onClick={handleAcceptCall}>Chaasp nhaan</button>
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        </div>
+      ) : (
+        <Loadding />
+      )}
     </>
   );
 }

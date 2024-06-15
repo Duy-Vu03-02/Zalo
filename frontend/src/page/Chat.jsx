@@ -4,9 +4,6 @@ import io from "socket.io-client";
 import "../resource/style/Chat/chat.css";
 import Message from "../component/Message/Message";
 import AddressBook from "../component/AddressBook/AddressBook";
-import ToDo from "../component/ToDo/ToDo";
-import Clod from "../component/Cloud/Cloud";
-import ToolBox from "../component/ToolBox/ToolBox";
 import Setting from "../component/Setting/Setting";
 import mess from "../resource/svg/chat/chat.svg";
 import addressbook from "../resource/svg/chat/addressbook.svg";
@@ -25,9 +22,9 @@ function Chat({ handleLogout }) {
   const listComponent = [
     <Message showPageAddressBook={showPageAddressBook} />,
     <AddressBook onClick={() => handleShowPageAddressBook(true)} />,
-    <ToDo />,
-    <Clod />,
-    <ToolBox />,
+    1,
+    1,
+    1,
   ];
   const CurrentComponent = listComponent[menuActive];
   const [isShowStartup, setIsShoeStartup] = useState(false);

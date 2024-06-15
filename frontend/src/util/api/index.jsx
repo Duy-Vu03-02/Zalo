@@ -156,3 +156,14 @@ export const getMessageByConversation = async ({ idConversation }) => {
   );
   return response;
 };
+
+// Video call - Audio call
+export const callUser = async ({ receiver }) => {
+  const url = "https://192.168.41.26/call/videocall";
+  const response = await axios.post(
+    url,
+    { friendId: receiver },
+    { withCredentials: true }
+  );
+  return response;
+};

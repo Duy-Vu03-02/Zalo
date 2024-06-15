@@ -280,11 +280,9 @@ function ContainerMess({ contactData }) {
   };
 
   const handleVideoCall = () => {
-    const encode = `caller=${userData._id}&receiver=${contactData.idChatWith}&receiverame=${contactData.username}&receiveravatar=${contactData.avatar}`;
-    const url =
-      "https://192.168.41.26:3000/videocall?" + encodeURIComponent(encode);
+    const url = `https://192.168.41.26:3000/videocall?&flag=1&id=${contactData.idChatWith}`;
     const windowName = "_blank";
-    const windowFeatures = "width=600,height=400,resizable=yes";
+    const windowFeatures = "width=1300,height=700,resizable=yes";
     window.open(url, windowName, windowFeatures);
   };
 
