@@ -24,6 +24,7 @@ import {
 } from "../controllers/UserController";
 
 import { getConversationById } from "../config/schema/ConversationModel";
+import { reverse } from "lodash";
 const app = express();
 const server = require("https").createServer(
   {
@@ -287,6 +288,18 @@ io.on("connection", async (socket: Socket) => {
     const user = await getUserById(data.friendId);
     if (user) {
       socket.emit("received-soft-mess", user);
+    }
+  });
+
+  /// socket - video call
+  socket.on("call-user", (data) => {
+    const caller = listRoom.get(data.userCaller);
+    const receiver = listRoom.get(data.userReceiver);
+
+    if (caller && receiver) {
+      io.to(receiver).emit("user-call", {
+        signal: data.signal,
+      });
     }
   });
 });

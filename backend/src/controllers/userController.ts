@@ -364,6 +364,7 @@ export const getUserById = async (friendId: any) => {
 export const getFriendById = async (req: Request, res: Response) => {
   try {
     const { friendId } = req.body;
+    console.log(req.body);
     const friend = await UserModel.findById(friendId).select(
       "avatar lastActive"
     );

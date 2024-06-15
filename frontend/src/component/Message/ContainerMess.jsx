@@ -279,6 +279,15 @@ function ContainerMess({ contactData }) {
     selection.addRange(range);
   };
 
+  const handleVideoCall = () => {
+    const encode = `caller=${userData._id}&receiver=${contactData.idChatWith}&receiverame=${contactData.username}&receiveravatar=${contactData.avatar}`;
+    const url =
+      "https://192.168.41.26:3000/videocall?" + encodeURIComponent(encode);
+    const windowName = "_blank";
+    const windowFeatures = "width=600,height=400,resizable=yes";
+    window.open(url, windowName, windowFeatures);
+  };
+
   return (
     <>
       <div className="container-containermess" onClick={handleSeenMess}>
@@ -311,7 +320,10 @@ function ContainerMess({ contactData }) {
             <HiOutlineUserGroup className="icon-header" />
             <CiSearch className="icon-header" />
             <IoCallOutline className="icon-header" />
-            <IoVideocamOutline className="icon-header" />
+            <IoVideocamOutline
+              className="icon-header"
+              onClick={handleVideoCall}
+            />
           </div>
         </div>
         <div className="infor-container" style={{ backgroundColor: theme }}>
