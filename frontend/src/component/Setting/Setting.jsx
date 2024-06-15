@@ -7,6 +7,7 @@ import { IoMdClose } from "react-icons/io";
 import { CiCamera } from "react-icons/ci";
 import { IoChevronBackOutline } from "react-icons/io5";
 import { CiSearch } from "react-icons/ci";
+import { updateAvatarById } from "../../util/api";
 import axios from "axios";
 
 export default function Setting({ handleShowSetting }) {
@@ -55,13 +56,11 @@ export default function Setting({ handleShowSetting }) {
     try {
       console.log(dataUpdate.avatar);
       if (dataUpdate.avatar !== "") {
-        console.log("cek");
-        const url = "http://localhost:8080/user/updateavatarbyid";
-        const response = await axios.post(url, {
+        const response = await updateAvatarById({
           userId: userData._id,
-          url: dataUpdate.avatar,
+          urlAvatar: dataUpdate.avatar,
         });
-        console.log(response);
+
         if (response.status === 200) {
           handleShowSetting(false);
           setUserData((prevState) => {

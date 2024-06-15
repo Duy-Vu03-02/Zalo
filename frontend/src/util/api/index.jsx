@@ -113,6 +113,16 @@ export const getGroupReq = async ({ userId }) => {
   return response;
 };
 
+export const updateAvatarById = async ({ userId, urlAvatar }) => {
+  const url = "https://192.168.41.26/user/updateavatarbyid";
+  const response = await axios.post(
+    url,
+    { userId, urlAvatar },
+    { withCredentials: true }
+  );
+  return response;
+};
+
 // Coversation
 export const getAllConversation = async ({ id }) => {
   const url = "https://192.168.41.26/conversation/getallconversationbyuser";

@@ -555,10 +555,10 @@ export const register = async (req: Request, res: Response) => {
 
 export const updateAvatar = async (req: Request, res: Response) => {
   try {
-    const { url, userId } = req.body;
+    const { urlAvatar, userId } = req.body;
     const user = await UserModel.findById(userId);
     if (user) {
-      user.avatar = url;
+      user.avatar = urlAvatar;
       user.save();
       res.sendStatus(200);
     } else {

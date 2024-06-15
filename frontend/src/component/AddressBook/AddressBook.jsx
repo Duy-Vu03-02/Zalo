@@ -64,6 +64,12 @@ export default function AddressBook() {
           });
           if (response.status === 200) {
             setDataContact({ ...response.data, idChatWith: response.data._id });
+            setShowContentMenuContact({
+              state: false,
+              data: null,
+              title: null,
+              count: null,
+            });
           }
         }
       } else {
