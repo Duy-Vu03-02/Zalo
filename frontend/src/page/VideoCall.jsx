@@ -9,6 +9,11 @@ import Peer from "simple-peer";
 import { callUser, getFriendById } from "../util/api";
 import io from "socket.io-client";
 import Loadding from "./Loadding";
+import { SlCallEnd } from "react-icons/sl";
+import { IoVideocamOffOutline } from "react-icons/io5";
+import { IoVideocamOutline } from "react-icons/io5";
+import { IoMicOffOutline } from "react-icons/io5";
+import { IoMicOutline } from "react-icons/io5";
 import "../resource/style/VideoCall/videocall.css";
 
 export default function VideoCall() {
@@ -16,11 +21,14 @@ export default function VideoCall() {
   const [meData, setMeData] = useState("");
   const [flag, setFlag] = useState("");
   const [stream, setStream] = useState("");
+  const [acceptCall, setacceptCall] = useState(false);
   const callerRef = useRef(null);
   const receiverRef = useRef(null);
   const connectionRef = useRef(null);
   const socket = useRef(null);
   socket.current = io("https://192.168.41.26");
+  const [mic, setMic] = useState(true);
+  const [video, setVideo] = useState(true);
 
   useEffect(() => {
     navigator.mediaDevices
@@ -42,6 +50,26 @@ export default function VideoCall() {
       if (response.status === 200) {
         setMeData(response.data.me);
         setFriendData(response.data.friend);
+
+        if (flag) {
+          const peer = new Peer({
+            initiation: true,
+            trickle: false,
+            stream: stream,
+          });
+
+          peer.on("signal", (data) => {
+            socket.current.emit("call-user", {
+              userCaller: meData._id,
+              userReceiver: friendData._id,
+              signal: data,
+            });
+          });
+
+          peer.on("stream", (stream) => {
+            receiverRef.current.srcObject = stream;
+          });
+        }
       }
     };
 
@@ -59,7 +87,36 @@ export default function VideoCall() {
     <>
       {friendData && meData && flag ? (
         <div className="video-call">
-          <div className="background-video"></div>
+          <div className="background-video">
+            {acceptCall ? (
+              ""
+            ) : (
+              <div className="not-accept">
+                <img src={friendData.avatar} alt="" />
+                <p>{friendData.username}</p>
+                <p
+                  style={{
+                    fontSize: "12px",
+                    textTransform: "lowercase",
+                    height: "120px",
+                  }}
+                >
+                  đang gọi . . .
+                </p>
+              </div>
+            )}
+          </div>
+          <div className="menu-call flex">
+            <div onClick={() => setMic(!mic)}>
+              {mic ? <IoMicOutline /> : <IoMicOffOutline />}
+            </div>
+            <div onClick={() => setVideo(!video)}>
+              {video ? <IoVideocamOutline /> : <IoVideocamOffOutline />}
+            </div>
+            <div>
+              <SlCallEnd className="icon-call" />
+            </div>
+          </div>
           <div className="your-video">
             <video playsInline muted ref={callerRef} autoPlay />
             {!flag && (
