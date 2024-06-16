@@ -22,15 +22,23 @@ export default function VideoCall() {
   const [flag, setFlag] = useState("");
   const [stream, setStream] = useState("");
   const [acceptCall, setacceptCall] = useState(false);
+  const [signalData, setSignalData] = useState(null);
   const callerRef = useRef(null);
   const receiverRef = useRef(null);
   const connectionRef = useRef(null);
   const socket = useRef(null);
-  socket.current = io("https://192.168.41.26");
+  socket.current = io("https://localhost");
+
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
+  const [stateCall, setStateCall] = useState("");
 
   useEffect(() => {
+    let idSocket = "";
+    if (socket.current) {
+      socket.current.on("me", (data) => (idSocket = data));
+    }
+
     navigator.mediaDevices
       .getUserMedia({ audio: true, video: true })
       .then((stream) => {
@@ -48,21 +56,23 @@ export default function VideoCall() {
       );
       setFlag(f);
       if (response.status === 200) {
-        setMeData(response.data.me);
-        setFriendData(response.data.friend);
+        const resData = response.data;
+        setMeData(resData.me);
+        setFriendData(resData.friend);
 
-        if (flag) {
+        if (f && socket.current && idSocket) {
           const peer = new Peer({
-            initiation: true,
+            initiator: true,
             trickle: false,
-            stream: stream,
+            stream,
           });
 
           peer.on("signal", (data) => {
             socket.current.emit("call-user", {
-              userCaller: meData._id,
-              userReceiver: friendData._id,
+              userCaller: resData.me._id,
+              userReceiver: resData.friend._id,
               signal: data,
+              socket_id: idSocket,
             });
           });
 
@@ -73,15 +83,55 @@ export default function VideoCall() {
       }
     };
 
+    if (socket.current) {
+      socket.current.on("accept-call", (data) => {
+        setSignalData(data);
+      });
+
+      // Do not accept call
+      socket.current.on("not-accept-call", () => {
+        console.log("ceheck");
+        setStateCall("Người nhận đang bận");
+      });
+    }
+
     fetch();
-    return () => {
-      if (socket.current) {
-        socket.current.off("");
-      }
-    };
+    // return () => {
+    //   if (socket.current) {
+    //     socket.current.off("accept-call");
+    //   }
+    // };
   }, []);
 
-  const handleAcceptCall = () => {};
+  useEffect(() => {
+    if (stateCall !== null && stateCall.trim() !== "") {
+      setTimeout(() => {
+        window.close();
+      }, 3000);
+    }
+  }, [stateCall]);
+
+  const handleAcceptCall = () => {
+    const peer = new Peer({
+      initiation: false,
+      trickle: false,
+      stream,
+    });
+
+    peer.on("signal", (data) => {
+      socket.current.emit("answer-call", {
+        signal: data,
+      });
+    });
+
+    peer.on("stream", (data) => {
+      setacceptCall(true);
+      receiverRef.current.srcObject = data;
+    });
+
+    peer.signal(signalData);
+    connectionRef.current = peer;
+  };
 
   return (
     <>
@@ -89,7 +139,9 @@ export default function VideoCall() {
         <div className="video-call">
           <div className="background-video">
             {acceptCall ? (
-              ""
+              <div className="receiver-video">
+                <video ref={receiverRef}></video>
+              </div>
             ) : (
               <div className="not-accept">
                 <img src={friendData.avatar} alt="" />
@@ -101,7 +153,7 @@ export default function VideoCall() {
                     height: "120px",
                   }}
                 >
-                  đang gọi . . .
+                  {stateCall ? stateCall : "đang gọi . . ."}
                 </p>
               </div>
             )}

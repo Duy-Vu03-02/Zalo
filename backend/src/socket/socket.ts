@@ -292,6 +292,23 @@ io.on("connection", async (socket: Socket) => {
   });
 
   /// socket - video call
+  socket.emit("me", socket.id);
+  socket.on("call-user", (data) => {
+    const userCaller = listRoom.get(data.userCaller);
+    const userReceiver = listRoom.get(data.userReceiver);
+
+    if (userCaller && userReceiver) {
+      io.to(userReceiver).emit("join-room-call", {
+        userCallId: data.socket_id,
+        url: `https://localhost:3000/videocall?&flag=0&id=${data.userCaller}`,
+      });
+    }
+  });
+
+  socket.on("do-not-accept-call", (data) => {
+    console.log(data.userCallerId);
+    io.to(data.userCallerId).emit("not-accept-call", {});
+  });
 });
 
 const handleStoreDate = async (value: any, id: any) => {

@@ -11,9 +11,17 @@ import todo from "../resource/svg/chat/todo.svg";
 import cloud from "../resource/svg/chat/cloud.svg";
 import toolbox from "../resource/svg/chat/toolbox.svg";
 import setting from "../resource/svg/chat/setting.svg";
+import { SlCallEnd } from "react-icons/sl";
+import { IoMdClose } from "react-icons/io";
+import { getFriendById } from "../util/api";
+import chuong from "../resource/mp3/chuong.mp3";
 
 function Chat({ handleLogout }) {
   const { userData, socket } = useContext(UserContext);
+
+  const [urlCall, setUrlCall] = useState(null);
+  const [friendCall, setFriendCall] = useState(null);
+  const [userCallId, setUserCallId] = useState(null);
 
   const [showPageAddressBook, setShowPageAddressBook] = useState(false);
   const topMenu = [mess, addressbook, todo];
@@ -31,6 +39,25 @@ function Chat({ handleLogout }) {
   const [showSetting, setShowSetting] = useState(false);
   const boxRef = useRef(null);
   const boxAvatar = useRef(null);
+  const audioRef = useRef(null);
+
+  useEffect(() => {
+    const fetch = async () => {
+      if (socket.current) {
+        socket.current.on("join-room-call", async (data) => {
+          setUrlCall(data.url);
+          setUserCallId(data.userCallId);
+          const caller = await getFriendById({
+            friendId: data.url.split("id=")[1],
+          });
+          if (caller.status === 200) {
+            setFriendCall(caller.data);
+          }
+        });
+      }
+    };
+    fetch();
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -65,6 +92,30 @@ function Chat({ handleLogout }) {
   };
   const handleShowPageAddressBook = (value) => {
     setShowPageAddressBook(value);
+  };
+
+  const handleAcceptCall = () => {
+    const windowName = "_blank";
+    const windowFeatures = "width=1300,height=700,resizable=yes";
+    window.open(urlCall, windowName, windowFeatures);
+  };
+
+  const DonotAcceptCall = () => {
+    if (socket.current) {
+      socket.current.emit("do-not-accept-call", {
+        userCallerId: userCallId,
+      });
+      setUrlCall(null);
+      setFriendCall(null);
+    }
+  };
+
+  /// Video call
+  const handleRePlay = () => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play();
+    }
   };
 
   return (
@@ -127,7 +178,54 @@ function Chat({ handleLogout }) {
         </div>
         <div>{CurrentComponent}</div>
         <div>
-          {showSetting && <Setting handleShowSetting={handleShowSetting} />}
+          {urlCall && friendCall ? (
+            <div className="screen-mask">
+              <div className="audio-chuong none">
+                <audio src={chuong} controls autoPlay onEnded={handleRePlay} />
+              </div>
+              <div className="dialog-call">
+                <div
+                  className="header-add-friend"
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    right: "0px",
+                    border: "none",
+                  }}
+                  onClick={() => {
+                    setUrlCall(null);
+                    setFriendCall(null);
+                  }}
+                >
+                  <IoMdClose className="btn-close" />
+                </div>
+                <div>
+                  <img src={friendCall.avatar} alt="" />
+                  <p style={{ textAlign: "center" }}>{friendCall.username}</p>
+                  <div className="flex">
+                    <div
+                      className="padding-icon"
+                      style={{ background: "rgb(233, 30, 30)" }}
+                    >
+                      <SlCallEnd
+                        className="icon-accept-call"
+                        onClick={DonotAcceptCall}
+                      />
+                    </div>
+                    <div
+                      className="padding-icon"
+                      style={{ backgroundColor: "rgb(48, 160, 75)" }}
+                      onClick={handleAcceptCall}
+                    >
+                      <SlCallEnd className="icon-reject-call" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            showSetting && <Setting handleShowSetting={handleShowSetting} />
+          )}
         </div>
       </div>
     </>
