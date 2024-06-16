@@ -24,7 +24,7 @@ import {
 } from "../controllers/UserController";
 
 import { getConversationById } from "../config/schema/ConversationModel";
-import { reverse } from "lodash";
+import { reverse, set } from "lodash";
 const app = express();
 const server = require("https").createServer(
   {
@@ -43,6 +43,7 @@ const io = socket(server, {
 });
 
 const listRoom = new Map();
+const listCall = new Map();
 
 io.on("connection", async (socket: Socket) => {
   // console.log("user connection: ", socket.id);
@@ -292,22 +293,49 @@ io.on("connection", async (socket: Socket) => {
   });
 
   /// socket - video call
-  socket.emit("me", socket.id);
+  socket.on("add-user-call", (data) => {
+    listCall.set(data.userCaller, socket.id);
+  });
+
   socket.on("call-user", (data) => {
-    const userCaller = listRoom.get(data.userCaller);
+    const userCaller = listCall.get(data.userCaller);
     const userReceiver = listRoom.get(data.userReceiver);
 
     if (userCaller && userReceiver) {
       io.to(userReceiver).emit("join-room-call", {
-        userCallId: data.socket_id,
-        url: `https://localhost:3000/videocall?&flag=0&id=${data.userCaller}`,
+        url: `https://localhost:3000/videocall?flag=0&id=${data.userCaller}`,
+      });
+    }
+  });
+
+  socket.on("done-join-call", (data) => {
+    listCall.set(data.userReceiver, socket.id);
+    const userCaller = listCall.get(data.userCaller);
+    io.to(userCaller).emit("send-signal");
+  });
+
+  socket.on("give-signal", (data) => {
+    const userReceiver = listCall.get(data.receiver);
+    if (userReceiver) {
+      io.to(userReceiver).emit("received-signal", { signal: data.signal });
+    }
+  });
+
+  socket.on("answer-call", (data) => {
+    const userCaller = listCall.get(data.userCaller);
+
+    if (userCaller) {
+      io.to(userCaller).emit("accept-call", {
+        signal: data.signal,
       });
     }
   });
 
   socket.on("do-not-accept-call", (data) => {
-    console.log(data.userCallerId);
-    io.to(data.userCallerId).emit("not-accept-call", {});
+    const userCaller = listCall.get(data.userCallerId);
+    if (userCaller) {
+      io.to(userCaller).emit("not-accept-call", {});
+    }
   });
 });
 

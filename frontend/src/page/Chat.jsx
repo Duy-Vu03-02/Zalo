@@ -21,7 +21,6 @@ function Chat({ handleLogout }) {
 
   const [urlCall, setUrlCall] = useState(null);
   const [friendCall, setFriendCall] = useState(null);
-  const [userCallId, setUserCallId] = useState(null);
 
   const [showPageAddressBook, setShowPageAddressBook] = useState(false);
   const topMenu = [mess, addressbook, todo];
@@ -46,7 +45,6 @@ function Chat({ handleLogout }) {
       if (socket.current) {
         socket.current.on("join-room-call", async (data) => {
           setUrlCall(data.url);
-          setUserCallId(data.userCallId);
           const caller = await getFriendById({
             friendId: data.url.split("id=")[1],
           });
@@ -98,12 +96,14 @@ function Chat({ handleLogout }) {
     const windowName = "_blank";
     const windowFeatures = "width=1300,height=700,resizable=yes";
     window.open(urlCall, windowName, windowFeatures);
+    setUrlCall(null);
+    setFriendCall(null);
   };
 
   const DonotAcceptCall = () => {
     if (socket.current) {
       socket.current.emit("do-not-accept-call", {
-        userCallerId: userCallId,
+        userCallerId: friendCall._id,
       });
       setUrlCall(null);
       setFriendCall(null);
@@ -188,8 +188,8 @@ function Chat({ handleLogout }) {
                   className="header-add-friend"
                   style={{
                     position: "absolute",
-                    top: 0,
-                    right: "0px",
+                    top: "-5px",
+                    right: "-10px",
                     border: "none",
                   }}
                   onClick={() => {
@@ -199,13 +199,28 @@ function Chat({ handleLogout }) {
                 >
                   <IoMdClose className="btn-close" />
                 </div>
-                <div>
+                <div style={{ width: "350px" }}>
+                  <div
+                    style={{
+                      padding: "15px 0",
+                      margin: "0 20px 10px 20px",
+                      textTransform: "uppercase",
+                      fontWeight: 500,
+                      color: "#2f2b2b",
+                      borderBottom: "2px solid rgb(215 223 234)",
+                    }}
+                  >
+                    cuộc gọi đến
+                  </div>
                   <img src={friendCall.avatar} alt="" />
                   <p style={{ textAlign: "center" }}>{friendCall.username}</p>
-                  <div className="flex">
+                  <p style={{ textAlign: "center", fontSize: "12px" }}>
+                    đang gọi . . .
+                  </p>
+                  <div className="flex" style={{ justifyContent: "center" }}>
                     <div
                       className="padding-icon"
-                      style={{ background: "rgb(233, 30, 30)" }}
+                      style={{ color: "white", background: "rgb(233, 30, 30)" }}
                     >
                       <SlCallEnd
                         className="icon-accept-call"
@@ -214,7 +229,10 @@ function Chat({ handleLogout }) {
                     </div>
                     <div
                       className="padding-icon"
-                      style={{ backgroundColor: "rgb(48, 160, 75)" }}
+                      style={{
+                        color: "white",
+                        backgroundColor: "rgb(48, 160, 75)",
+                      }}
                       onClick={handleAcceptCall}
                     >
                       <SlCallEnd className="icon-reject-call" />
