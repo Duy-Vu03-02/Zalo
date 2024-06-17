@@ -280,7 +280,7 @@ function ContainerMess({ contactData }) {
   };
 
   const handleVideoCall = () => {
-    const url = `https://localhost:3000/videocall?flag=1&id=${contactData.idChatWith}`;
+    const url = `https://localhost:3000/videocall?&flag=1&id=${contactData.idChatWith}`;
     const windowName = "_blank";
     const windowFeatures = "width=1300,height=700,resizable=yes";
     window.open(url, windowName, windowFeatures);
