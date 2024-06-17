@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext, memo, useRef } from "react";
 import { UserContext } from "../Context/UserContext";
-import io from "socket.io-client";
 import "../resource/style/Chat/chat.css";
 import Message from "../component/Message/Message";
 import AddressBook from "../component/AddressBook/AddressBook";
@@ -41,8 +40,23 @@ function Chat({ handleLogout }) {
   const audioRef = useRef(null);
 
   useEffect(() => {
-    const fetch = async () => {
+    if (socket.current) {
+      socket.current.on("end-meeting", () => {
+        console.log("end meeting");
+        setUrlCall(null);
+        setFriendCall(null);
+      });
+    }
+    return () => {
       if (socket.current) {
+        socket.current.off("end-meeting");
+      }
+    };
+  }, [socket.current]);
+
+  useEffect(() => {
+    if (socket.current) {
+      const fetch = async () => {
         socket.current.on("join-room-call", async (data) => {
           setUrlCall(data.url);
           const caller = await getFriendById({
@@ -52,10 +66,13 @@ function Chat({ handleLogout }) {
             setFriendCall(caller.data);
           }
         });
-      }
+      };
+      fetch();
+    }
+    return () => {
+      socket.current.off("join-room-call");
     };
-    fetch();
-  }, []);
+  }, [socket]);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -75,9 +92,9 @@ function Chat({ handleLogout }) {
   }, [boxRef, setIsShoeStartup]);
 
   const handleChangeMenuActive = (index) => {
-    if (index == 0 || index == 1) {
+    if (index === 0 || index === 1) {
       setMenuactive(index);
-    } else if (index == 5) {
+    } else if (index === 5) {
       handleShowSetting(true);
     }
   };
@@ -95,7 +112,14 @@ function Chat({ handleLogout }) {
   const handleAcceptCall = () => {
     const windowName = "_blank";
     const windowFeatures = "width=1300,height=700,resizable=yes";
-    window.open(urlCall, windowName, windowFeatures);
+    const newWindow = window.open(urlCall, windowName, windowFeatures);
+
+    if (newWindow) {
+      newWindow.onbeforeunload = () => {
+        return false; // Ngăn cản cửa sổ đóng lại
+      };
+    }
+
     setUrlCall(null);
     setFriendCall(null);
   };
@@ -178,7 +202,7 @@ function Chat({ handleLogout }) {
         </div>
         <div>{CurrentComponent}</div>
         <div>
-          {urlCall && friendCall ? (
+          {friendCall ? (
             <div className="screen-mask">
               <div className="audio-chuong none">
                 <audio src={chuong} controls autoPlay onEnded={handleRePlay} />

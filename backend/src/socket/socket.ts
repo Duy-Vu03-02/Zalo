@@ -293,16 +293,12 @@ io.on("connection", async (socket: Socket) => {
   });
 
   /// socket - video call
-  socket.on("add-user-call", (data) => {
-    listCall.set(data.userCaller, socket.id);
-  });
-
   socket.on("call-user", (data) => {
-    const userCaller = listCall.get(data.userCaller);
+    listCall.set(data.userCaller, socket.id);
     const userReceiver = listRoom.get(data.userReceiver);
 
-    if (userCaller && userReceiver) {
-      io.to(userReceiver).emit("join-room-call", {
+    if (userReceiver) {
+      socket.to(userReceiver).emit("join-room-call", {
         url: `https://localhost:3000/videocall?flag=0&id=${data.userCaller}`,
       });
     }
@@ -311,21 +307,20 @@ io.on("connection", async (socket: Socket) => {
   socket.on("done-join-call", (data) => {
     listCall.set(data.userReceiver, socket.id);
     const userCaller = listCall.get(data.userCaller);
-    io.to(userCaller).emit("send-signal");
+    socket.to(userCaller).emit("send-signal");
   });
 
   socket.on("give-signal", (data) => {
     const userReceiver = listCall.get(data.receiver);
     if (userReceiver) {
-      io.to(userReceiver).emit("received-signal", { signal: data.signal });
+      socket.to(userReceiver).emit("received-signal", { signal: data.signal });
     }
   });
 
   socket.on("answer-call", (data) => {
     const userCaller = listCall.get(data.userCaller);
-
     if (userCaller) {
-      io.to(userCaller).emit("accept-call", {
+      socket.to(userCaller).emit("accept-call", {
         signal: data.signal,
       });
     }
@@ -334,8 +329,19 @@ io.on("connection", async (socket: Socket) => {
   socket.on("do-not-accept-call", (data) => {
     const userCaller = listCall.get(data.userCallerId);
     if (userCaller) {
-      io.to(userCaller).emit("not-accept-call", {});
+      socket.to(userCaller).emit("not-accept-call", {});
     }
+  });
+
+  socket.on("end-video-call", (data) => {
+    const room = listRoom.get(data.person);
+    const call = listCall.get(data.person);
+
+    console.log(data.person);
+    console.log(room);
+    console.log(call);
+    if (room) socket.to(room).emit("end-metting");
+    if (call) socket.to(call).emit("end-meeting");
   });
 });
 

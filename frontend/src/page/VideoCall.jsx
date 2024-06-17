@@ -33,41 +33,17 @@ export default function VideoCall() {
   const [video, setVideo] = useState(true);
   const [stateCall, setStateCall] = useState("");
 
-  useEffect(() => {
-    if (socket.current) {
-      // Do not accept call
-      socket.current.on("not-accept-call", () => {
-        setStateCall("Người nhận đang bận");
-      });
+  // useEffect(() => {
+  //   const handleBeforeUnload = (event) => {
+  //     socket.current.emit("end-video-call", { person: friendData._id });
+  //   };
 
-      socket.current.on("send-signal", () => {
-        if (flag && socket.current && friendData) {
-          const peer = new Peer({
-            initiator: true,
-            trickle: false,
-            stream,
-          });
+  //   window.addEventListener("beforeunload", handleBeforeUnload);
 
-          peer.on("signal", (data) => {
-            socket.current.emit("give-signal", {
-              signal: data,
-              receiver: friendData._id,
-            });
-          });
-
-          peer.on("stream", (stream) => {
-            receiverRef.current.srcObject = stream;
-          });
-          socket.current.on("accept-call", (data) => {
-            peer.signal = data.signal;
-          });
-          setacceptCall(true);
-
-          connectionRef.current = peer;
-        }
-      });
-    }
-  }, []);
+  //   return () => {
+  //     window.removeEventListener("beforeunload", handleBeforeUnload);
+  //   };
+  // }, []);
 
   useEffect(() => {
     navigator.mediaDevices
@@ -76,63 +52,167 @@ export default function VideoCall() {
         setStream(stream);
         callerRef.current.srcObject = stream;
       });
-
+    let f;
     const fetch = async () => {
       const baseUrl = window.location.href;
       const friendId = baseUrl.split("id=")[1];
       const response = await callUser({ receiver: friendId });
-      const f = baseUrl.slice(
+      f = baseUrl.slice(
         baseUrl.indexOf("flag") + 5,
         baseUrl.indexOf("flag") + 6
       );
       setFlag(f == 1 ? true : false);
       if (response.status === 200) {
         const resData = response.data;
-        if (socket.current) {
+        setMeData(resData.me);
+        setFriendData(resData.friend);
+
+        if (f == 1 && socket.current) {
+          // call user
           socket.current.emit("call-user", {
             userCaller: resData.me._id,
             userReceiver: resData.friend._id,
           });
-          socket.current.emit("add-user-call", { userCaller: resData.me._id });
         }
-        setMeData(resData.me);
-        setFriendData(resData.friend);
 
         if (f == 0 && socket.current) {
-          if (socket.current) {
-            socket.current.emit("done-join-call", {
-              userReceiver: resData.me._id,
-              userCaller: resData.friend._id,
-            });
-          }
-          const peer = new Peer({
-            initiation: false,
-            trickle: false,
-            stream,
+          //
+          socket.current.emit("done-join-call", {
+            userReceiver: resData.me._id,
+            userCaller: resData.friend._id,
           });
-
-          peer.on("signal", (data) => {
-            socket.current.emit("answer-call", {
-              userCaller: resData.friend._id,
-              signal: data,
-            });
-          });
-
-          peer.on("stream", (data) => {
-            receiverRef.current.srcObject = data;
-          });
-
-          socket.current.on("received-signal", (data) => {
-            console.log(data);
-            peer.signal(data);
-          });
-          connectionRef.current = peer;
         }
       }
     };
 
     fetch();
   }, []);
+
+  // useEffect(() => {
+  //   if (socket.current) {
+  //     socket.current.on("not-accept-call", () => {
+  //       setStateCall("Người nhận đang bận");
+  //     });
+  //     socket.current.on("end-metting", () => {
+  //       setStateCall("Kết thúc cuộc gọi");
+  //     });
+  //   }
+  //   if (socket.current && flag) {
+  //     socket.current.on("send-signal", () => {
+  //       if (flag && socket.current && friendData) {
+  //         const peer = new Peer({
+  //           initiator: true,
+  //           trickle: false,
+  //           stream,
+  //         });
+
+  //         peer.on("signal", (data) => {
+  //           socket.current.emit("give-signal", {
+  //             signal: data,
+  //             receiver: friendData._id,
+  //           });
+  //         });
+
+  //         peer.on("stream", (stream) => {
+  //           receiverRef.current.srcObject = stream;
+  //         });
+  //         socket.current.on("accept-call", (data) => {
+  //           peer.signal = data.signal;
+  //         });
+  //         setacceptCall(true);
+
+  //         connectionRef.current = peer;
+  //       }
+  //     });
+  //   }
+  //   if (socket.current && !flag && friendData) {
+  //     const peer = new Peer({
+  //       initiation: false,
+  //       trickle: false,
+  //       stream,
+  //     });
+
+  //     peer.on("signal", (data) => {
+  //       socket.current.emit("answer-call", {
+  //         userCaller: friendData._id,
+  //         signal: data,
+  //       });
+  //     });
+
+  //     peer.on("stream", (data) => {
+  //       receiverRef.current.srcObject = data;
+  //     });
+
+  //     socket.current.on("received-signal", (data) => {
+  //       peer.signal(data);
+  //       setacceptCall(true);
+  //     });
+  //     connectionRef.current = peer;
+  //   }
+
+  //   return () => {
+  //     if (socket.current) {
+  //       socket.current.off("not-accept-call");
+  //       socket.current.off("send-signal");
+  //       socket.current.off("accept-call");
+  //       socket.current.off("received-signal");
+  //     }
+  //   };
+  // }, [socket.current]);
+
+  // const callUserVideo = () => {
+  //   socket.current.on("send-signal", () => {
+  //     if (flag && socket.current && friendData) {
+  //       const peer = new Peer({
+  //         initiator: true,
+  //         trickle: false,
+  //         stream,
+  //       });
+
+  //       peer.on("signal", (data) => {
+  //         socket.current.emit("give-signal", {
+  //           signal: data,
+  //           receiver: friendData._id,
+  //         });
+  //       });
+
+  //       peer.on("stream", (stream) => {
+  //         receiverRef.current.srcObject = stream;
+  //       });
+  //       socket.current.on("accept-call", (data) => {
+  //         console.log(data);
+  //         peer.signal =data.signal;
+  //       });
+  //       setacceptCall(true);
+
+  //       connectionRef.current = peer;
+  //     }
+  //   });
+  // };
+
+  // const answerCallVideo = () => {
+  //   const peer = new Peer({
+  //     initiation: false,
+  //     trickle: false,
+  //     stream,
+  //   });
+
+  //   peer.on("signal", (data) => {
+  //     socket.current.emit("answer-call", {
+  //       userCaller: resData.friend._id,
+  //       signal: data,
+  //     });
+  //   });
+
+  //   peer.on("stream", (data) => {
+  //     receiverRef.current.srcObject = data;
+  //   });
+
+  //   socket.current.on("received-signal", (data) => {
+  //     peer.signal(data);
+  //     connectionRef.current = peer;
+  //   });
+  // };
 
   useEffect(() => {
     if (stateCall !== null && stateCall.trim() !== "") {
@@ -144,6 +224,7 @@ export default function VideoCall() {
 
   const handleCancelCall = () => {
     if (socket.current) {
+      socket.current.emit("end-video-call", { person: friendData._id });
     }
   };
 

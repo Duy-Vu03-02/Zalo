@@ -53,9 +53,7 @@ export const calculatorLastActive = async (timeInput: any) => {
     } else {
       const farDate = nowDate.getTime() - lastDate.getTime();
       if (farDate >= 2_592_000_000) {
-        return `${lastDate.getDate()}/${
-          lastDate.getMonth() + 1
-        }/${lastDate.getFullYear()}`;
+        return `${lastDate.getDate()}/${lastDate.getMonth() + 1}`;
       } else {
         if (farDate >= 86_400_000) {
           return `${Math.floor(farDate / 86_400_000)} ngày`;
