@@ -34,42 +34,6 @@ export default function VideoCall() {
   const [stateCall, setStateCall] = useState("");
 
   useEffect(() => {
-    if (socket.current) {
-      // Do not accept call
-      socket.current.on("not-accept-call", () => {
-        setStateCall("Người nhận đang bận");
-      });
-
-      socket.current.on("send-signal", () => {
-        if (flag && socket.current && friendData) {
-          const peer = new Peer({
-            initiator: true,
-            trickle: false,
-            stream,
-          });
-
-          peer.on("signal", (data) => {
-            socket.current.emit("give-signal", {
-              signal: data,
-              receiver: friendData._id,
-            });
-          });
-
-          peer.on("stream", (stream) => {
-            receiverRef.current.srcObject = stream;
-          });
-          socket.current.on("accept-call", (data) => {
-            peer.signal = data.signal;
-          });
-          setacceptCall(true);
-
-          connectionRef.current = peer;
-        }
-      });
-    }
-  }, []);
-
-  useEffect(() => {
     navigator.mediaDevices
       .getUserMedia({ audio: true, video: true })
       .then((stream) => {
@@ -88,49 +52,12 @@ export default function VideoCall() {
       setFlag(f == 1 ? true : false);
       if (response.status === 200) {
         const resData = response.data;
-        if (socket.current) {
-          socket.current.emit("call-user", {
-            userCaller: resData.me._id,
-            userReceiver: resData.friend._id,
-          });
-          socket.current.emit("add-user-call", { userCaller: resData.me._id });
-        }
         setMeData(resData.me);
         setFriendData(resData.friend);
-
-        if (f == 0 && socket.current) {
-          if (socket.current) {
-            socket.current.emit("done-join-call", {
-              userReceiver: resData.me._id,
-              userCaller: resData.friend._id,
-            });
-          }
-          const peer = new Peer({
-            initiation: false,
-            trickle: false,
-            stream,
-          });
-
-          peer.on("signal", (data) => {
-            socket.current.emit("answer-call", {
-              userCaller: resData.friend._id,
-              signal: data,
-            });
-          });
-
-          peer.on("stream", (data) => {
-            receiverRef.current.srcObject = data;
-          });
-
-          socket.current.on("received-signal", (data) => {
-            console.log(data);
-            peer.signal(data);
-          });
-          connectionRef.current = peer;
-        }
+        handleUserCaller(resData);
+        handleUserReceiver(resData);
       }
     };
-
     fetch();
   }, []);
 
@@ -143,8 +70,68 @@ export default function VideoCall() {
   }, [stateCall]);
 
   const handleCancelCall = () => {
-    if (socket.current) {
-    }
+    socket.current.emit("do-not-accept-call", { userCallerId: friendData._id });
+    window.close();
+  };
+
+  const handleUserCaller = (resData) => {
+    const peer = new Peer({
+      initiator: true,
+      trickle: false,
+      stream,
+    });
+
+    socket.current.emit("call-user", {
+      userCaller: resData.me._id,
+      userReceiver: resData.friend._id,
+    });
+
+    socket.current.on("not-accept-call", () => {
+      setStateCall("Người nhận đang bận");
+    });
+
+    // Nguoi goi nhan signal
+    socket.current.on("send-signal", (data) => {
+      peer.on("signal", (data) => {
+        socket.current.emit("comfirm-signal", {
+          signal: data,
+          userCaller: friendData._id,
+        });
+      });
+
+      peer.on("stream", (stream) => {
+        receiverRef.current.srcObject = stream;
+      });
+
+      peer.signal = data.signal;
+      setacceptCall(true);
+      connectionRef.current = peer;
+    });
+  };
+
+  const handleUserReceiver = (resData) => {
+    const peer = new Peer({
+      initiation: false,
+      trickle: false,
+      stream,
+    });
+
+    peer.on("signal", (data) => {
+      socket.current.emit("done-join-call", {
+        userReceiver: resData.me._id,
+        userCaller: resData.friend._id,
+        signal: data,
+      });
+    });
+
+    peer.on("stream", (data) => {
+      receiverRef.current.srcObject = data;
+    });
+
+    socket.current.on("received-signal", (data) => {
+      peer.signal(data);
+    });
+    connectionRef.current = peer;
   };
 
   return (

@@ -41,9 +41,18 @@ function Chat({ handleLogout }) {
   const audioRef = useRef(null);
 
   useEffect(() => {
+    if (socket.current) {
+      socket.current.on("not-accept-call", () => {
+        console.log("check");
+        setFriendCall(null);
+        setUrlCall(null);
+      });
+    }
     const fetch = async () => {
       if (socket.current) {
+        console.log("wrapper room");
         socket.current.on("join-room-call", async (data) => {
+          console.log("join zoom ");
           setUrlCall(data.url);
           const caller = await getFriendById({
             friendId: data.url.split("id=")[1],
@@ -55,7 +64,7 @@ function Chat({ handleLogout }) {
       }
     };
     fetch();
-  }, []);
+  }, [socket.current]);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -197,7 +206,7 @@ function Chat({ handleLogout }) {
                     setFriendCall(null);
                   }}
                 >
-                  <IoMdClose className="btn-close" />
+                  <IoMdClose className="btn-close" onClick={DonotAcceptCall} />
                 </div>
                 <div style={{ width: "350px" }}>
                   <div
